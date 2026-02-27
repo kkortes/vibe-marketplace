@@ -9,7 +9,7 @@
     "compile:watch": "bun compile && bun node_modules/@ape-egg/vibe/compiler/bin/vibe-compile.js --watch --no-clean --fouc-as-is"
   },
   "dependencies": {
-    "@ape-egg/vibe": "^1.7.0",
+    "@ape-egg/vibe": "^1.7.1",
     "async-await-websockets": "^3.0.5"
   },
   "vibe-compiler": {
