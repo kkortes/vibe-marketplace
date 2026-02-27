@@ -8,6 +8,7 @@ export let ws = null;
 
 export const initWs = () => {
   ws = aaw(WS_URL);
+  window.ws = ws;
 
   ws.on("open", async () => {
     window.$.wsConnected = true;
