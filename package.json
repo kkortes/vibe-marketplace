@@ -4,9 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "bun compile:watch & bunx live-server compiled --port=3000 --host=localhost",
-    "build": "bun compile",
-    "compile": "bun node_modules/@ape-egg/vibe/compiler/bin/vibe-compile.js && mv compiled/node_modules compiled/modules",
-    "compile:watch": "bun compile && bun node_modules/@ape-egg/vibe/compiler/bin/vibe-compile.js --watch --no-clean --fouc-as-is"
+    "build": "bun vibe compile",
+    "compile": "bun vibe compile && mv compiled/node_modules compiled/modules",
+    "compile:watch": "bun compile && bun vibe compile --watch --no-clean --fouc-as-is"
   },
   "dependencies": {
     "@ape-egg/vibe": "^1.7.1",

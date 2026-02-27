@@ -3,6 +3,4 @@ server/node_modules/
 lib/
 .env
 server/.env
-bun.lockb
-server/bun.lockb
 compiled
