@@ -74,10 +74,17 @@ user-badge {
   border: 1px solid var(--border);
 }
 
-user-badge img {
+user-avatar {
   width: calc(var(--unit) * 8);
   height: calc(var(--unit) * 8);
   border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: calc(var(--unit) * 4);
 }
 
 page-content {
