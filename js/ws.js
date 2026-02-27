@@ -1,8 +1,6 @@
-import aaw from "/lib/aaw.js";
+import aaw from "/modules/async-await-websockets/client.js";
 import { get } from "/js/localStorage.js";
-
-// const WS_URL = 'ws://localhost:1337';
-const WS_URL = "wss://vibe-marketplace.onrender.com";
+import { WS_URL } from "/js/env.js";
 
 export let ws = null;
 
@@ -21,6 +19,7 @@ export const initWs = () => {
         // Session expired, silently clear
       }
     }
+    window.$.authReady = true;
   });
 
   ws.on("close", () => {

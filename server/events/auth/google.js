@@ -10,10 +10,10 @@ export default async ({ token }, { mongo }) => {
   const sessionToken = crypto.randomUUID();
 
   const user = await users.findOneAndUpdate(
-    { googleId: sub },
+    { 'identities.provider': 'google', 'identities.id': sub },
     {
       $set: { email, name, picture, sessionToken, updatedAt: new Date() },
-      $setOnInsert: { googleId: sub, createdAt: new Date() },
+      $setOnInsert: { identities: [{ provider: 'google', id: sub }], createdAt: new Date() },
     },
     { upsert: true, returnDocument: 'after' },
   );

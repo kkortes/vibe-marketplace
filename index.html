@@ -4,14 +4,11 @@
 <head>
   <meta charset="UTF-8" />
   <title>Vibe Marketplace</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/index.css" />
   <script async src="https://accounts.google.com/gsi/client"></script>
 
   <script type="module">
-    import vibe from '/lib/vibe/index.js';
+    import vibe from '/modules/@ape-egg/vibe/index.js';
     import globalState from '/js/globalState.js';
     import afterVibeReady from '/js/afterVibeReady.js';
     import { initWs } from '/js/ws.js';
@@ -21,7 +18,7 @@
       ...globalState,
       signIn,
       signOut,
-    });
+    }, { debug: true });
 
     afterVibeReady();
     initWs();
@@ -32,17 +29,13 @@
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
     <filter-bar>
-      <input
-        type="search"
-        placeholder="Search components..."
-        value="@[searchQuery]"
-        oninput="$.searchQuery = this.value; $.applyFilter()"
-      />
+      <input type="search" placeholder="Search components..." value="@[searchQuery]"
+        oninput="$.searchQuery = this.value; $.applyFilter()" />
       <!-- each categories as cat -->
       <!-- if selectedCategory === cat -->
-      <button primary onclick="$.selectedCategory = cat; $.applyFilter()">@[cat]</button>
+      <button primary onclick="$.selectedCategory = '@[cat]'; $.applyFilter()">@[cat]</button>
       <!-- else -->
-      <button secondary onclick="$.selectedCategory = cat; $.applyFilter()">@[cat]</button>
+      <button secondary onclick="$.selectedCategory = '@[cat]'; $.applyFilter()">@[cat]</button>
       <!-- /if -->
       <!-- /each -->
     </filter-bar>

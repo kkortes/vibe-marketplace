@@ -3,11 +3,21 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "bun run build && bunx live-server --port=3000",
-    "build": "mkdir -p lib && cp -r node_modules/@ape-egg/vibe lib/vibe && cp node_modules/async-await-websockets/client.js lib/aaw.js"
+    "dev": "bun compile:watch & bunx live-server compiled --port=3000 --host=localhost",
+    "build": "bun compile",
+    "compile": "bun node_modules/@ape-egg/vibe/compiler/bin/vibe-compile.js && mv compiled/node_modules compiled/modules",
+    "compile:watch": "bun compile && bun node_modules/@ape-egg/vibe/compiler/bin/vibe-compile.js --watch --no-clean --fouc-as-is"
   },
   "dependencies": {
     "@ape-egg/vibe": "^1.7.0",
     "async-await-websockets": "^3.0.5"
+  },
+  "vibe-compiler": {
+    "source": "./",
+    "output": "./compiled",
+    "components": "components",
+    "elementsAsIs": true,
+    "nodeModulesAsIs": false,
+    "minify": false
   }
 }

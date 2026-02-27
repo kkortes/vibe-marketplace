@@ -19,6 +19,8 @@ const categories = ['All', 'Interactive', 'Forms', 'Layout', 'Navigation'];
 
 const globalState = {
   user: null,
+  userMenuOpen: false,
+  authReady: !get('mkp-session'),
   wsConnected: false,
   darkMode: get('mkp-darkMode'),
   categories,

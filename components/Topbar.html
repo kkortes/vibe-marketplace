@@ -9,13 +9,25 @@
     <a href="https://vibe.korte.kim" target="_blank" rel="noopener">Docs</a>
   </nav>
   <auth-area>
+    <!-- if authReady -->
     <!-- if user -->
-    <user-badge>
-      <user-avatar>@[user.name[0].toUpperCase()]</user-avatar>
-      <span>@[user.name]</span>
-    </user-badge>
+    <user-menu>
+      <!-- if userMenuOpen --><user-backdrop onclick="$.userMenuOpen = false"></user-backdrop><!-- /if -->
+      <user-avatar onclick="$.userMenuOpen = !$.userMenuOpen">@[user.name[0].toUpperCase()]</user-avatar>
+      <!-- if userMenuOpen -->
+      <user-dropdown>
+        <span user-name>@[user.name]</span>
+        <span user-email>@[user.email]</span>
+        <hr>
+        <button primary onclick="$.signOut(); $.userMenuOpen = false">Sign out</button>
+      </user-dropdown>
+      <!-- /if -->
+    </user-menu>
     <!-- else -->
     <button primary onclick="$.signIn()">Sign in with Google</button>
+    <!-- /if -->
+    <!-- else -->
+    <auth-loader></auth-loader>
     <!-- /if -->
   </auth-area>
 </topbar>

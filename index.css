@@ -2,6 +2,13 @@
 
 @import "/css/stylecheat.css";
 
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: optional;
+}
+
 :root {
   --topbar-height: calc(var(--unit) * 16);
   --font-sans: "Geist", sans-serif;
@@ -54,7 +61,9 @@ topbar nav a {
   padding: calc(var(--unit) * 2) calc(var(--unit) * 3);
   border-radius: var(--radius);
   font-size: calc(var(--unit) * 3.5);
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 topbar nav a:hover,
@@ -69,19 +78,32 @@ auth-area {
   align-items: center;
 }
 
-user-badge {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--unit) * 2);
-  padding: calc(var(--unit) * 1) calc(var(--unit) * 3);
-  border-radius: var(--radius);
-  cursor: pointer;
-  border: 1px solid var(--border);
+auth-loader {
+  width: calc(var(--unit) * 9);
+  height: calc(var(--unit) * 9);
+  border-radius: 50%;
+  background: var(--muted);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+user-menu {
+  position: relative;
+}
+
+user-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
 }
 
 user-avatar {
-  width: calc(var(--unit) * 8);
-  height: calc(var(--unit) * 8);
+  width: calc(var(--unit) * 9);
+  height: calc(var(--unit) * 9);
   border-radius: 50%;
   background: var(--primary);
   color: var(--primary-foreground);
@@ -90,6 +112,49 @@ user-avatar {
   justify-content: center;
   font-weight: 700;
   font-size: calc(var(--unit) * 4);
+  cursor: pointer;
+  position: relative;
+  z-index: 11;
+  user-select: none;
+}
+
+user-dropdown {
+  position: absolute;
+  top: calc(100% + calc(var(--unit) * 2));
+  right: 0;
+  min-width: calc(var(--unit) * 52);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: min(
+    calc(var(--radius) - calc(var(--unit) * 1)),
+    calc(var(--unit) * 1)
+  );
+  box-shadow: 0 4px 24px oklch(0 0 0 / 0.12);
+  padding: calc(var(--unit) * 2);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--unit) * 1);
+  z-index: 11;
+}
+
+user-dropdown [user-name] {
+  display: block;
+  font-weight: 600;
+  font-size: calc(var(--unit) * 3.5);
+  padding: calc(var(--unit) * 1) calc(var(--unit) * 2);
+  color: var(--foreground);
+}
+
+user-dropdown [user-email] {
+  display: block;
+  font-size: calc(var(--unit) * 3);
+  padding: 0 calc(var(--unit) * 2);
+  color: var(--muted-foreground);
+}
+
+user-dropdown button {
+  width: 100%;
+  margin-top: calc(var(--unit) * 1);
 }
 
 page-content {
@@ -130,7 +195,9 @@ component-card {
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--card);
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
   cursor: pointer;
 }
 

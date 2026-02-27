@@ -17,6 +17,11 @@ const handleCredential = async (response) => {
 };
 
 export const signIn = () => {
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleCredential,
+    auto_select: true,
+  });
   google.accounts.id.prompt();
 };
 

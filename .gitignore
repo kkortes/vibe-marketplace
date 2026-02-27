@@ -5,3 +5,4 @@ lib/
 server/.env
 bun.lockb
 server/bun.lockb
+compiled
