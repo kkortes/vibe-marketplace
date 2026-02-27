@@ -1,0 +1,12 @@
+{
+  "name": "vibe-marketplace",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bunx live-server --port=3001"
+  },
+  "dependencies": {
+    "@ape-egg/vibe": "file:../vibe/nodemodules/@ape-egg/vibe",
+    "async-await-websockets": "file:../async-await-websockets"
+  }
+}

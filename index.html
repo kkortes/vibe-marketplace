@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Vibe Marketplace</title>
+  <link rel="stylesheet" href="/index.css" />
+  <script async src="https://accounts.google.com/gsi/client"></script>
+
+  <script type="module">
+    import vibe from '/node_modules/@ape-egg/vibe/index.js';
+    import globalState from '/js/globalState.js';
+    import afterVibeReady from '/js/afterVibeReady.js';
+    import { initWs } from '/js/ws.js';
+    import { initAuth, signIn, signOut } from '/js/auth.js';
+
+    window.$ = vibe({
+      ...globalState,
+      signIn,
+      signOut,
+    });
+
+    afterVibeReady();
+    initWs();
+    initAuth();
+  </script>
+</head>
+
+<body stylecheat vibe-fouc>
+  <component src="/components/Layout.html">
+    <filter-bar>
+      <input
+        type="search"
+        placeholder="Search components..."
+        value="@[searchQuery]"
+        oninput="$.searchQuery = this.value; $.applyFilter()"
+      />
+      <!-- each categories as cat -->
+      <button
+        @[selectedCategory === cat ? 'primary' : 'secondary']
+        onclick="$.selectedCategory = cat; $.applyFilter()"
+      >@[cat]</button>
+      <!-- /each -->
+    </filter-bar>
+
+    <component-grid>
+      <!-- each filteredComponents as comp -->
+      <component-card>
+        <card-preview>
+          <icon @[comp.icon]></icon>
+        </card-preview>
+        <card-body>
+          <crow g-2 align-center>
+            <h3>@[comp.title]</h3>
+            <badge>@[comp.category]</badge>
+          </crow>
+          <p text-muted>@[comp.description]</p>
+          <card-footer>
+            <star-count>
+              <icon star></icon>
+              <span>@[comp.stars]</span>
+            </star-count>
+            <crow g-2>
+              <button secondary small>View</button>
+              <button secondary small>Copy</button>
+            </crow>
+          </card-footer>
+        </card-body>
+      </component-card>
+      <!-- /each -->
+    </component-grid>
+  </component>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+<topbar>
+  <a href="/" brand>
+    <icon logo-vibe></icon>
+    <span>Marketplace</span>
+  </a>
+  <nav>
+    <a href="/">Browse</a>
+    <a href="/submit.html">Submit</a>
+    <a href="https://vibe.korte.kim" target="_blank" rel="noopener">Docs</a>
+  </nav>
+  <auth-area>
+    <!-- if user -->
+    <user-badge>
+      <img src="@[user.picture]" referrerpolicy="no-referrer" />
+      <span>@[user.name]</span>
+    </user-badge>
+    <!-- else -->
+    <button primary onclick="$.signIn()">Sign in with Google</button>
+    <!-- /if -->
+  </auth-area>
+</topbar>

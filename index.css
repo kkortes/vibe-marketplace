@@ -1,0 +1,191 @@
+@layer base, components, utilities;
+
+@import "/css/stylecheat.css";
+
+:root {
+  --topbar-height: calc(var(--unit) * 16);
+}
+
+topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-height);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 4);
+  padding: 0 calc(var(--unit) * 6);
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+
+[brand] {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 2);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: calc(var(--unit) * 5);
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+[brand] icon {
+  font-size: calc(var(--unit) * 8);
+  color: var(--primary);
+}
+
+topbar nav {
+  display: flex;
+  gap: calc(var(--unit) * 1);
+  flex: 1;
+}
+
+topbar nav a {
+  text-decoration: none;
+  color: var(--muted-foreground);
+  padding: calc(var(--unit) * 2) calc(var(--unit) * 3);
+  border-radius: var(--radius);
+  font-size: calc(var(--unit) * 3.5);
+  transition: color 0.15s, background 0.15s;
+}
+
+topbar nav a:hover,
+topbar nav a[active] {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+auth-area {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+user-badge {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 2);
+  padding: calc(var(--unit) * 1) calc(var(--unit) * 3);
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+
+user-badge img {
+  width: calc(var(--unit) * 8);
+  height: calc(var(--unit) * 8);
+  border-radius: 50%;
+}
+
+page-content {
+  display: block;
+  padding-top: var(--topbar-height);
+  min-height: 100vh;
+}
+
+filter-bar {
+  display: flex;
+  gap: calc(var(--unit) * 2);
+  align-items: center;
+  padding: calc(var(--unit) * 3) calc(var(--unit) * 6);
+  flex-wrap: wrap;
+  position: sticky;
+  top: var(--topbar-height);
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+  z-index: 90;
+}
+
+filter-bar input {
+  flex: 1;
+  min-width: calc(var(--unit) * 48);
+}
+
+component-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--unit) * 72), 1fr));
+  gap: calc(var(--unit) * 6);
+  padding: calc(var(--unit) * 6);
+}
+
+component-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--card);
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+
+component-card:hover {
+  box-shadow: 0 4px 24px oklch(0 0 0 / 0.12);
+  transform: translateY(-1px);
+}
+
+card-preview {
+  display: flex;
+  height: calc(var(--unit) * 44);
+  background: var(--muted);
+  align-items: center;
+  justify-content: center;
+}
+
+card-preview icon {
+  font-size: calc(var(--unit) * 16);
+  color: var(--muted-foreground);
+  opacity: 0.4;
+}
+
+card-body {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--unit) * 3);
+  padding: calc(var(--unit) * 4);
+  flex: 1;
+}
+
+card-body h3 {
+  margin: 0;
+  font-size: calc(var(--unit) * 4);
+}
+
+card-body [text-muted] {
+  font-size: calc(var(--unit) * 3.5);
+  line-height: 1.5;
+  flex: 1;
+}
+
+card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+star-count {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 1);
+  color: var(--muted-foreground);
+  font-size: calc(var(--unit) * 3.5);
+}
+
+star-count icon {
+  font-size: calc(var(--unit) * 4);
+  color: oklch(0.75 0.18 85);
+}
+
+badge {
+  display: inline-block;
+  padding: calc(var(--unit) * 0.5) calc(var(--unit) * 2);
+  border-radius: calc(var(--radius) * 0.6);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: calc(var(--unit) * 3);
+  font-weight: 600;
+  white-space: nowrap;
+}

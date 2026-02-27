@@ -1,0 +1,14 @@
+{
+  "name": "vibe-marketplace-server",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch index.js",
+    "start": "bun index.js"
+  },
+  "dependencies": {
+    "async-await-websockets": "file:../../async-await-websockets",
+    "dotenv": "^16.4.0",
+    "mongodb": "^6.0.0"
+  }
+}
