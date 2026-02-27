@@ -6,7 +6,7 @@
     "dev": "bunx live-server --port=3001"
   },
   "dependencies": {
-    "@ape-egg/vibe": "file:../vibe/nodemodules/@ape-egg/vibe",
-    "async-await-websockets": "file:../async-await-websockets"
+    "@ape-egg/vibe": "^1.7.0",
+    "async-await-websockets": "^3.0.5"
   }
 }
