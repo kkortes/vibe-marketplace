@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "bunx live-server --port=3001",
+    "dev": "bun run build && bunx live-server --port=3000",
     "build": "mkdir -p lib && cp -r node_modules/@ape-egg/vibe lib/vibe && cp node_modules/async-await-websockets/client.js lib/aaw.js"
   },
   "dependencies": {

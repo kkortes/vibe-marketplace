@@ -4,6 +4,11 @@
 
 :root {
   --topbar-height: calc(var(--unit) * 16);
+  --font-sans: "Geist", sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
 }
 
 topbar {

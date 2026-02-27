@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <title>Vibe Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/index.css" />
   <script async src="https://accounts.google.com/gsi/client"></script>
 
@@ -36,10 +39,11 @@
         oninput="$.searchQuery = this.value; $.applyFilter()"
       />
       <!-- each categories as cat -->
-      <button
-        @[selectedCategory === cat ? 'primary' : 'secondary']
-        onclick="$.selectedCategory = cat; $.applyFilter()"
-      >@[cat]</button>
+      <!-- if selectedCategory === cat -->
+      <button primary onclick="$.selectedCategory = cat; $.applyFilter()">@[cat]</button>
+      <!-- else -->
+      <button secondary onclick="$.selectedCategory = cat; $.applyFilter()">@[cat]</button>
+      <!-- /if -->
       <!-- /each -->
     </filter-bar>
 
