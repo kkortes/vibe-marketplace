@@ -1,4 +1,4 @@
-import aaw from '/node_modules/async-await-websockets/client.js';
+import aaw from '/lib/aaw.js';
 import { get } from '/js/localStorage.js';
 
 const WS_URL = 'ws://localhost:1337';
