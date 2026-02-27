@@ -1,4 +1,4 @@
-import aaw from 'async-await-websockets';
+import aaw from 'async-await-websockets/server.js';
 import dotenv from 'dotenv';
 import { MongoClient } from 'mongodb';
 
