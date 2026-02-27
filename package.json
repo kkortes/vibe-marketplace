@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun compile:watch & bunx live-server compiled --port=3000 --host=localhost",
-    "build": "bun vibe compile",
+    "build": "bun compile",
     "compile": "bun vibe compile && mv compiled/node_modules compiled/modules",
     "compile:watch": "bun compile && bun vibe compile --watch --no-clean --fouc-as-is"
   },
