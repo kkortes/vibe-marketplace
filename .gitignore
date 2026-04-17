@@ -4,3 +4,5 @@ lib/
 .env
 server/.env
 compiled
+# Claude
+.claude/
