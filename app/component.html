@@ -29,12 +29,12 @@
       <detail-meta>
         <badge secondary>@[component.category]</badge>
         <path-chip>@[namespace]/@[slug]</path-chip>
-        <span muted>Showing v@[showing()] · latest is v@[component.latest]</span>
+        <span muted>Showing v@[$.showing()] · latest is v@[component.latest]</span>
         <a href="/edit.html?c=@[namespace]/@[slug]" tertiary><icon pencil></icon> Open in editor</a>
       </detail-meta>
-      <!-- if outdated() -->
+      <!-- if $.outdated() -->
       <flag-line>
-        You are reading v@[showing()]. It is frozen and always will be — v@[component.latest] is
+        You are reading v@[$.showing()]. It is frozen and always will be — v@[component.latest] is
         where the component is now.
       </flag-line>
       <!-- /if -->
@@ -89,7 +89,7 @@
         </prop-list>
 
         <button tertiary onclick="$.reset()">Reset to defaults</button>
-        <!-- if structured() -->
+        <!-- if $.structured() -->
         <p muted>
           An array or an object has no literal form an attribute can hold, so a json prop is passed
           bound to state of your own. The snippet below writes it that way.
@@ -107,30 +107,30 @@
         <label>
           <input type="checkbox" role="switch" checked="@[pinned]"
             onchange="$.pinned = event.currentTarget.checked" />
-          <span>Pin to v@[showing()]</span>
+          <span>Pin to v@[$.showing()]</span>
         </label>
         <button secondary onclick="$.copy()">Copy</button>
       </usage-controls>
 
-      <usage-code>@[snippet()]</usage-code>
+      <usage-code>@[$.snippet()]</usage-code>
 
       <!-- if pinned -->
       <p muted>
-        Frozen. That tag renders v@[showing()] today and in five years — a published revision is
+        Frozen. That tag renders v@[$.showing()] today and in five years — a published revision is
         never edited, so the only way a component changes under you is a version you asked for.
       </p>
 
       <pane-title>What resolves the pin</pane-title>
       <p muted>
-        A <code>#v@[showing()]</code> fragment never reaches a server — it is cut from the request
+        A <code>#v@[$.showing()]</code> fragment never reaches a server — it is cut from the request
         before it is sent. This line resolves it in your page, before vibe reads the document.
       </p>
-      <usage-code>@[include()]</usage-code>
+      <usage-code>@[$.include()]</usage-code>
       <!-- else -->
       <p muted>
         Unpinned, and that is the whole cost of it: this tag renders the <em>latest</em> revision —
         v@[component.latest] today, and whatever someone publishes tomorrow. Add
-        <code>#v@[showing()]</code> to the address to freeze it.
+        <code>#v@[$.showing()]</code> to the address to freeze it.
       </p>
       <!-- /if -->
     </pane>
@@ -140,7 +140,7 @@
       <!-- if user -->
       <version-list>
         <!-- each versions as rev (rev.version) -->
-        <version-row current="@[rev.version === showing()]">
+        <version-row current="@[rev.version === $.showing()]">
           <version-tag>v@[rev.version]</version-tag>
           <version-notes>@[rev.notes]</version-notes>
           <version-by>@[rev.authorName]</version-by>

@@ -100,8 +100,53 @@ the page modules stack per navigation without teardown.
 
 ## Running it
 
+Needs MongoDB listening on `localhost:27017` and `bun install` in both the root
+and `server/`.
+
 ```
-cd server && bun seed.js   # needs MONGO_CONNECT in server/.env
-cd server && bun dev       # websocket on 1337, component source on 8080
-bun dev                    # compiler watch + static server on 3000
+cp server/.env.example server/.env    # MONGO_CONNECT and the Google client id
+cd server && bun seed.js              # writes the vibe namespace + 18 components
+cd server && bun dev                  # websocket 1337, component source 8080
+bun dev                               # compiler watch + site on 3000
 ```
+
+Three ports, and the site needs all three: `3000` serves the compiled site,
+`1337` answers every marketplace read and write, `8080` serves the component
+source that `<component src>` fetches. An empty catalogue with a live-looking
+page means `1337` is not up; a preview stage that stays blank means `8080` is
+not.
+
+`server/.env` is gitignored and the server will not start without it —
+`dotenv.config()` finds nothing, `MONGO_CONNECT` is undefined and the Mongo
+client throws on connect.
+
+### Never pass `--fouc-as-is` to a stamped build
+
+The compiler stamps values into the HTML and moves conditional branches and
+iteration templates into `compiled/vibe-hyperspeed/<page>.manifest.js`. The
+runtime decides whether to fetch that manifest by looking for the FOUC marker:
+
+```js
+// @ape-egg/vibe/runtime/pre-compiled-manifest.js
+const skipNetwork = !!document.querySelector("[vibe-fouc], .vibe-fouc");
+```
+
+So `vibe-fouc` present means "runtime mode, no manifest". On a build that has
+already been stamped, that combination is fatal and silent: every `<!-- if -->`
+true branch and every `<!-- each -->` row is gone from the DOM, with no console
+error and no failed request. It looks exactly like a page whose data never
+arrived — empty catalogue, no sign-in button — while `window.$` holds all of it.
+
+### A state method called from a binding is called unbound
+
+`@[showing()]` reaches the function but not the object, so `this` is undefined
+inside it and the binding renders `undefined`. Call it on the state object:
+
+```html
+<span>v@[$.showing()]</span>       <!-- works -->
+<span>v@[showing()]</span>         <!-- renders "vundefined" -->
+```
+
+Same for conditionals: `<!-- if $.owns() -->`, not `<!-- if owns() -->`. A
+throwing conditional reads as false, so this one fails by quietly hiding a
+branch. Event handlers are unaffected — they already write `$.method()`.

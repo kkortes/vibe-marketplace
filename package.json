@@ -6,7 +6,7 @@
     "dev": "bun compile:watch & bunx live-server compiled --port=3000 --host=localhost",
     "build": "bun compile",
     "compile": "rm -rf compiled && bunx vibe compile && mv compiled/node_modules compiled/modules",
-    "compile:watch": "bun compile && bunx vibe compile --watch --no-clean --fouc-as-is",
+    "compile:watch": "bun compile && bunx vibe compile --watch --no-clean",
     "test": "bun test"
   },
   "dependencies": {
