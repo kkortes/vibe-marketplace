@@ -5,4 +5,5 @@ lib/
 server/.env
 compiled
 # Claude
-.claude/
+.claude/*
+!.claude/launch.json
