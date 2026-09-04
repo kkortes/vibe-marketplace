@@ -54,13 +54,18 @@
           <prop-fields>
             <input type="text" placeholder="name" value="@[prop.name]"
               oninput="$.props[@[index]].name = this.value; $.sync()" />
-            <select onchange="$.props[@[index]].type = this.value; $.sync()">
+            <select onchange="$.setType(@[index], this.value)">
               <!-- each types as kind -->
               <option value="@[kind]" selected="@[prop.type === kind]">@[kind]</option>
               <!-- /each -->
             </select>
+            <!-- if prop.type === 'json' -->
+            <textarea rows="4" spellcheck="false" placeholder="default, as JSON"
+              value="@[drafts[index]]" oninput="$.setDefault(@[index], this.value)"></textarea>
+            <!-- else -->
             <input type="text" placeholder="default" value="@[prop.default]"
               oninput="$.setDefault(@[index], this.value)" />
+            <!-- /if -->
             <input type="text" placeholder="what it does" value="@[prop.description]"
               oninput="$.props[@[index]].description = this.value" />
             <!-- if prop.type === 'select' -->
@@ -147,9 +152,8 @@
       <!-- /if -->
       <!-- else -->
       <p muted>
-        Editing is open to anyone — publishing is not.
-        <button primary onclick="$.signIn()">Sign in</button> to put this under a namespace of your
-        own.
+        Editing is open to anyone — publishing is not. Sign in from the top right to put this under
+        a namespace of your own.
       </p>
       <!-- /if -->
     </pane>

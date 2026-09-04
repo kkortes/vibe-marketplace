@@ -2,8 +2,9 @@ import dotenv from 'dotenv';
 import { MongoClient } from 'mongodb';
 
 import createIndexes from './indexes.js';
-import components from './seed/vibe.js';
-import { defaults } from './props.js';
+import gameStack from './seed/game-stack.js';
+import written from './seed/vibe.js';
+import { defaults, validate } from './props.js';
 
 dotenv.config();
 
@@ -26,7 +27,14 @@ await mongo.collection('namespaces').updateOne(
 await mongo.collection('components').deleteMany({ namespace: 'vibe' });
 await mongo.collection('revisions').deleteMany({ namespace: 'vibe' });
 
-for (const { slug, title, description, category, icon, versions } of components) {
+// Seeded props go through the same validation a published revision does, so the
+// catalogue can never hold a schema the publish event would have refused.
+const catalogue = [...written, ...(await gameStack())].map((component) => ({
+  ...component,
+  versions: component.versions.map((version) => ({ ...version, props: validate(version.props) })),
+}));
+
+for (const { slug, title, description, category, icon, versions } of catalogue) {
   await mongo.collection('components').insertOne({
     namespace: 'vibe',
     slug,
@@ -46,7 +54,7 @@ for (const { slug, title, description, category, icon, versions } of components)
       namespace: 'vibe',
       slug,
       version: i + 1,
-      html: html.trim(),
+      html,
       props,
       notes,
       authorId: null,

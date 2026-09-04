@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "bun compile:watch & bunx live-server compiled --port=3000 --host=localhost",
     "build": "bun compile",
-    "compile": "bunx vibe compile && mv compiled/node_modules compiled/modules",
+    "compile": "rm -rf compiled && bunx vibe compile && mv compiled/node_modules compiled/modules",
     "compile:watch": "bun compile && bunx vibe compile --watch --no-clean --fouc-as-is",
     "test": "bun test"
   },
@@ -18,7 +18,7 @@
     "@ape-egg/vibe-compiler": "^4.3.0"
   },
   "vibe-compiler": {
-    "source": "./",
+    "source": "./app",
     "output": "./compiled",
     "components": "components",
     "elementsAsIs": true,

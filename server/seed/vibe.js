@@ -546,4 +546,11 @@ const avatar = {
   ],
 };
 
-export default [counter, switchField, statCard, hint, copyButton, avatar];
+// These are written here as template literals, so they carry the newline that
+// opens them. Imported components are published exactly as their file reads.
+const trimmed = (component) => ({
+  ...component,
+  versions: component.versions.map((version) => ({ ...version, html: version.html.trim() })),
+});
+
+export default [counter, switchField, statCard, hint, copyButton, avatar].map(trimmed);

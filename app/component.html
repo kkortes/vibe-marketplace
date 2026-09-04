@@ -75,6 +75,12 @@
             <!-- else if prop.type === 'number' -->
             <input type="number" value="@[values[prop.name]]"
               oninput="$.values['@[prop.name]'] = Number(this.value)" />
+            <!-- else if prop.type === 'json' -->
+            <textarea rows="7" spellcheck="false" value="@[drafts[prop.name]]"
+              oninput="$.setJson('@[prop.name]', this.value)"></textarea>
+            <!-- if invalid[prop.name] -->
+            <prop-warn>Not valid JSON yet — the preview is still on the last value that parsed.</prop-warn>
+            <!-- /if -->
             <!-- else -->
             <input type="text" value="@[values[prop.name]]" oninput="$.values['@[prop.name]'] = this.value" />
             <!-- /if -->
@@ -83,6 +89,12 @@
         </prop-list>
 
         <button tertiary onclick="$.reset()">Reset to defaults</button>
+        <!-- if structured() -->
+        <p muted>
+          An array or an object has no literal form an attribute can hold, so a json prop is passed
+          bound to state of your own. The snippet below writes it that way.
+        </p>
+        <!-- /if -->
         <!-- else -->
         <p muted>This component takes no props. Point a tag at it and you are done.</p>
         <!-- /if -->
@@ -138,8 +150,8 @@
       </version-list>
       <!-- else -->
       <p muted>
-        Every revision ever published is kept, and signing in is what opens the list.
-        <button primary onclick="$.signIn()">Sign in</button>
+        Every revision ever published is kept. Signing in is what opens the list — the control is in
+        the top right.
       </p>
       <!-- /if -->
     </pane>

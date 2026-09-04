@@ -18,7 +18,7 @@ export default (mongo, port) => {
     c.header('Content-Type', 'application/javascript; charset=UTF-8');
     c.header('Cache-Control', 'public, max-age=3600');
 
-    return c.body(Bun.file(`${import.meta.dir}/../js/pin.js`).stream());
+    return c.body(Bun.file(`${import.meta.dir}/../app/js/pin.js`).stream());
   });
 
   const revision = async (c, namespace, slug, version) => {

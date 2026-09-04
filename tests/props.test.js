@@ -41,6 +41,23 @@ describe('validate', () => {
 
   test('refuses a prop name an attribute cannot carry', () => {
     expect(() => validate([{ name: 'My Label', type: 'text' }])).toThrow();
+    expect(() => validate([{ name: 'PageCount', type: 'text' }])).toThrow();
+  });
+
+  test('keeps camelCase, which is how an attribute-borne prop is often written', () => {
+    const [prop] = validate([{ name: 'pageCount', type: 'number', default: 7 }]);
+
+    expect(prop.name).toBe('pageCount');
+  });
+
+  test('refuses a json prop whose default an attribute could have held', () => {
+    expect(() => validate([{ name: 'bars', type: 'json', default: 'nope' }])).toThrow();
+  });
+
+  test('keeps a json prop with a structured default', () => {
+    const [prop] = validate([{ name: 'bars', type: 'json', default: [{ value: 1 }] }]);
+
+    expect(prop.default).toEqual([{ value: 1 }]);
   });
 
   test('refuses an unknown type', () => {

@@ -5,6 +5,8 @@ import { call } from '/js/ws.js';
 const params = new URLSearchParams(location.search);
 const [namespace, slug] = (params.get('c') || '').split('/');
 
+const readable = (value) => JSON.stringify(value, null, 2);
+
 // Which props a component takes is the thing being documented, so the attribute
 // *names* on the tag are data. That is the one place the page writes markup
 // instead of templating it — every value on it stays bound to `values`, so
@@ -23,6 +25,8 @@ export const state = {
   revision: null,
   props: [],
   values: {},
+  drafts: {},
+  invalid: {},
   version: 0,
   versions: [],
   previewSource: '',
@@ -37,14 +41,17 @@ export const state = {
     return this.component && this.showing() < this.component.latest;
   },
 
-  // A boolean prop is carried the way HTML carries one — the attribute is
-  // there or it is not. Writing dismissable="false" would read as true.
+  // A boolean prop is carried the way HTML carries one — the attribute is there
+  // or it is not; dismissable="false" would read as true. An array or an object
+  // has no literal form an attribute can hold, so it is shown bound instead.
   snippet() {
     const attrs = this.props
       .map(({ name, type }) =>
         type === 'boolean'
           ? this.values[name] && ` ${name}`
-          : ` ${name}="${this.values[name]}"`,
+          : type === 'json'
+            ? ` ${name}="@[${name}]"`
+            : ` ${name}="${this.values[name]}"`,
       )
       .filter(Boolean)
       .join('');
@@ -68,10 +75,33 @@ export const state = {
     this.notice = 'Snippet copied';
   },
 
+  // A json prop is edited as text and only committed once it parses, so a
+  // half-typed bracket leaves the preview on the last value that made sense.
+  setJson(name, text) {
+    this.drafts[name] = text;
+
+    try {
+      this.values[name] = JSON.parse(text);
+      this.invalid[name] = false;
+    } catch {
+      this.invalid[name] = true;
+    }
+  },
+
+  structured() {
+    return this.props.some(({ type }) => type === 'json');
+  },
+
   reset() {
-    this.values = Object.fromEntries(
-      this.props.map(({ name, default: value }) => [name, value]),
+    this.values = Object.fromEntries(this.props.map(({ name, default: value }) => [name, value]));
+
+    this.drafts = Object.fromEntries(
+      this.props
+        .filter(({ type }) => type === 'json')
+        .map(({ name, default: value }) => [name, readable(value)]),
     );
+
+    this.invalid = {};
   },
 
   async show(version) {

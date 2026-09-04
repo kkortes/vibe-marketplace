@@ -35,5 +35,11 @@ export const initWs = (onOpen) => {
     }
   });
 
-  ws.on('close', () => (window.$.wsConnected = false));
+  // A socket that will not open is an answer too: nobody is signed in, and the
+  // chrome should offer to sign in rather than spin on a session it cannot ask
+  // about.
+  ws.on('close', () => {
+    window.$.wsConnected = false;
+    window.$.authReady = true;
+  });
 };

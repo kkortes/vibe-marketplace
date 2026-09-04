@@ -26,6 +26,16 @@ const defaults = (props) =>
     props.filter(({ name }) => name).map(({ name, default: value }) => [name, value]),
   );
 
+// A json default is edited as text, so the text the author is halfway through
+// typing lives beside the value that last parsed.
+const drafts = (props) =>
+  Object.fromEntries(
+    props
+      .map((prop, index) => [index, prop])
+      .filter(([, { type }]) => type === 'json')
+      .map(([index, { default: value }]) => [index, JSON.stringify(value, null, 2)]),
+  );
+
 let editor;
 let draft;
 
@@ -56,12 +66,17 @@ export const state = {
   code: '',
   props: [],
   values: {},
+  drafts: {},
+  invalid: {},
   from: 0,
   latest: 0,
   mine: [],
-  types: ['text', 'number', 'boolean', 'select'],
+  types: ['text', 'number', 'boolean', 'select', 'json'],
   categories: ['Interactive', 'Forms', 'Layout', 'Navigation', 'Feedback'],
-  icons: ['stack', 'cog', 'layout', 'bell', 'embed', 'user', 'crow', 'eye', 'pencil', 'book'],
+  icons: [
+    'stack', 'cog', 'layout', 'bell', 'embed', 'user', 'crow', 'eye', 'pencil', 'book',
+    'image', 'search', 'clock', 'folder', 'checkmark', 'chevron-right', 'play-button',
+  ],
 
   owns() {
     return this.mine.some(({ slug }) => slug === this.namespace);
@@ -69,6 +84,19 @@ export const state = {
 
   addProp() {
     this.props.push({ name: '', type: 'text', default: '', description: '', options: [] });
+  },
+
+  // Switching a prop to json needs a default an attribute could never hold, so
+  // it starts as an empty array rather than the empty string it was.
+  setType(index, type) {
+    this.props[index].type = type;
+
+    if (type === 'json' && typeof this.props[index].default !== 'object') {
+      this.props[index].default = [];
+      this.drafts[index] = '[]';
+    }
+
+    this.sync();
   },
 
   dropProp(index) {
@@ -81,8 +109,20 @@ export const state = {
   setDefault(index, value) {
     const { type } = this.props[index];
 
-    this.props[index].default =
-      type === 'number' ? Number(value) : type === 'boolean' ? value === 'true' : value;
+    if (type === 'json') {
+      this.drafts[index] = value;
+
+      try {
+        this.props[index].default = JSON.parse(value);
+        this.invalid[index] = false;
+      } catch {
+        this.invalid[index] = true;
+        return;
+      }
+    } else {
+      this.props[index].default =
+        type === 'number' ? Number(value) : type === 'boolean' ? value === 'true' : value;
+    }
 
     this.sync();
   },
@@ -156,6 +196,7 @@ export const load = async () => {
   }
 
   window.$.values = defaults(window.$.props);
+  window.$.drafts = drafts(window.$.props);
 
   await window.$.ready;
   attach();

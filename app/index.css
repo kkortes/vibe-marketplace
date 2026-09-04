@@ -500,6 +500,20 @@ prop-doc {
   color: var(--muted-foreground);
 }
 
+prop-warn {
+  font-size: calc(var(--unit) * 3.25);
+  color: var(--destructive);
+}
+
+prop-row textarea,
+prop-fields textarea {
+  width: 100%;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: calc(var(--unit) * 3.25);
+  line-height: 1.5;
+  resize: vertical;
+}
+
 usage-controls {
   display: flex;
   align-items: center;
@@ -585,7 +599,8 @@ prop-fields {
 }
 
 prop-fields input,
-prop-fields select {
+prop-fields select,
+prop-fields textarea {
   flex: 1;
   min-width: calc(var(--unit) * 26);
 }

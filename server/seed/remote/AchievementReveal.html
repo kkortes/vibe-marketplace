@@ -1,0 +1,102 @@
+<achievement-reveal-root open="@[achievementReveals.length]">
+  <achievement-reveal-stack>
+    <!-- each achievementReveals as r (r.id) -->
+      <achievement-reveal-card
+        onclick="followAchievementReveal(r.id)"
+        onanimationend="event.animationName === 'revealFade' && dismissAchievementReveal(r.id)"
+      >
+        <reveal-eyebrow>Achievement unlocked</reveal-eyebrow>
+        <achievement-card royal>
+          <ac-corner tl></ac-corner>
+          <ac-corner tr></ac-corner>
+          <ac-corner bl></ac-corner>
+          <ac-corner br></ac-corner>
+          <ac-icon><icon @[r.icon]></icon></ac-icon>
+          <ac-body>
+            <ac-eyebrow>Earned</ac-eyebrow>
+            <ac-title>@[r.title]</ac-title>
+            <ac-desc>@[r.description]</ac-desc>
+          </ac-body>
+        </achievement-card>
+        <reveal-hint>Tap to view it in your achievements</reveal-hint>
+      </achievement-reveal-card>
+    <!-- /each -->
+  </achievement-reveal-stack>
+</achievement-reveal-root>
+
+<style>
+  achievement-reveal-root {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-cutscene, 60);
+    pointer-events: none;
+  }
+
+  achievement-reveal-root:not([open]) {
+    display: none;
+  }
+
+  achievement-reveal-stack {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  achievement-reveal-card {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--unit) * 3);
+    padding: calc(var(--unit) * 6);
+    pointer-events: none;
+    cursor: pointer;
+    background: radial-gradient(ellipse at center, oklch(0 0 0 / 0.55), transparent 70%);
+    animation:
+      revealPop 280ms cubic-bezier(0.34, 1.56, 0.64, 1) both,
+      revealFade 480ms ease 2000ms forwards;
+  }
+
+  achievement-reveal-card > * {
+    pointer-events: auto;
+  }
+
+  achievement-reveal-card:not(:last-child) {
+    filter: brightness(0.7);
+  }
+
+  reveal-eyebrow {
+    font-family: var(--font-sans);
+    font-size: calc(var(--unit) * 4);
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: oklch(from var(--gold-warm) calc(l + 0.08) c h);
+    text-shadow: 0 calc(var(--unit) * 0.5) calc(var(--unit) * 1.5) oklch(0 0 0 / 0.7);
+  }
+
+  reveal-hint {
+    font-size: calc(var(--unit) * 3.75);
+    color: oklch(0.95 0.015 85);
+  }
+
+  @keyframes revealPop {
+    from {
+      transform: scale(0.85);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes revealFade {
+    to {
+      opacity: 0;
+    }
+  }
+</style>
