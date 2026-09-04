@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Publish — Vibe Components</title>
+  <link rel="stylesheet" href="/index.css" />
+  <script async src="https://accounts.google.com/gsi/client"></script>
+
+  <script type="module">
+    import boot from '/js/boot.js';
+    import { load, state } from '/js/publish.js';
+
+    boot(state, load);
+  </script>
+</head>
+
+<body stylecheat vibe-fouc>
+  <component src="/components/Layout.html">
+    <editor-head>
+      <h1>Publish</h1>
+      <p lead>
+        A namespace is your corner of the catalogue. Anyone can make one, and everything published
+        under it is addressed by <path-chip>your-namespace/your-component.html</path-chip>.
+      </p>
+    </editor-head>
+
+    <!-- if user -->
+    <pane>
+      <pane-title>Your namespaces</pane-title>
+      <!-- if mine.length -->
+      <namespace-list>
+        <!-- each mine as ns (ns.slug) -->
+        <namespace-row>
+          <path-chip>@[ns.slug]</path-chip>
+          <span muted>@[ns.title]</span>
+          <a href="/edit.html?ns=@[ns.slug]" tertiary>New component</a>
+        </namespace-row>
+        <!-- /each -->
+      </namespace-list>
+      <!-- else -->
+      <p muted>None yet. The form below makes one.</p>
+      <!-- /if -->
+
+      <pane-title>Make a namespace</pane-title>
+      <publish-form>
+        <label>
+          <span>Slug</span>
+          <input type="text" placeholder="acme" value="@[slug]" oninput="$.slug = this.value" />
+        </label>
+        <label>
+          <span>Title</span>
+          <input type="text" placeholder="Acme" value="@[title]" oninput="$.title = this.value" />
+        </label>
+      </publish-form>
+      <publish-foot>
+        <button primary onclick="$.create()">Create</button>
+        <p muted>Lowercase words joined by dashes. It becomes part of every address you publish.</p>
+      </publish-foot>
+    </pane>
+
+    <pane>
+      <pane-title>Your components</pane-title>
+      <!-- if owned.length -->
+      <namespace-list>
+        <!-- each owned as comp (comp.namespace + '/' + comp.slug) -->
+        <namespace-row>
+          <path-chip>@[comp.namespace]/@[comp.slug]</path-chip>
+          <span muted>@[comp.title] · v@[comp.latest]</span>
+          <a href="/component.html?c=@[comp.namespace]/@[comp.slug]" tertiary>View</a>
+          <a href="/edit.html?c=@[comp.namespace]/@[comp.slug]" tertiary>New revision</a>
+        </namespace-row>
+        <!-- /each -->
+      </namespace-list>
+      <!-- else -->
+      <p muted>Nothing published yet.</p>
+      <!-- /if -->
+    </pane>
+    <!-- else -->
+    <pane>
+      <p muted>
+        Browsing and editing are open to everyone. Publishing is what needs an account.
+        <button primary onclick="$.signIn()">Sign in</button>
+      </p>
+    </pane>
+    <!-- /if -->
+  </component>
+</body>
+
+</html>

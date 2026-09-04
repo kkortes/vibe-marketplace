@@ -1,28 +1,39 @@
-import aaw from "/modules/async-await-websockets/client.js";
-import { get } from "/js/localStorage.js";
-import { WS_URL } from "/js/env.js";
+import aaw from '/modules/@ape-egg/async-await-websockets/client.js';
+
+import { WS_URL } from '/js/env.js';
+import { get, set } from '/js/localStorage.js';
 
 export let ws = null;
 
-export const initWs = () => {
-  ws = aaw(WS_URL);
+export const call = (event, payload) => ws.sendAsync(event, payload);
 
-  ws.on("open", async () => {
+// Every marketplace read and write is an event on this socket. The only thing
+// the site fetches over HTTP is a component's own source, because that is what
+// `<component src>` does.
+export const initWs = (onOpen) => {
+  ws = aaw(WS_URL, { token: get('mkp-session') });
+
+  // The client replays a stored token before `open` fires; this is where the
+  // answer to that replay tells us who we are.
+  ws.on('aaw/resume', ({ user }) => user && (window.$.user = user));
+
+  ws.on('unauthorized', () => {
+    set('mkp-session', null);
+    window.$.user = null;
+  });
+
+  ws.on('open', async () => {
     window.$.wsConnected = true;
-
-    const token = get("mkp-session");
-    if (token) {
-      try {
-        const user = await ws.sendAsync("auth/session", { token });
-        window.$.user = user;
-      } catch (_) {
-        // Session expired, silently clear
-      }
-    }
     window.$.authReady = true;
+
+    // A page loads itself here, so this is the last place a refusal can still
+    // be put in front of the visitor instead of only in the console.
+    try {
+      await onOpen?.();
+    } catch ({ message }) {
+      window.$.notice = message;
+    }
   });
 
-  ws.on("close", () => {
-    window.$.wsConnected = false;
-  });
+  ws.on('close', () => (window.$.wsConnected = false));
 };

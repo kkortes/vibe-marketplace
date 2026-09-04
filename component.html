@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Component — Vibe Components</title>
+  <link rel="stylesheet" href="/index.css" />
+  <script async src="https://accounts.google.com/gsi/client"></script>
+
+  <script type="module">
+    import boot from '/js/boot.js';
+    import { load, state } from '/js/detail.js';
+
+    boot(state, load);
+  </script>
+</head>
+
+<body stylecheat vibe-fouc>
+  <component src="/components/Layout.html">
+    <!-- if missing -->
+    <empty-state>@[missing]</empty-state>
+    <!-- else if component -->
+
+    <detail-head>
+      <crumbs><a href="/" secondary>Browse</a> <span>/</span> <span>@[namespace]</span></crumbs>
+      <h1>@[component.title]</h1>
+      <p lead>@[component.description]</p>
+      <detail-meta>
+        <badge secondary>@[component.category]</badge>
+        <path-chip>@[namespace]/@[slug]</path-chip>
+        <span muted>Showing v@[showing()] · latest is v@[component.latest]</span>
+        <a href="/edit.html?c=@[namespace]/@[slug]" tertiary><icon pencil></icon> Open in editor</a>
+      </detail-meta>
+      <!-- if outdated() -->
+      <flag-line>
+        You are reading v@[showing()]. It is frozen and always will be — v@[component.latest] is
+        where the component is now.
+      </flag-line>
+      <!-- /if -->
+    </detail-head>
+
+    <detail-split>
+      <pane>
+        <pane-title>Preview</pane-title>
+        <preview-stage>
+          <preview-host></preview-host>
+        </preview-stage>
+      </pane>
+
+      <pane>
+        <pane-title>Props</pane-title>
+        <!-- if props.length -->
+        <p muted>Change a value and the preview above re-renders as you type.</p>
+
+        <prop-list>
+          <!-- each props as prop (prop.name) -->
+          <prop-row>
+            <prop-head>
+              <prop-name>@[prop.name]</prop-name>
+              <badge outline>@[prop.type]</badge>
+              <prop-default>default @[prop.default]</prop-default>
+            </prop-head>
+            <prop-doc>@[prop.description]</prop-doc>
+
+            <!-- if prop.type === 'select' -->
+            <select onchange="$.values['@[prop.name]'] = this.value">
+              <!-- each prop.options as choice -->
+              <option value="@[choice]" selected="@[values[prop.name] === choice]">@[choice]</option>
+              <!-- /each -->
+            </select>
+            <!-- else if prop.type === 'boolean' -->
+            <input type="checkbox" role="switch" checked="@[values[prop.name]]"
+              onchange="$.values['@[prop.name]'] = event.currentTarget.checked" />
+            <!-- else if prop.type === 'number' -->
+            <input type="number" value="@[values[prop.name]]"
+              oninput="$.values['@[prop.name]'] = Number(this.value)" />
+            <!-- else -->
+            <input type="text" value="@[values[prop.name]]" oninput="$.values['@[prop.name]'] = this.value" />
+            <!-- /if -->
+          </prop-row>
+          <!-- /each -->
+        </prop-list>
+
+        <button tertiary onclick="$.reset()">Reset to defaults</button>
+        <!-- else -->
+        <p muted>This component takes no props. Point a tag at it and you are done.</p>
+        <!-- /if -->
+      </pane>
+    </detail-split>
+
+    <pane>
+      <pane-title>Use it</pane-title>
+      <usage-controls>
+        <label>
+          <input type="checkbox" role="switch" checked="@[pinned]"
+            onchange="$.pinned = event.currentTarget.checked" />
+          <span>Pin to v@[showing()]</span>
+        </label>
+        <button secondary onclick="$.copy()">Copy</button>
+      </usage-controls>
+
+      <usage-code>@[snippet()]</usage-code>
+
+      <!-- if pinned -->
+      <p muted>
+        Frozen. That tag renders v@[showing()] today and in five years — a published revision is
+        never edited, so the only way a component changes under you is a version you asked for.
+      </p>
+
+      <pane-title>What resolves the pin</pane-title>
+      <p muted>
+        A <code>#v@[showing()]</code> fragment never reaches a server — it is cut from the request
+        before it is sent. This line resolves it in your page, before vibe reads the document.
+      </p>
+      <usage-code>@[include()]</usage-code>
+      <!-- else -->
+      <p muted>
+        Unpinned, and that is the whole cost of it: this tag renders the <em>latest</em> revision —
+        v@[component.latest] today, and whatever someone publishes tomorrow. Add
+        <code>#v@[showing()]</code> to the address to freeze it.
+      </p>
+      <!-- /if -->
+    </pane>
+
+    <pane>
+      <pane-title>Version history</pane-title>
+      <!-- if user -->
+      <version-list>
+        <!-- each versions as rev (rev.version) -->
+        <version-row current="@[rev.version === showing()]">
+          <version-tag>v@[rev.version]</version-tag>
+          <version-notes>@[rev.notes]</version-notes>
+          <version-by>@[rev.authorName]</version-by>
+          <button tertiary onclick="$.show(@[rev.version])">View</button>
+        </version-row>
+        <!-- /each -->
+      </version-list>
+      <!-- else -->
+      <p muted>
+        Every revision ever published is kept, and signing in is what opens the list.
+        <button primary onclick="$.signIn()">Sign in</button>
+      </p>
+      <!-- /if -->
+    </pane>
+
+    <!-- else -->
+    <empty-state>Loading…</empty-state>
+    <!-- /if -->
+  </component>
+</body>
+
+</html>

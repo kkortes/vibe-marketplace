@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live edit — Vibe Components</title>
+  <link rel="stylesheet" href="/index.css" />
+  <script async src="https://accounts.google.com/gsi/client"></script>
+
+  <script type="module">
+    import boot from '/js/boot.js';
+    import { load, state } from '/js/editor.js';
+
+    // The draft is mounted from a fresh blob on every keystroke, so the
+    // component cache would only ever collect corpses.
+    boot(state, load, { noCache: true });
+  </script>
+</head>
+
+<body stylecheat vibe-fouc>
+  <component src="/components/Layout.html">
+    <editor-head>
+      <crumbs><a href="/" secondary>Browse</a> <span>/</span> <span>@[namespace || 'new']</span></crumbs>
+      <h1>
+        <!-- if slug -->@[title]<!-- else -->New component<!-- /if -->
+      </h1>
+      <!-- if from -->
+      <p muted>Started from v@[from]. That revision stays exactly as it is.</p>
+      <!-- /if -->
+      <p muted>
+        Type on the left, watch it render on the right. Nothing here touches the catalogue until
+        you publish, and publishing always writes a new version.
+      </p>
+    </editor-head>
+
+    <editor-split>
+      <pane>
+        <pane-title>Markup</pane-title>
+        <template codie dark highlight-html vibe-dehydrate></template>
+      </pane>
+
+      <pane>
+        <pane-title>Preview</pane-title>
+        <preview-stage>
+          <preview-host></preview-host>
+        </preview-stage>
+
+        <pane-title>Props</pane-title>
+        <p muted>Every prop you declare here becomes a row in the component's API docs.</p>
+
+        <prop-editor>
+          <!-- each props as prop, index -->
+          <prop-fields>
+            <input type="text" placeholder="name" value="@[prop.name]"
+              oninput="$.props[@[index]].name = this.value; $.sync()" />
+            <select onchange="$.props[@[index]].type = this.value; $.sync()">
+              <!-- each types as kind -->
+              <option value="@[kind]" selected="@[prop.type === kind]">@[kind]</option>
+              <!-- /each -->
+            </select>
+            <input type="text" placeholder="default" value="@[prop.default]"
+              oninput="$.setDefault(@[index], this.value)" />
+            <input type="text" placeholder="what it does" value="@[prop.description]"
+              oninput="$.props[@[index]].description = this.value" />
+            <!-- if prop.type === 'select' -->
+            <input type="text" placeholder="options, comma separated" value="@[prop.options.join(', ')]"
+              oninput="$.setOptions(@[index], this.value)" />
+            <!-- /if -->
+            <button tertiary onclick="$.dropProp(@[index])">Remove</button>
+          </prop-fields>
+          <!-- /each -->
+        </prop-editor>
+
+        <button secondary onclick="$.addProp()">Add a prop</button>
+      </pane>
+    </editor-split>
+
+    <pane>
+      <pane-title>Publish</pane-title>
+      <!-- if user -->
+      <!-- if mine.length -->
+      <publish-form>
+        <label>
+          <span>Namespace</span>
+          <select onchange="$.namespace = this.value">
+            <!-- each mine as ns -->
+            <option value="@[ns.slug]" selected="@[namespace === ns.slug]">@[ns.slug]</option>
+            <!-- /each -->
+          </select>
+        </label>
+        <label>
+          <span>Slug</span>
+          <input type="text" placeholder="my-component" value="@[slug]" oninput="$.slug = this.value" />
+        </label>
+        <label>
+          <span>Title</span>
+          <input type="text" placeholder="My Component" value="@[title]" oninput="$.title = this.value" />
+        </label>
+        <label>
+          <span>Category</span>
+          <select onchange="$.category = this.value">
+            <!-- each categories as name -->
+            <option value="@[name]" selected="@[category === name]">@[name]</option>
+            <!-- /each -->
+          </select>
+        </label>
+        <label>
+          <span>Icon</span>
+          <select onchange="$.icon = this.value">
+            <!-- each icons as name -->
+            <option value="@[name]" selected="@[icon === name]">@[name]</option>
+            <!-- /each -->
+          </select>
+        </label>
+        <label wide>
+          <span>Description</span>
+          <input type="text" placeholder="One line, what it is for" value="@[description]"
+            oninput="$.description = this.value" />
+        </label>
+        <label wide>
+          <span>Release notes</span>
+          <input type="text" placeholder="What changed in this revision" value="@[notes]"
+            oninput="$.notes = this.value" />
+        </label>
+      </publish-form>
+
+      <publish-foot>
+        <!-- if owns() -->
+        <button primary onclick="$.publish()">
+          Publish as v@[latest + 1]
+        </button>
+        <p muted>
+          v@[latest + 1] is frozen the moment it lands. Anything you change afterwards becomes
+          v@[latest + 2].
+        </p>
+        <!-- else -->
+        <p muted>@[namespace || 'That namespace'] is not yours. Pick one you own, or make a new one on
+          the <a href="/publish.html" primary>publish page</a>.</p>
+        <!-- /if -->
+      </publish-foot>
+      <!-- else -->
+      <p muted>
+        You own no namespaces yet. <a href="/publish.html" primary>Make one</a> and this component
+        has somewhere to live.
+      </p>
+      <!-- /if -->
+      <!-- else -->
+      <p muted>
+        Editing is open to anyone — publishing is not.
+        <button primary onclick="$.signIn()">Sign in</button> to put this under a namespace of your
+        own.
+      </p>
+      <!-- /if -->
+    </pane>
+  </component>
+</body>
+
+</html>

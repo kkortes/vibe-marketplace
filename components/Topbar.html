@@ -1,14 +1,17 @@
 <topbar>
   <a href="/" brand>
     <icon logo-vibe></icon>
-    <span>Marketplace</span>
+    <span>Vibe Components</span>
   </a>
   <nav>
     <a href="/">Browse</a>
-    <a href="/submit.html">Submit</a>
-    <a href="https://vibe.korte.kim" target="_blank" rel="noopener">Docs</a>
+    <a href="/publish.html">Publish</a>
+    <a href="https://vibe.korte.kim" target="_blank" rel="noopener">Vibe docs</a>
   </nav>
   <auth-area>
+    <button tertiary title="Switch theme" onclick="$.darkMode = !$.darkMode">
+      <!-- if darkMode --><icon light></icon><!-- else --><icon dark></icon><!-- /if -->
+    </button>
     <!-- if authReady -->
     <!-- if user -->
     <user-menu>
@@ -18,13 +21,13 @@
       <user-dropdown>
         <span user-name>@[user.name]</span>
         <span user-email>@[user.email]</span>
-        <hr>
-        <button primary onclick="$.signOut(); $.userMenuOpen = false">Sign out</button>
+        <hr />
+        <button primary onclick="$.signOut()">Sign out</button>
       </user-dropdown>
       <!-- /if -->
     </user-menu>
     <!-- else -->
-    <button primary onclick="$.signIn()">Sign in with Google</button>
+    <button primary onclick="$.signIn()">Sign in</button>
     <!-- /if -->
     <!-- else -->
     <auth-loader></auth-loader>

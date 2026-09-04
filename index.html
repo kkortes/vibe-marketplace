@@ -1,71 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
-  <title>Vibe Marketplace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vibe Components — components you point at</title>
+  <meta name="description"
+    content="A marketplace of Vibe components. Every one is plain HTML at a URL: one tag, no build step, no install." />
   <link rel="stylesheet" href="/index.css" />
   <script async src="https://accounts.google.com/gsi/client"></script>
 
   <script type="module">
-    import vibe from '/modules/@ape-egg/vibe/index.js';
-    import globalState from '/js/globalState.js';
-    import afterVibeReady from '/js/afterVibeReady.js';
-    import { initWs } from '/js/ws.js';
-    import { initAuth, signIn, signOut } from '/js/auth.js';
+    import codie from '/modules/@ape-egg/codie/codie.js';
 
-    window.$ = vibe({
-      ...globalState,
-      signIn,
-      signOut,
-    }, { debug: true });
+    import boot from '/js/boot.js';
+    import { load, state } from '/js/browse.js';
 
-    afterVibeReady();
-    initWs();
-    initAuth();
+    boot(state, load).on('ready', () => codie('[codie]'));
   </script>
 </head>
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
+    <hero>
+      <hero-copy>
+        <h1>Components you point at.</h1>
+        <p lead>
+          Every component here is plain HTML living at a URL. Point a <code>&lt;component&gt;</code>
+          tag at one and it renders — no install, no build step, nothing to keep in sync.
+        </p>
+        <template codie highlight-html vibe-dehydrate>
+          <component src="https://vibe-components.com/vibe/counter.html#v3" label="Items" step="1"></component>
+        </template>
+        <p muted>
+          The <code>#v3</code> pins that render to revision three, for good. Leave it off and the
+          tag renders whatever the latest revision happens to be.
+        </p>
+      </hero-copy>
+
+      <hero-demo>
+        <demo-label>Rendered from that tag</demo-label>
+        <component src="@[featured]" label="Items" step="1"></component>
+      </hero-demo>
+    </hero>
+
     <filter-bar>
-      <input type="search" placeholder="Search components..." value="@[searchQuery]"
-        oninput="$.searchQuery = this.value; $.applyFilter()" />
-      <!-- each categories as cat -->
-      <!-- if selectedCategory === cat -->
-      <button primary onclick="$.selectedCategory = '@[cat]'; $.applyFilter()">@[cat]</button>
-      <!-- else -->
-      <button secondary onclick="$.selectedCategory = '@[cat]'; $.applyFilter()">@[cat]</button>
-      <!-- /if -->
-      <!-- /each -->
+      <search-field>
+        <icon search></icon>
+        <input type="search" placeholder="Search components" value="@[query]"
+          oninput="$.query = this.value; $.filter()" />
+      </search-field>
+
+      <filter-group>
+        <!-- each categories as name -->
+        <button secondary chosen="@[category === name]" onclick="$.category = '@[name]'; $.filter()">@[name]</button>
+        <!-- /each -->
+      </filter-group>
+
+      <select onchange="$.scope = this.value; $.filter()">
+        <option value="all">All namespaces</option>
+        <!-- each namespaces as ns -->
+        <option value="@[ns.slug]">@[ns.slug]</option>
+        <!-- /each -->
+      </select>
     </filter-bar>
 
+    <!-- if loading -->
+    <empty-state>Loading the catalogue…</empty-state>
+    <!-- else -->
+    <!-- if matches.length -->
     <component-grid>
-      <!-- each filteredComponents as comp -->
-      <component-card>
-        <card-preview>
-          <icon @[comp.icon]></icon>
-        </card-preview>
+      <!-- each matches as comp (comp.namespace + '/' + comp.slug) -->
+      <a href="/component.html?c=@[comp.namespace]/@[comp.slug]" card-link>
+        <card-mark><icon @[comp.icon]></icon></card-mark>
         <card-body>
-          <crow g-2 align-center>
-            <h3>@[comp.title]</h3>
-            <badge>@[comp.category]</badge>
-          </crow>
-          <p text-muted>@[comp.description]</p>
-          <card-footer>
-            <star-count>
-              <icon star></icon>
-              <span>@[comp.stars]</span>
-            </star-count>
-            <crow g-2>
-              <button secondary small>View</button>
-              <button secondary small>Copy</button>
-            </crow>
-          </card-footer>
+          <card-title>@[comp.title]</card-title>
+          <card-path>@[comp.namespace]/@[comp.slug]</card-path>
+          <card-blurb>@[comp.description]</card-blurb>
+          <card-foot>
+            <badge secondary>@[comp.category]</badge>
+            <card-version>v@[comp.latest]</card-version>
+          </card-foot>
         </card-body>
-      </component-card>
+      </a>
       <!-- /each -->
     </component-grid>
+    <!-- else -->
+    <empty-state>
+      <!-- if query -->Nothing matches “@[query]”.<!-- else -->No components published here yet.<!-- /if -->
+    </empty-state>
+    <!-- /if -->
+    <!-- /if -->
   </component>
 </body>
 

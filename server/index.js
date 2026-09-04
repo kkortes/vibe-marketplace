@@ -1,7 +1,10 @@
-import aaw from 'async-await-websockets/server.js';
+import aaw from '@ape-egg/async-await-websockets/server.js';
 import dotenv from 'dotenv';
 import { MongoClient } from 'mongodb';
+
+import createIndexes from './indexes.js';
 import startHttp from './http.js';
+import store from './store.js';
 
 dotenv.config();
 
@@ -12,13 +15,14 @@ await client.connect();
 
 const mongo = client.db('vibe-marketplace');
 
+await createIndexes(mongo);
 startHttp(mongo, HTTP_PORT);
 
 aaw(
   'events',
   { mongo },
   PORT,
-  ({ event, websocketKey, async: isAsync, error }) => {
-    console.info(`${error ? '🔴' : '🟢'} ${event} | ${websocketKey}`);
-  },
+  ({ event, websocketKey, error }) =>
+    console.info(`${error ? '🔴' : '🟢'} ${event} | ${websocketKey}`),
+  { store: store(mongo) },
 );
