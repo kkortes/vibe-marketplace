@@ -1,0 +1,58 @@
+<script type="module">
+  const escape = (text) =>
+    String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+
+  window.barGraphSvg = (bars = []) => {
+    const W = 1000;
+    const ROW = 28;
+    const L = 220;
+    const R = 200;
+    const T = 8;
+    const H = T + bars.length * ROW + 8;
+    const max = Math.max(...bars.map((b) => b.value), 0.0001);
+    return (
+      `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">` +
+      bars
+        .map((bar, i) => {
+          const yMid = T + i * ROW + ROW / 2;
+          const width = (bar.value / max) * (W - L - R);
+          return (
+            `<text x="${L - 10}" y="${yMid + 5}" text-anchor="end" fill="var(--foreground)" font-size="15">${escape(bar.name)}</text>` +
+            `<rect x="${L}" y="${yMid - 9}" width="${Math.max(width, 2)}" height="18" rx="4" fill="${bar.color}" data-label="${escape(bar.label)}" />` +
+            `<text x="${L + Math.max(width, 2) + 10}" y="${yMid + 5}" fill="var(--muted-foreground)" font-size="14">${escape(bar.note)}</text>`
+          );
+        })
+        .join('') +
+      '</svg>'
+    );
+  };
+
+  window.chartDotHover = (event) => {
+    const label = event.target.dataset?.label;
+    if (label)
+      showTooltip({ description: label, plain: true }, event.target, {
+        direction: 'up',
+        lock: true,
+      });
+  };
+  window.chartDotOut = (event) => {
+    if (event.target.dataset?.label) hideTooltip();
+  };
+</script>
+
+<bar-graph onmouseover="chartDotHover(event)" onmouseout="chartDotOut(event)">
+  @[$.unsafe(barGraphSvg(bars))]
+</bar-graph>
+
+<style>
+  bar-graph {
+    display: block;
+    width: 100%;
+  }
+
+  bar-graph svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

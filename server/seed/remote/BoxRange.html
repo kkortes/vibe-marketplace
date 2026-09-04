@@ -1,0 +1,68 @@
+<script type="module">
+  window.boxRangeCells = (min, max) =>
+    Array.from({ length: Number(max) - Number(min) + 1 }, (_, i) => Number(min) + i);
+</script>
+
+<box-range>
+  <!-- each boxRangeCells(min, max) as n (n) -->
+    <box-cell filled="@[n <= value]" onclick="@[onchange](n)">@[n]</box-cell>
+  <!-- /each -->
+</box-range>
+
+<style>
+  box-range {
+    --active: var(--border);
+    --inactive: transparent;
+    --gap: calc(var(--unit) * 2);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+  }
+
+  box-cell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(var(--unit) * 9);
+    aspect-ratio: 1 / 1;
+    border-radius: calc(var(--unit) * 0.75);
+    background: var(--input);
+    box-shadow: inset 0 0 0 1px var(--inactive);
+    font-family: var(--font-heading);
+    font-size: calc(var(--unit) * 4.75);
+    line-height: 1;
+    color: transparent;
+    cursor: pointer;
+    transition:
+      box-shadow 120ms ease,
+      color 120ms ease;
+  }
+
+  box-cell:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 100%;
+    width: var(--gap);
+  }
+
+  box-cell[filled],
+  box-cell:hover,
+  box-cell:has(~ box-cell:hover) {
+    box-shadow: inset 0 0 0 1px var(--active);
+  }
+
+  box-cell[filled]:not(:has(~ box-cell[filled])) {
+    color: var(--card-foreground);
+  }
+
+  box-range:has(box-cell:hover) box-cell:not(:hover) {
+    color: transparent;
+  }
+
+  box-cell:hover {
+    color: var(--card-foreground);
+  }
+</style>

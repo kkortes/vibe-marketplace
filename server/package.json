@@ -4,10 +4,11 @@
   "type": "module",
   "scripts": {
     "dev": "bun --watch index.js",
-    "start": "bun index.js"
+    "start": "bun index.js",
+    "seed": "bun seed.js"
   },
   "dependencies": {
-    "async-await-websockets": "^3.0.5",
+    "@ape-egg/async-await-websockets": "^3.4.0",
     "dotenv": "^16.4.0",
     "hono": "^4.12.3",
     "mongodb": "^6.0.0"

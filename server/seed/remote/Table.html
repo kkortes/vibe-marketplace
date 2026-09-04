@@ -1,0 +1,79 @@
+<script type="module">
+  window.skeletonRows = (count) =>
+    Array.from({ length: Math.max(0, count || 0) }, (_, i) => ({ i }));
+</script>
+
+<table game-table>
+  <slot></slot>
+  <!-- each skeletonRows(skeleton) as s (s.i) -->
+    <tr game-table-row skeleton>
+      <td colspan="99"><skeleton-bar></skeleton-bar></td>
+    </tr>
+  <!-- /each -->
+</table>
+
+<style>
+  table[game-table] {
+    width: calc(100% + var(--unit) * 12);
+    margin-top: calc(var(--unit) * 4);
+    margin-inline: calc(var(--unit) * -6);
+    border-collapse: collapse;
+  }
+
+  table[game-table] td {
+    padding: calc(var(--unit) * 3) calc(var(--unit) * 2);
+    border-bottom: 1px solid var(--c-line);
+    vertical-align: middle;
+  }
+
+  table[game-table] td:first-child {
+    padding-left: calc(var(--unit) * 6);
+  }
+
+  table[game-table] td:last-child {
+    padding-right: calc(var(--unit) * 6);
+  }
+
+  table[game-table] tr[game-table-header] td {
+    font-size: calc(var(--unit) * 3);
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--c-muted);
+  }
+
+  table[game-table] tr[game-table-row] {
+    font-size: calc(var(--unit) * 4);
+    color: var(--c-fg);
+    transition: background 200ms ease;
+  }
+
+  table[game-table] tr[game-table-row][even] {
+    background: oklch(from var(--c-fg) l c h / 0.05);
+  }
+
+  table[game-table] tr[game-table-row]:last-child td {
+    border-bottom: 0;
+  }
+
+  table[game-table] tr:hover td {
+    background-color: transparent;
+  }
+
+  table[game-table] tr[skeleton] skeleton-bar {
+    display: block;
+    width: calc(var(--unit) * 28);
+    max-width: 60%;
+    height: calc(var(--unit) * 3.5);
+    border-radius: calc(var(--unit) * 1.5);
+    background: oklch(from var(--c-fg) l c h / 0.08);
+  }
+
+  @media (width <= 767px) {
+    table[game-table] {
+      width: calc(100% + var(--unit) * 6);
+      margin-inline: calc(var(--unit) * -3);
+    }
+  }
+</style>
