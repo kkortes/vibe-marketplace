@@ -7,7 +7,7 @@
     "start": "bun index.js"
   },
   "dependencies": {
-    "async-await-websockets": "^3.0.5",
+    "@ape-egg/async-await-websockets": "^3.7.1",
     "dotenv": "^16.4.0",
     "hono": "^4.12.3",
     "mongodb": "^6.0.0"

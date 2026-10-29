@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@ape-egg/vibe": "^1.7.2",
-    "async-await-websockets": "^3.0.5"
+    "@ape-egg/async-await-websockets": "^3.7.1"
   },
   "vibe-compiler": {
     "source": "./",
