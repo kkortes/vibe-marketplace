@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "bun --watch index.js",
-    "start": "bun index.js"
+    "start": "bun index.js",
+    "seed": "bun seed.js"
   },
   "dependencies": {
     "@ape-egg/async-await-websockets": "^3.7.1",

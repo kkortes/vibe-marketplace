@@ -1,0 +1,367 @@
+<script type="module">
+  import component from '/node_modules/@ape-egg/vibe/component.js';
+
+  const STORAGE_KEY = 'dataInspectorOpenPaths';
+  let initialOpen = {};
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    if (raw && typeof raw === 'object' && !Array.isArray(raw)) initialOpen = raw;
+    else if (Array.isArray(raw)) initialOpen = raw.reduce((acc, p) => ((acc[p] = true), acc), {});
+  } catch {}
+
+  const s = $[component({ openPaths: initialOpen })];
+
+  const persistOpenPaths = () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(s.openPaths));
+    } catch {}
+  };
+
+  const isOpen = (path) => !!s.openPaths[path];
+
+  const setOpenPaths = (next) => {
+    s.openPaths = next;
+    persistOpenPaths();
+  };
+
+  const isObject = (v) => v !== null && typeof v === 'object';
+
+  const summarize = (v) => {
+    if (v === null) return 'null';
+    if (v === undefined) return 'undefined';
+    if (typeof v === 'function') return '[Function]';
+    if (typeof v !== 'object') return String(v);
+    if (Array.isArray(v)) return `[${v.length}]`;
+    return `{${Object.keys(v).length}}`;
+  };
+
+  const getSortRank = (key, val) => {
+    if (key.startsWith('_')) return 2;
+    if (!isObject(val)) return 0;
+    return 1;
+  };
+
+  const collator = new Intl.Collator(undefined, { numeric: true });
+
+  const sortedEntries = (obj) =>
+    Object.entries(obj).sort(([aK, aV], [bK, bV]) => {
+      const aR = getSortRank(aK, aV);
+      const bR = getSortRank(bK, bV);
+      if (aR !== bR) return aR - bR;
+      return collator.compare(aK, bK);
+    });
+
+  const childPath = (parentPath, indexOrKey) =>
+    parentPath ? `${parentPath}/${indexOrKey}` : `${indexOrKey}`;
+
+  const buildHiddenKeyCheck = () => {
+    const root = document.querySelector('state-inspector');
+    const componentKeys = new Set();
+    if (root) {
+      root.querySelectorAll('[data-vibe-component-id]').forEach((el) => {
+        const id = el.getAttribute('data-vibe-component-id');
+        if (id) componentKeys.add(id);
+      });
+    }
+    return (key) => key === 'vibeStateInspector' || componentKeys.has(key);
+  };
+
+  let cache = null;
+  $.on('afterUpdate', () => {
+    cache = null;
+  });
+
+  const computeInspectorState = (data, opens) => {
+    if (cache) return cache;
+
+    const safeOpens = opens && typeof opens === 'object' ? opens : {};
+    if (!data || typeof data !== 'object') {
+      return { rows: [], shallowCount: 0, totalCount: 0, allOpenLabel: 'Open all' };
+    }
+
+    const isHiddenKey = buildHiddenKeyCheck();
+    const rows = [];
+    let totalCount = 0;
+    let hasExpandable = false;
+    let allOpen = true;
+    const ancestors = new Set();
+
+    const walk = (value, depth, path, key, visible) => {
+      const expandable = isObject(value);
+      const open = expandable && !!safeOpens[path];
+
+      if (visible) rows.push({ path, key, depth, expandable, open, summary: summarize(value) });
+
+      if (!expandable) {
+        totalCount++;
+        return;
+      }
+
+      hasExpandable = true;
+      if (!open) allOpen = false;
+
+      if (ancestors.has(value)) return;
+      ancestors.add(value);
+
+      const childVisible = visible && open;
+
+      if (Array.isArray(value)) {
+        for (let i = 0; i < value.length; i++) {
+          walk(value[i], depth + 1, childPath(path, i), `#${i + 1}`, childVisible);
+        }
+      } else {
+        const entries = childVisible ? sortedEntries(value) : Object.entries(value);
+        for (let n = 0; n < entries.length; n++) {
+          walk(
+            entries[n][1],
+            depth + 1,
+            childPath(path, entries[n][0]),
+            entries[n][0],
+            childVisible,
+          );
+        }
+      }
+      ancestors.delete(value);
+    };
+
+    const rootEntries = sortedEntries(data).filter(([k]) => !isHiddenKey(k));
+    for (let n = 0; n < rootEntries.length; n++) {
+      walk(rootEntries[n][1], 0, rootEntries[n][0], rootEntries[n][0], true);
+    }
+
+    cache = {
+      rows,
+      shallowCount: rootEntries.length,
+      totalCount,
+      allOpenLabel: hasExpandable && allOpen ? 'Close all' : 'Open all',
+    };
+    return cache;
+  };
+
+  window.dataInspectorState = computeInspectorState;
+
+  const collectExpandablePaths = (data) => {
+    const paths = [];
+    const ancestors = new Set();
+    const isHiddenKey = buildHiddenKeyCheck();
+    const visit = (value, path) => {
+      if (!isObject(value) || ancestors.has(value)) return;
+      if (path) paths.push(path);
+      ancestors.add(value);
+      if (Array.isArray(value)) {
+        value.forEach((item, i) => visit(item, childPath(path, i)));
+      } else {
+        Object.entries(value).forEach(([k, v]) => visit(v, childPath(path, k)));
+      }
+      ancestors.delete(value);
+    };
+    Object.keys(data || {}).forEach((k) => {
+      if (isHiddenKey(k)) return;
+      visit(data[k], k);
+    });
+    return paths;
+  };
+
+  window.toggleInspectorPath = (e, row) => {
+    if (!row?.expandable) return;
+    const path = row.path;
+    if (!path) return;
+    const nextOpen = !isOpen(path);
+    const next = { ...s.openPaths };
+    if (nextOpen) next[path] = true;
+    else delete next[path];
+
+    if (e.altKey) {
+      collectExpandablePaths(window.$).forEach((p) => {
+        if (!p.startsWith(`${path}/`)) return;
+        if (nextOpen) next[p] = true;
+        else delete next[p];
+      });
+    }
+
+    setOpenPaths(next);
+  };
+
+  window.toggleInspectorAll = () => {
+    const all = collectExpandablePaths(window.$);
+    const everythingOpen = all.length > 0 && all.every(isOpen);
+    if (everythingOpen) {
+      setOpenPaths({});
+    } else {
+      const next = { ...s.openPaths };
+      all.forEach((p) => {
+        next[p] = true;
+      });
+      setOpenPaths(next);
+    }
+  };
+
+  window.copyDataInspectorJson = () => {
+    try {
+      navigator.clipboard?.writeText(JSON.stringify(window.$, null, 2));
+    } catch {}
+  };
+</script>
+
+<data-inspector>
+  <data-inspector-header>
+    <data-inspector-title>
+      Vibe state (@[dataInspectorState(data, this.openPaths).shallowCount] |
+      @[dataInspectorState(data, this.openPaths).totalCount])
+    </data-inspector-title>
+    <data-inspector-actions>
+      <button onclick="toggleInspectorAll()">
+        @[dataInspectorState(data, this.openPaths).allOpenLabel]
+      </button>
+      <button onclick="copyDataInspectorJson()">Copy JSON</button>
+    </data-inspector-actions>
+  </data-inspector-header>
+  <data-inspector-lines>
+    <!-- each dataInspectorState(data, this.openPaths).rows as row (row.path) -->
+      <data-inspector-row
+        expandable="@[row.expandable]"
+        open="@[row.open]"
+        onclick="toggleInspectorPath(event, row)"
+      >
+        <data-inspector-key style="padding-left: calc(@[row.depth] * 1ch)">
+          @[row.key]
+        </data-inspector-key>
+        <data-inspector-value bracket="@[row.expandable]">@[row.summary]</data-inspector-value>
+      </data-inspector-row>
+    <!-- /each -->
+  </data-inspector-lines>
+</data-inspector>
+
+<style>
+  data-inspector {
+    --inspector-bg: #1e1e1e;
+    --inspector-header-bg: #252526;
+    --inspector-border: #3c3c3c;
+    --inspector-divider: #424242;
+    --inspector-divider-strong: #505050;
+    --inspector-text: #d4d4d4;
+    --inspector-text-muted: #969696;
+    --inspector-row-hover: #2a2d2e;
+    --inspector-key: #9cdcfe;
+    --inspector-bracket: #569cd6;
+    --inspector-string: #ce9178;
+
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    font-size: calc(var(--unit) * 3);
+    background: var(--inspector-bg);
+    color: var(--inspector-text);
+    font-family:
+      'Geist Mono', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+  }
+
+  data-inspector-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--unit) * 4);
+    padding: calc(var(--unit) * 2.5) calc(var(--unit) * 3);
+    background: var(--inspector-header-bg);
+    border-bottom: 1px solid var(--inspector-border);
+  }
+
+  data-inspector-title {
+    font-weight: 500;
+    font-size: calc(var(--unit) * 3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--inspector-text-muted);
+  }
+
+  data-inspector-actions {
+    display: flex;
+    gap: calc(var(--unit) * 1);
+  }
+
+  data-inspector-actions button {
+    height: calc(var(--unit) * 6);
+    padding: 0 calc(var(--unit) * 2);
+    font-family: inherit;
+    font-size: calc(var(--unit) * 3);
+    color: var(--inspector-text-muted);
+    background: transparent;
+    border: 1px solid var(--inspector-border);
+    border-radius: calc(var(--unit) * 1);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  data-inspector-actions button:hover {
+    color: var(--inspector-text);
+    background: var(--inspector-row-hover);
+    border-color: var(--inspector-divider-strong);
+  }
+
+  data-inspector-lines {
+    --scrollbar-width: calc(var(--unit) * 4);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin-right: calc(var(--scrollbar-width) * -1);
+    line-height: 1.5;
+    scrollbar-color: var(--inspector-divider) transparent;
+  }
+
+  data-inspector-lines::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+  }
+
+  data-inspector-lines::-webkit-scrollbar-thumb {
+    background: var(--inspector-divider);
+    border-radius: calc(var(--unit) * 1);
+  }
+
+  data-inspector-lines::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  data-inspector-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    gap: calc(var(--unit) * 2);
+    padding: calc(var(--unit) * 0.5) calc(var(--unit) * 3);
+    box-sizing: border-box;
+  }
+
+  data-inspector-row:hover {
+    background: var(--inspector-row-hover);
+  }
+
+  data-inspector-row[expandable] {
+    cursor: pointer;
+  }
+
+  data-inspector-key {
+    display: inline-block;
+    flex-shrink: 0;
+    color: var(--inspector-key);
+  }
+
+  data-inspector-value {
+    flex: 1;
+    min-width: 0;
+    text-align: right;
+    word-break: break-word;
+    white-space: normal;
+    color: var(--inspector-string);
+  }
+
+  data-inspector-value[bracket] {
+    color: var(--inspector-bracket);
+  }
+</style>
