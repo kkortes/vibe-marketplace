@@ -5,7 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Live edit — Vibe Components</title>
-  <link rel="stylesheet" href="/index.css" />
+  <link rel="stylesheet" href="/css/stylecheat.css" />
+  <link rel="stylesheet" href="/modules/@ape-egg/codie/codie.css" />
   <script async src="https://accounts.google.com/gsi/client"></script>
 
   <script type="module">
@@ -20,143 +21,149 @@
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
-    <editor-head>
-      <crumbs><a href="/" secondary>Browse</a> <span>/</span> <span>@[namespace || 'new']</span></crumbs>
+    <crow vertical left g-3 w-full>
+      <breadcrumb><a href="/" secondary>Browse</a><span current>@[namespace || 'new']</span></breadcrumb>
       <h1>
         <!-- if slug -->@[title]<!-- else -->New component<!-- /if -->
       </h1>
       <!-- if from -->
-      <p muted>Started from v@[from]. That revision stays exactly as it is.</p>
+      <p text-muted>Started from v@[from]. That revision stays exactly as it is.</p>
       <!-- /if -->
-      <p muted>
+      <p text-muted>
         Type on the left, watch it render on the right. Nothing here touches the catalogue until
         you publish, and publishing always writes a new version.
       </p>
-    </editor-head>
+    </crow>
 
-    <editor-split>
-      <pane>
-        <pane-title>Markup</pane-title>
+    <crow up g-6 w-full sm:vertical>
+      <card f-1 g-4 p-6 radius="16px">
+        <h6>Markup</h6>
         <template codie dark highlight-html vibe-dehydrate></template>
-      </pane>
+      </card>
 
-      <pane>
-        <pane-title>Preview</pane-title>
-        <preview-stage>
+      <card f-1 g-4 p-6 radius="16px">
+        <h6>Preview</h6>
+        <crow grid p-8 rounded bg-background>
           <preview-host></preview-host>
-        </preview-stage>
+        </crow>
 
-        <pane-title>Props</pane-title>
-        <p muted>Every prop you declare here becomes a row in the component's API docs.</p>
+        <h6 mt-4>Props</h6>
+        <p text-muted>Every prop you declare here becomes a row in the component's API docs.</p>
 
-        <prop-editor>
+        <crow vertical left g-2>
           <!-- each props as prop, index -->
-          <prop-fields>
-            <input type="text" placeholder="name" value="@[prop.name]"
+          <crow left g-2 wrap w-full>
+            <input type="text" f-1 placeholder="name" value="@[prop.name]"
               oninput="$.props[@[index]].name = this.value; $.sync()" />
-            <select onchange="$.setType(@[index], this.value)">
+            <select f-1 onchange="$.setType(@[index], this.value)">
               <!-- each types as kind -->
               <option value="@[kind]" selected="@[prop.type === kind]">@[kind]</option>
               <!-- /each -->
             </select>
             <!-- if prop.type === 'json' -->
-            <textarea rows="4" spellcheck="false" placeholder="default, as JSON"
+            <textarea rows="4" f-1 spellcheck="false" placeholder="default, as JSON"
               value="@[drafts[index]]" oninput="$.setDefault(@[index], this.value)"></textarea>
             <!-- else -->
-            <input type="text" placeholder="default" value="@[prop.default]"
+            <input type="text" f-1 placeholder="default" value="@[prop.default]"
               oninput="$.setDefault(@[index], this.value)" />
             <!-- /if -->
-            <input type="text" placeholder="what it does" value="@[prop.description]"
+            <input type="text" f-1 placeholder="what it does" value="@[prop.description]"
               oninput="$.props[@[index]].description = this.value" />
             <!-- if prop.type === 'select' -->
-            <input type="text" placeholder="options, comma separated" value="@[prop.options.join(', ')]"
+            <input type="text" f-1 placeholder="options, comma separated" value="@[prop.options.join(', ')]"
               oninput="$.setOptions(@[index], this.value)" />
             <!-- /if -->
             <button tertiary onclick="$.dropProp(@[index])">Remove</button>
-          </prop-fields>
+          </crow>
           <!-- /each -->
-        </prop-editor>
+        </crow>
 
         <button secondary onclick="$.addProp()">Add a prop</button>
-      </pane>
-    </editor-split>
+      </card>
+    </crow>
 
-    <pane>
-      <pane-title>Publish</pane-title>
+    <card w-full g-4 p-6 radius="16px">
+      <h6>Publish</h6>
       <!-- if user -->
       <!-- if mine.length -->
-      <publish-form>
-        <label>
-          <span>Namespace</span>
-          <select onchange="$.namespace = this.value">
-            <!-- each mine as ns -->
-            <option value="@[ns.slug]" selected="@[namespace === ns.slug]">@[ns.slug]</option>
-            <!-- /each -->
-          </select>
-        </label>
-        <label>
-          <span>Slug</span>
-          <input type="text" placeholder="my-component" value="@[slug]" oninput="$.slug = this.value" />
-        </label>
-        <label>
-          <span>Title</span>
-          <input type="text" placeholder="My Component" value="@[title]" oninput="$.title = this.value" />
-        </label>
-        <label>
-          <span>Category</span>
-          <select onchange="$.category = this.value">
-            <!-- each categories as name -->
-            <option value="@[name]" selected="@[category === name]">@[name]</option>
-            <!-- /each -->
-          </select>
-        </label>
-        <label>
-          <span>Icon</span>
-          <select onchange="$.icon = this.value">
-            <!-- each icons as name -->
-            <option value="@[name]" selected="@[icon === name]">@[name]</option>
-            <!-- /each -->
-          </select>
-        </label>
-        <label wide>
-          <span>Description</span>
-          <input type="text" placeholder="One line, what it is for" value="@[description]"
+      <crow up left g-4 wrap>
+        <crow vertical left g="1.5" w="50">
+          <span sm text-muted>Namespace</span>
+          <label w-full>
+            <select w-full onchange="$.namespace = this.value">
+              <!-- each mine as ns -->
+              <option value="@[ns.slug]" selected="@[namespace === ns.slug]">@[ns.slug]</option>
+              <!-- /each -->
+            </select>
+          </label>
+        </crow>
+        <crow vertical left g="1.5" w="50">
+          <span sm text-muted>Slug</span>
+          <input type="text" w-full placeholder="my-component" value="@[slug]" oninput="$.slug = this.value" />
+        </crow>
+        <crow vertical left g="1.5" w="50">
+          <span sm text-muted>Title</span>
+          <input type="text" w-full placeholder="My Component" value="@[title]" oninput="$.title = this.value" />
+        </crow>
+        <crow vertical left g="1.5" w="50">
+          <span sm text-muted>Category</span>
+          <label w-full>
+            <select w-full onchange="$.category = this.value">
+              <!-- each categories as name -->
+              <option value="@[name]" selected="@[category === name]">@[name]</option>
+              <!-- /each -->
+            </select>
+          </label>
+        </crow>
+        <crow vertical left g="1.5" w="50">
+          <span sm text-muted>Icon</span>
+          <label w-full>
+            <select w-full onchange="$.icon = this.value">
+              <!-- each icons as name -->
+              <option value="@[name]" selected="@[icon === name]">@[name]</option>
+              <!-- /each -->
+            </select>
+          </label>
+        </crow>
+        <crow vertical left g="1.5" w-full>
+          <span sm text-muted>Description</span>
+          <input type="text" w-full placeholder="One line, what it is for" value="@[description]"
             oninput="$.description = this.value" />
-        </label>
-        <label wide>
-          <span>Release notes</span>
-          <input type="text" placeholder="What changed in this revision" value="@[notes]"
+        </crow>
+        <crow vertical left g="1.5" w-full>
+          <span sm text-muted>Release notes</span>
+          <input type="text" w-full placeholder="What changed in this revision" value="@[notes]"
             oninput="$.notes = this.value" />
-        </label>
-      </publish-form>
+        </crow>
+      </crow>
 
-      <publish-foot>
+      <crow vertical left g-3>
         <!-- if $.owns() -->
         <button primary onclick="$.publish()">
           Publish as v@[latest + 1]
         </button>
-        <p muted>
+        <p text-muted>
           v@[latest + 1] is frozen the moment it lands. Anything you change afterwards becomes
           v@[latest + 2].
         </p>
         <!-- else -->
-        <p muted>@[namespace || 'That namespace'] is not yours. Pick one you own, or make a new one on
+        <p text-muted>@[namespace || 'That namespace'] is not yours. Pick one you own, or make a new one on
           the <a href="/publish.html" primary>publish page</a>.</p>
         <!-- /if -->
-      </publish-foot>
+      </crow>
       <!-- else -->
-      <p muted>
+      <p text-muted>
         You own no namespaces yet. <a href="/publish.html" primary>Make one</a> and this component
         has somewhere to live.
       </p>
       <!-- /if -->
       <!-- else -->
-      <p muted>
+      <p text-muted>
         Editing is open to anyone — publishing is not. Sign in from the top right to put this under
         a namespace of your own.
       </p>
       <!-- /if -->
-    </pane>
+    </card>
   </component>
 </body>
 

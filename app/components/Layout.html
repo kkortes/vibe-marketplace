@@ -1,7 +1,9 @@
 <component src="/components/Topbar.html"></component>
-<page-content>
+<container vertical left g-10 px-6 pt="10" pb="20">
   <slot></slot>
-</page-content>
+</container>
 <!-- if notice -->
-<notice-bar onclick="$.notice = ''">@[notice]</notice-bar>
+<crow position="fixed" l-0 r-0 b-6>
+  <card hover px-5 py-3 onclick="$.notice = ''">@[notice]</card>
+</crow>
 <!-- /if -->

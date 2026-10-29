@@ -1,36 +1,42 @@
-<topbar>
-  <a href="/" brand>
-    <icon logo-vibe></icon>
-    <span>Vibe Components</span>
-  </a>
-  <nav>
-    <a href="/">Browse</a>
-    <a href="/publish.html">Publish</a>
-    <a href="https://vibe.korte.kim" target="_blank" rel="noopener">Vibe docs</a>
-  </nav>
-  <auth-area>
-    <button tertiary title="Switch theme" onclick="$.darkMode = !$.darkMode">
-      <!-- if darkMode --><icon light></icon><!-- else --><icon dark></icon><!-- /if -->
-    </button>
-    <!-- if authReady -->
-    <!-- if user -->
-    <user-menu>
-      <!-- if userMenuOpen --><user-backdrop onclick="$.userMenuOpen = false"></user-backdrop><!-- /if -->
-      <user-avatar onclick="$.userMenuOpen = !$.userMenuOpen">@[user.name[0].toUpperCase()]</user-avatar>
-      <!-- if userMenuOpen -->
-      <user-dropdown>
-        <span user-name>@[user.name]</span>
-        <span user-email>@[user.email]</span>
-        <hr />
-        <button primary onclick="$.signOut()">Sign out</button>
-      </user-dropdown>
+<sticky auto-shadow bg-background>
+  <crow g-4 px-6 h-16>
+    <a href="/" secondary>
+      <crow g-2>
+        <icon logo-vibe w="7" h="7" text-primary></icon>
+        <strong>Vibe Components</strong>
+      </crow>
+    </a>
+    <nav flex g-1 f-1 sm:hide>
+      <a href="/" secondary text-muted px-3 py-2 rounded hover>Browse</a>
+      <a href="/publish.html" secondary text-muted px-3 py-2 rounded hover>Publish</a>
+      <a href="https://vibe.korte.kim" target="_blank" rel="noopener" secondary text-muted px-3 py-2 rounded hover>Vibe docs</a>
+    </nav>
+    <crow g-2>
+      <button tertiary title="Switch theme" onclick="$.darkMode = !$.darkMode">
+        <!-- if darkMode --><icon light></icon><!-- else --><icon dark></icon><!-- /if -->
+      </button>
+      <!-- if authReady -->
+      <!-- if user -->
+      <user-menu position="relative">
+        <!-- if userMenuOpen --><user-backdrop position="fixed" t-0 r-0 b-0 l-0 onclick="$.userMenuOpen = false"></user-backdrop><!-- /if -->
+        <button primary w="9" h="9" p-0 radius="50%" onclick="$.userMenuOpen = !$.userMenuOpen">
+          <strong>@[user.name[0].toUpperCase()]</strong>
+        </button>
+        <!-- if userMenuOpen -->
+        <card position="absolute" t="11" r-0 w="52" p-2 g-1>
+          <strong px-2 py-1>@[user.name]</strong>
+          <span sm text-muted px-2>@[user.email]</span>
+          <hr />
+          <button primary w-full mt-1 onclick="$.signOut()">Sign out</button>
+        </card>
+        <!-- /if -->
+      </user-menu>
+      <!-- else -->
+      <button primary onclick="$.signIn()">Sign in</button>
       <!-- /if -->
-    </user-menu>
-    <!-- else -->
-    <button primary onclick="$.signIn()">Sign in</button>
-    <!-- /if -->
-    <!-- else -->
-    <auth-loader></auth-loader>
-    <!-- /if -->
-  </auth-area>
-</topbar>
+      <!-- else -->
+      <circle w="9" bg-slate animate-pulse></circle>
+      <!-- /if -->
+    </crow>
+  </crow>
+</sticky>
