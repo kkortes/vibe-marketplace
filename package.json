@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@ape-egg/async-await-websockets": "^3.7.1",
-    "@ape-egg/codie": "^0.1.5",
-    "@ape-egg/vibe": "^4.3.0"
+    "@ape-egg/codie": "^0.2.1",
+    "@ape-egg/vibe": "^4.3.23"
   },
   "devDependencies": {
-    "@ape-egg/vibe-compiler": "^4.3.0"
+    "@ape-egg/vibe-compiler": "^4.3.23"
   },
   "vibe-compiler": {
     "source": "./app",
