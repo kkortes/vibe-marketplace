@@ -11,38 +11,36 @@ const noPasswords = () => {
   throw Error('This marketplace has no password login — sign in with Google');
 };
 
-export default (db) => {
-  const userByEmail = db.query('SELECT * FROM users WHERE email = $email');
-  const userBySession = db.query(
-    'SELECT users.* FROM users JOIN sessions ON sessions.userId = users.id WHERE token = $token AND expiresAt > $now',
-  );
-  const insertSession = db.query('INSERT INTO sessions (token, userId, expiresAt) VALUES ($token, $userId, $expiresAt)');
-  const expireSessions = db.query('DELETE FROM sessions WHERE expiresAt <= $now');
-  const deleteSession = db.query('DELETE FROM sessions WHERE token = $token');
+export default (db) => ({
+  findUser: (email) => db.prepare('SELECT * FROM users WHERE email = ?').bind(email).first(),
 
-  return {
-    findUser: (email) => userByEmail.get({ email }),
+  verify: noPasswords,
+  createUser: noPasswords,
+  createReset: noPasswords,
+  consumeReset: noPasswords,
+  setPassword: noPasswords,
 
-    verify: noPasswords,
-    createUser: noPasswords,
-    createReset: noPasswords,
-    consumeReset: noPasswords,
-    setPassword: noPasswords,
+  createSession: async (user, ttl) => {
+    const token = crypto.randomUUID();
 
-    createSession: (user, ttl) => {
-      const token = crypto.randomUUID();
+    await db.batch([
+      db.prepare('DELETE FROM sessions WHERE expiresAt <= ?').bind(Date.now()),
+      db.prepare('INSERT INTO sessions (token, userId, expiresAt) VALUES (?, ?, ?)').bind(token, user.id, Date.now() + ttl),
+    ]);
 
-      expireSessions.run({ now: Date.now() });
-      insertSession.run({ token, userId: user.id, expiresAt: Date.now() + ttl });
+    return token;
+  },
 
-      return token;
-    },
+  readSession: async (token) => {
+    const user = await db
+      .prepare(
+        'SELECT users.* FROM users JOIN sessions ON sessions.userId = users.id WHERE token = ? AND expiresAt > ?',
+      )
+      .bind(token, Date.now())
+      .first();
 
-    readSession: (token) => {
-      const user = userBySession.get({ token, now: Date.now() });
-      return user && identity(user);
-    },
+    return user && identity(user);
+  },
 
-    endSession: (token) => deleteSession.run({ token }),
-  };
-};
+  endSession: (token) => db.prepare('DELETE FROM sessions WHERE token = ?').bind(token).run(),
+});

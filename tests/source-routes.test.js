@@ -1,27 +1,29 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
+import { getPlatformProxy } from 'wrangler';
 
-import startHttp from '../server/http.js';
-import { open } from '../server/db.js';
+import source from '../server/source.js';
 
-const db = open(':memory:');
+// The Worker's own D1 and assets bindings, simulated locally and kept in memory.
+const { env, dispose } = await getPlatformProxy({ configPath: `${import.meta.dir}/../wrangler.jsonc`, persist: false });
 
-db.run("INSERT INTO namespaces (slug, title, createdAt) VALUES ('vibe', 'Vibe', '')");
-db.run(
-  "INSERT INTO components (namespace, slug, title, category, latest, defaults, createdAt, updatedAt) VALUES ('vibe', 'counter', 'Counter', 'Interactive', 3, '{}', '', '')",
-);
-db.run(
-  "INSERT INTO revisions (namespace, slug, version, html, props, notes, authorName, createdAt) VALUES ('vibe', 'counter', 1, '<p>one</p>', '[]', '', 'Vibe', ''), ('vibe', 'counter', 3, '<p>three</p>', '[]', '', 'Vibe', '')",
-);
+const fetch = (url) => source.fetch(new Request(url), env);
 
-let server;
-let origin;
+const origin = 'http://localhost';
 
-beforeAll(() => {
-  server = startHttp(db, 0);
-  origin = `http://localhost:${server.port}`;
+beforeAll(async () => {
+  const schema = await Bun.file(`${import.meta.dir}/../server/migrations/0001_schema.sql`).text();
+
+  await env.DB.batch(
+    [
+      ...schema.split(';').filter((statement) => statement.trim()),
+      "INSERT INTO namespaces (slug, title, createdAt) VALUES ('vibe', 'Vibe', '')",
+      "INSERT INTO components (namespace, slug, title, category, latest, defaults, createdAt, updatedAt) VALUES ('vibe', 'counter', 'Counter', 'Interactive', 3, '{}', '', '')",
+      "INSERT INTO revisions (namespace, slug, version, html, props, notes, authorName, createdAt) VALUES ('vibe', 'counter', 1, '<p>one</p>', '[]', '', 'Vibe', ''), ('vibe', 'counter', 3, '<p>three</p>', '[]', '', 'Vibe', '')",
+    ].map((statement) => env.DB.prepare(statement)),
+  );
 });
 
-afterAll(() => server.stop(true));
+afterAll(dispose);
 
 describe('component source', () => {
   test('a bare address serves the latest revision', async () => {

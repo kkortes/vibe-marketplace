@@ -12,12 +12,35 @@ A marketplace of Vibe components. A component is plain HTML at a URL; a consumer
 points a `<component src>` at it and it renders. The site itself is built with
 Vibe and Stylecheat and nothing else.
 
+## Hosting
+
+**Cloudflare, the whole stack: one Worker and one D1 database.**
+
+- The Worker is named `viberary` and `wrangler.jsonc` is its whole
+  configuration. It serves the front end, built into `compiled/`
+  (`bun run build`), as static assets, and runs `server/worker.js` for every
+  request no asset answers: the websocket at `/ws`, the component source at
+  `/<namespace>/<slug>.html`, and `/js/pin.js`, which goes through the Worker
+  first (`run_worker_first`) only so it carries CORS headers.
+- One origin serves all of it, so `ORIGIN` in `app/js/env.js` is the site, the
+  socket (`wss://…/ws`) and the component source alike. A namespace named like a
+  top-level asset folder would be shadowed by it, which is why `modules`, `js`
+  and `css` are reserved.
+- It is deployed with `bunx wrangler deploy` from the root, after
+  `bun run build`, to the developer's own Cloudflare account. There is no
+  deploy script.
+- `GOOGLE_CLIENT_ID` is a plain `vars` entry in `wrangler.jsonc`. A client id is
+  public; the browser half carries the same value in `app/js/auth.js`.
+
 ## Where components are stored
 
-**In SQLite, through Bun's built-in `bun:sqlite`. No component is ever a file of its own.**
+**In Cloudflare D1, bound to the Worker as `DB`. No component is ever a file of its own.**
 
-One database file, `server/viberary.sqlite` (gitignored, created on
-first open), three tables. `server/db.js` opens it and owns the schema:
+One D1 database, `viberary`. Its schema is `server/migrations/`, applied with
+`wrangler d1 migrations apply viberary` (`--local` for `wrangler dev`,
+`--remote` for the deployed one). D1 enforces foreign keys on its own. Three
+tables hold the catalogue; `users` and `sessions` hold Google sign-ins for
+`server/store.js`:
 
 | Table        | Holds | Mutable |
 |---|---|---|
@@ -27,7 +50,7 @@ first open), three tables. `server/db.js` opens it and owns the schema:
 
 **The source bytes of a component live in `revisions.html`** — a text column on
 the revision row, holding the component's markup exactly as published.
-There is no file per component, no object store, no CDN bucket. `server/http.js` reads
+There is no file per component, no object store, no CDN bucket. `server/source.js` reads
 that field and answers with it as `text/html`; that response *is* the component.
 
 A revision row is `{ namespace, slug, version, html, props, notes, authorId,
@@ -35,7 +58,9 @@ authorName, createdAt }`. Revisions are insert-only. `revisions` has its primary
 key on `(namespace, slug, version)`, so a second write to a version that exists
 is an error rather than an edit — that key is what makes "frozen" a fact rather
 than a convention. Publishing bumps `components.latest` and inserts the new
-revision in one transaction; it never updates an old one.
+revision in one D1 batch, which is one transaction; it never updates an old one.
+
+D1 binds parameters by position only (`?` or `?NNN`), never by name.
 
 SQLite has no booleans or nested values: `components.defaults` and
 `revisions.props` are JSON text and `namespaces.official` is `0`/`1`. The
@@ -49,6 +74,8 @@ The only files under `server/seed/` that look like components are inputs to the
 seed script: `server/seed/remote/*.html` are byte-for-byte copies of the
 webdev-game-stack remote components, read at seed time and written into
 `revisions.html` like any other publish. They are not served from disk.
+`server/seed.js` turns the catalogue into SQL and runs it through
+`wrangler d1 execute`.
 
 ## Addresses and pinning
 
@@ -64,9 +91,12 @@ in the page into the version path above. The marketplace serves that resolver at
 
 **Google, and only Google, and it is stated rather than inherited.**
 
-- `server/index.js` passes `{ providers: [], store: store(db) }` to aaw.
-  `providers: []` turns off aaw's default (`["sqlite"]`, password login) and
-  registers no social provider, so no HTTP `/auth/*` route is mounted.
+- `server/worker.js` runs aaw through its Cloudflare entry,
+  `@ape-egg/async-await-websockets/cloudflare/index.js`, and passes it
+  `{ providers: [], store: store(env.DB) }`. `providers: []` registers no social
+  provider, so no HTTP `/auth/*` route exists. A Worker has no folder to scan,
+  so every event is listed by name in `server/worker.js`; a new file under
+  `server/events/` answers nothing until it is added there.
 - The only path to a session is this app's own `server/events/login/google.js`,
   which verifies a Google ID token and calls aaw's `authenticate`.
   `js/auth.js` holds the browser half and the client id.
@@ -91,7 +121,8 @@ top-level `.html` file becomes a page.
 - `app/` — pages flat at its root (`index.html`, `component.html`, `edit.html`,
   `publish.html`), plus `components/` (the site's own Layout and Topbar), `js/`,
   `css/`, `fonts/` and `index.css`.
-- `server/` — the websocket events, the component-source HTTP server, and the seed.
+- `server/` — the Worker: its websocket events, the component-source routes,
+  the D1 migrations and the seed.
 - `tests/` — runs under `bun test`.
 
 Pages compile as an MPA. There is no `pages/` tree, so the compiler's SPA mode
@@ -105,25 +136,26 @@ the page modules stack per navigation without teardown.
 
 ## Running it
 
-Needs `bun install` in both the root and `server/`. There is no database server
-to run — the SQLite file sits next to the server source.
+Needs `bun install` in both the root and `server/`. `wrangler` is a root
+devDependency; the local D1 it simulates lives in `.wrangler/` (gitignored).
 
 ```
-cp server/.env.example server/.env    # ports and the Google client id
-cd server && bun seed.js              # writes the vibe namespace + 18 components
-cd server && bun dev                  # websocket 1337, component source 8080
-bun dev                               # compiler watch + site on 3000
+cd server && bun run migrate          # schema into the local D1
+cd server && bun run seed             # writes the vibe namespace + 18 components
+cd server && bun dev                  # wrangler dev: socket, source and assets on 1337
+bun dev                               # compiler watch + site on $PORT
 ```
 
-Three ports, and the site needs all three: `3000` serves the compiled site,
-`1337` answers every marketplace read and write, `8080` serves the component
+Two processes: `bun dev` at the root compiles `app/` into `compiled/` and
+serves it; `bun dev` in `server/` runs the Worker locally on `1337`, which
+answers every marketplace read and write at `/ws` and serves the component
 source that `<component src>` fetches. An empty catalogue with a live-looking
-page means `1337` is not up; a preview stage that stays blank means `8080` is
-not.
+page, or a preview stage that stays blank, means `1337` is not up. `wrangler
+dev` needs `compiled/` to exist, so compile once before starting it.
 
-`server/.env` is gitignored. Without it the ports fall back to their defaults,
-but `GOOGLE_CLIENT_ID` is undefined and every Google sign-in is refused with
-"Invalid token audience".
+For the deployed database, the same two steps take `--remote`:
+`bunx wrangler d1 migrations apply viberary --remote` and
+`bun run seed --remote`, both in `server/`.
 
 ### Never pass `--fouc-as-is` to a stamped build
 

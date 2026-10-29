@@ -10,12 +10,13 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@ape-egg/async-await-websockets": "^3.7.1",
+    "@ape-egg/async-await-websockets": "^3.9.0",
     "@ape-egg/codie": "^0.2.1",
     "@ape-egg/vibe": "^4.3.23"
   },
   "devDependencies": {
-    "@ape-egg/vibe-compiler": "^4.3.23"
+    "@ape-egg/vibe-compiler": "^4.3.23",
+    "wrangler": "^4.155.0"
   },
   "vibe-compiler": {
     "source": "./app",

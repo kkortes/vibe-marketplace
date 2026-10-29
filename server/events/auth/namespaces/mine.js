@@ -1,7 +1,6 @@
 import { namespace } from '../../../db.js';
 
 export default async (_, { db, identity }) =>
-  db
-    .query('SELECT slug, title, official FROM namespaces WHERE ownerId = $ownerId ORDER BY slug')
-    .all({ ownerId: identity.id })
-    .map(namespace);
+  (
+    await db.prepare('SELECT slug, title, official FROM namespaces WHERE ownerId = ? ORDER BY slug').bind(identity.id).all()
+  ).results.map(namespace);
