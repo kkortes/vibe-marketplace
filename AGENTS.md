@@ -16,7 +16,7 @@ Vibe and Stylecheat and nothing else.
 
 **In SQLite, through Bun's built-in `bun:sqlite`. No component is ever a file of its own.**
 
-One database file, `server/vibe-marketplace.sqlite` (gitignored, created on
+One database file, `server/viberary.sqlite` (gitignored, created on
 first open), three tables. `server/db.js` opens it and owns the schema:
 
 | Table        | Holds | Mutable |

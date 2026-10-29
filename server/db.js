@@ -53,7 +53,7 @@ const SCHEMA = `
   )
 `;
 
-export const open = (filename = `${import.meta.dir}/vibe-marketplace.sqlite`) => {
+export const open = (filename = `${import.meta.dir}/viberary.sqlite`) => {
   const db = new Database(filename, { create: true, strict: true });
 
   db.run('PRAGMA journal_mode = WAL');
