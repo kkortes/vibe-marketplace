@@ -1,11 +1,8 @@
 // Under auth/, so a session is what buys the history. Rendering a component
 // never needs one.
-export default async ({ namespace, slug }, { mongo }) =>
-  mongo
-    .collection('revisions')
-    .find(
-      { namespace, slug },
-      { projection: { _id: 0, version: 1, notes: 1, authorName: 1, createdAt: 1 } },
+export default async ({ namespace, slug }, { db }) =>
+  db
+    .query(
+      'SELECT version, notes, authorName, createdAt FROM revisions WHERE namespace = $namespace AND slug = $slug ORDER BY version DESC',
     )
-    .sort({ version: -1 })
-    .toArray();
+    .all({ namespace, slug });

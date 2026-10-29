@@ -3,6 +3,7 @@ server/node_modules/
 lib/
 .env
 server/.env
+server/*.sqlite*
 compiled
 # Claude
 .claude/*

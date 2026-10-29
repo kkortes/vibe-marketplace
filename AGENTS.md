@@ -14,27 +14,32 @@ Vibe and Stylecheat and nothing else.
 
 ## Where components are stored
 
-**In MongoDB. Nothing about a component is ever written to disk.**
+**In SQLite, through Bun's built-in `bun:sqlite`. No component is ever a file of its own.**
 
-Database `vibe-marketplace`, three collections:
+One database file, `server/vibe-marketplace.sqlite` (gitignored, created on
+first open), three tables. `server/db.js` opens it and owns the schema:
 
-| Collection   | Holds | Mutable |
+| Table        | Holds | Mutable |
 |---|---|---|
 | `namespaces` | `slug`, `title`, `official`, `ownerId` | yes |
 | `components` | catalogue metadata per `namespace` + `slug`: `title`, `description`, `category`, `icon`, `latest`, `defaults`, `ownerId` | yes |
-| `revisions`  | one document per published version | **never** |
+| `revisions`  | one row per published version | **never** |
 
-**The source bytes of a component live in `revisions.html`** — a string field on
-the revision document, holding the component's markup exactly as published.
-There is no file on disk, no object store, no CDN bucket. `server/http.js` reads
+**The source bytes of a component live in `revisions.html`** — a text column on
+the revision row, holding the component's markup exactly as published.
+There is no file per component, no object store, no CDN bucket. `server/http.js` reads
 that field and answers with it as `text/html`; that response *is* the component.
 
-A revision document is `{ namespace, slug, version, html, props, notes,
-authorId, authorName, createdAt }`. Revisions are insert-only. `server/indexes.js`
-puts a unique index on `(namespace, slug, version)`, so a second write to a
-version that exists is an error rather than an edit — that index is what makes
-"frozen" a fact rather than a convention. Publishing `$inc`s `components.latest`
-and inserts the new revision; it never updates an old one.
+A revision row is `{ namespace, slug, version, html, props, notes, authorId,
+authorName, createdAt }`. Revisions are insert-only. `revisions` has its primary
+key on `(namespace, slug, version)`, so a second write to a version that exists
+is an error rather than an edit — that key is what makes "frozen" a fact rather
+than a convention. Publishing bumps `components.latest` and inserts the new
+revision in one transaction; it never updates an old one.
+
+SQLite has no booleans or nested values: `components.defaults` and
+`revisions.props` are JSON text and `namespaces.official` is `0`/`1`. The
+decoders in `server/db.js` turn rows back into the shapes the client receives.
 
 `components.defaults` is a derived copy of the latest revision's prop defaults,
 kept so the catalogue can be listed in one call without fetching a revision per
@@ -59,7 +64,7 @@ in the page into the version path above. The marketplace serves that resolver at
 
 **Google, and only Google, and it is stated rather than inherited.**
 
-- `server/index.js` passes `{ providers: [], store: store(mongo) }` to aaw.
+- `server/index.js` passes `{ providers: [], store: store(db) }` to aaw.
   `providers: []` turns off aaw's default (`["sqlite"]`, password login) and
   registers no social provider, so no HTTP `/auth/*` route is mounted.
 - The only path to a session is this app's own `server/events/login/google.js`,
@@ -100,11 +105,11 @@ the page modules stack per navigation without teardown.
 
 ## Running it
 
-Needs MongoDB listening on `localhost:27017` and `bun install` in both the root
-and `server/`.
+Needs `bun install` in both the root and `server/`. There is no database server
+to run — the SQLite file sits next to the server source.
 
 ```
-cp server/.env.example server/.env    # MONGO_CONNECT and the Google client id
+cp server/.env.example server/.env    # ports and the Google client id
 cd server && bun seed.js              # writes the vibe namespace + 18 components
 cd server && bun dev                  # websocket 1337, component source 8080
 bun dev                               # compiler watch + site on 3000
@@ -116,9 +121,9 @@ source that `<component src>` fetches. An empty catalogue with a live-looking
 page means `1337` is not up; a preview stage that stays blank means `8080` is
 not.
 
-`server/.env` is gitignored and the server will not start without it —
-`dotenv.config()` finds nothing, `MONGO_CONNECT` is undefined and the Mongo
-client throws on connect.
+`server/.env` is gitignored. Without it the ports fall back to their defaults,
+but `GOOGLE_CLIENT_ID` is undefined and every Google sign-in is refused with
+"Invalid token audience".
 
 ### Never pass `--fouc-as-is` to a stamped build
 

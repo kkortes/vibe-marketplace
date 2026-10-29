@@ -1,6 +1,7 @@
-export default async (_, { mongo }) =>
-  mongo
-    .collection('namespaces')
-    .find({}, { projection: { _id: 0, slug: 1, title: 1, official: 1, ownerId: 1 } })
-    .sort({ official: -1, slug: 1 })
-    .toArray();
+import { namespace } from '../../db.js';
+
+export default async (_, { db }) =>
+  db
+    .query('SELECT slug, title, official, ownerId FROM namespaces ORDER BY official DESC, slug')
+    .all()
+    .map(namespace);

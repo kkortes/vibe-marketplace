@@ -1,24 +1,20 @@
+import { namespace as decode, now } from '../../../db.js';
 import { slug as slugPattern } from '../../../user.js';
 
 const RESERVED = ['vibe', 'stylecheat', 'codie', 'api', 'docs', 'admin', 'modules', 'js', 'css'];
 
-export default async ({ slug, title }, { mongo, identity }) => {
+export default async ({ slug, title }, { db, identity }) => {
   if (!slugPattern.test(String(slug))) throw Error('A namespace is lowercase words joined by dashes');
   if (RESERVED.includes(slug)) throw Error(`${slug} is reserved`);
 
-  const taken = await mongo.collection('namespaces').findOne({ slug });
+  const taken = db.query('SELECT 1 FROM namespaces WHERE slug = $slug').get({ slug });
   if (taken) throw Error(`${slug} is taken`);
 
-  const namespace = {
-    slug,
-    title: String(title).trim() || slug,
-    official: false,
-    ownerId: identity.id,
-    createdAt: new Date(),
-  };
-
-  await mongo.collection('namespaces').insertOne(namespace);
-
-  const { _id, ...created } = namespace;
-  return created;
+  return decode(
+    db
+      .query(
+        'INSERT INTO namespaces (slug, title, official, ownerId, createdAt) VALUES ($slug, $title, 0, $ownerId, $createdAt) RETURNING *',
+      )
+      .get({ slug, title: String(title).trim() || slug, ownerId: identity.id, createdAt: now() }),
+  );
 };

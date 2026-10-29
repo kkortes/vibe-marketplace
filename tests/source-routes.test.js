@@ -1,28 +1,23 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 
 import startHttp from '../server/http.js';
+import { open } from '../server/db.js';
 
-const data = {
-  components: [{ namespace: 'vibe', slug: 'counter', latest: 3 }],
-  revisions: [
-    { namespace: 'vibe', slug: 'counter', version: 1, html: '<p>one</p>' },
-    { namespace: 'vibe', slug: 'counter', version: 3, html: '<p>three</p>' },
-  ],
-};
+const db = open(':memory:');
 
-const mongo = {
-  collection: (name) => ({
-    findOne: async (query) =>
-      data[name].find((doc) => Object.entries(query).every(([key, value]) => doc[key] === value)) ??
-      null,
-  }),
-};
+db.run("INSERT INTO namespaces (slug, title, createdAt) VALUES ('vibe', 'Vibe', '')");
+db.run(
+  "INSERT INTO components (namespace, slug, title, category, latest, defaults, createdAt, updatedAt) VALUES ('vibe', 'counter', 'Counter', 'Interactive', 3, '{}', '', '')",
+);
+db.run(
+  "INSERT INTO revisions (namespace, slug, version, html, props, notes, authorName, createdAt) VALUES ('vibe', 'counter', 1, '<p>one</p>', '[]', '', 'Vibe', ''), ('vibe', 'counter', 3, '<p>three</p>', '[]', '', 'Vibe', '')",
+);
 
 let server;
 let origin;
 
 beforeAll(() => {
-  server = startHttp(mongo, 0);
+  server = startHttp(db, 0);
   origin = `http://localhost:${server.port}`;
 });
 

@@ -1,31 +1,9 @@
-import dotenv from 'dotenv';
-import { MongoClient } from 'mongodb';
-
-import createIndexes from './indexes.js';
 import gameStack from './seed/game-stack.js';
 import written from './seed/vibe.js';
+import { now, open } from './db.js';
 import { defaults, validate } from './props.js';
 
-dotenv.config();
-
-const client = new MongoClient(process.env.MONGO_CONNECT);
-await client.connect();
-
-const mongo = client.db('vibe-marketplace');
-
-await createIndexes(mongo);
-
-await mongo.collection('namespaces').updateOne(
-  { slug: 'vibe' },
-  {
-    $set: { title: 'Vibe', official: true, ownerId: null },
-    $setOnInsert: { createdAt: new Date() },
-  },
-  { upsert: true },
-);
-
-await mongo.collection('components').deleteMany({ namespace: 'vibe' });
-await mongo.collection('revisions').deleteMany({ namespace: 'vibe' });
+const db = open();
 
 // Seeded props go through the same validation a published revision does, so the
 // catalogue can never hold a schema the publish event would have refused.
@@ -34,36 +12,42 @@ const catalogue = [...written, ...(await gameStack())].map((component) => ({
   versions: component.versions.map((version) => ({ ...version, props: validate(version.props) })),
 }));
 
-for (const { slug, title, description, category, icon, versions } of catalogue) {
-  await mongo.collection('components').insertOne({
-    namespace: 'vibe',
-    slug,
-    title,
-    description,
-    category,
-    icon,
-    latest: versions.length,
-    defaults: defaults(versions.at(-1).props),
-    ownerId: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
+const namespace = db.query(
+  `INSERT INTO namespaces (slug, title, official, ownerId, createdAt) VALUES ('vibe', 'Vibe', 1, NULL, $now)
+   ON CONFLICT (slug) DO UPDATE SET title = 'Vibe', official = 1, ownerId = NULL`,
+);
+const component = db.query(
+  `INSERT INTO components (namespace, slug, title, description, category, icon, latest, defaults, ownerId, createdAt, updatedAt)
+   VALUES ('vibe', $slug, $title, $description, $category, $icon, $latest, $defaults, NULL, $now, $now)`,
+);
+const revision = db.query(
+  `INSERT INTO revisions (namespace, slug, version, html, props, notes, authorId, authorName, createdAt)
+   VALUES ('vibe', $slug, $version, $html, $props, $notes, NULL, 'Vibe', $now)`,
+);
 
-  await mongo.collection('revisions').insertMany(
-    versions.map(({ html, props, notes }, i) => ({
-      namespace: 'vibe',
+db.transaction(() => {
+  namespace.run({ now: now() });
+  db.run("DELETE FROM revisions WHERE namespace = 'vibe'");
+  db.run("DELETE FROM components WHERE namespace = 'vibe'");
+
+  catalogue.forEach(({ slug, title, description, category, icon, versions }) => {
+    component.run({
       slug,
-      version: i + 1,
-      html,
-      props,
-      notes,
-      authorId: null,
-      authorName: 'Vibe',
-      createdAt: new Date(),
-    })),
-  );
+      title,
+      description,
+      category,
+      icon,
+      latest: versions.length,
+      defaults: JSON.stringify(defaults(versions.at(-1).props)),
+      now: now(),
+    });
 
-  console.info(`Seeded vibe/${slug} through v${versions.length}`);
-}
+    versions.forEach(({ html, props, notes }, i) =>
+      revision.run({ slug, version: i + 1, html, props: JSON.stringify(props), notes, now: now() }),
+    );
 
-await client.close();
+    console.info(`Seeded vibe/${slug} through v${versions.length}`);
+  });
+})();
+
+db.close();
