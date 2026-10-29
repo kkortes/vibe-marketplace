@@ -1,6 +1,6 @@
 {
   "name": "viberary",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "\"$(git rev-parse --path-format=absolute --git-common-dir)/../../dev.sh\" 'bun compile:watch & bunx live-server compiled --port=$PORT --host=localhost --no-browser'",
