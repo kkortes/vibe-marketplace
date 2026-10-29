@@ -2,10 +2,6 @@
 
 AI assistant guidance for working with this repository.
 
-## Git
-
-Never run `git add`, `git commit`, or `git push`. The user manages their own git workflow.
-
 ## What this is
 
 A marketplace of Vibe components. A component is plain HTML at a URL; a consumer

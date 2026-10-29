@@ -1,5 +1,5 @@
 const { hostname } = window.location;
-const local = hostname === '127.0.0.1' || hostname.split('.').at(-1) === 'localhost';
+const local = hostname === '127.0.0.1' || hostname.split('.').at(-1) === 'localhost' || hostname.includes('.local.');
 
 export const ORIGIN = local ? 'https://viberary.local.korte.kim' : 'https://viberary.korte.kim';
 
