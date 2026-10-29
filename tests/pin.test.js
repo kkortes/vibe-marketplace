@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 
 import { address, pin, source } from '../app/js/pin.js';
 
-const ORIGIN = 'https://vibe-components.com';
+const ORIGIN = 'https://viberary.korte.kim';
 
 describe('addresses', () => {
   test('an unpinned address is the bare path', () => {
