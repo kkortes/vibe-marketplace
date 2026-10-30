@@ -218,6 +218,7 @@ slider > codie {
   height: 100%;
   min-block-size: 0;
   border-radius: 0;
+  box-shadow: 1px 0 var(--border);
 }
 
 pane {
