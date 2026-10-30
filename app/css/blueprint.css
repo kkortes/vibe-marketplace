@@ -147,10 +147,15 @@ container {
   margin-inline: round(down, (100% - var(--frame)) / 2, var(--cell)) auto;
 }
 
+catalogue code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
 catalogue {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(calc(var(--cell) * 6), 1fr));
-  grid-auto-rows: minmax(calc(var(--cell) * 6), auto);
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--cell) * 10), 1fr));
+  grid-auto-rows: minmax(calc(var(--cell) * 4), auto);
   gap: var(--cell);
 }
 
@@ -168,7 +173,7 @@ catalogue {
   }
 
   catalogue {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     grid-auto-rows: auto;
   }
 }

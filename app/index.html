@@ -85,14 +85,16 @@
           <card f-1 p-6 hover paper>
             <crow up left g-4 f-1>
               <card vertical w-12 h-12 f-0 p-0><icon @[comp.icon] w="6" h="6" text-primary></icon></card>
-              <crow vertical left up g="1.5" f-1 h-full>
-                <h5>@[comp.title]</h5>
-                <code>@[comp.namespace]/@[comp.slug]</code>
-                <p text-muted f-1>@[comp.description]</p>
-                <crow justify-between w-full mt-2>
-                  <badge secondary>@[comp.category]</badge>
-                  <span sm text-muted>v@[comp.latest]</span>
+              <crow vertical left up g="1.5" f-1>
+                <crow justify-between g-3 wrap w-full>
+                  <h5>@[comp.title]</h5>
+                  <crow g-2>
+                    <badge secondary>@[comp.category]</badge>
+                    <badge secondary>v@[comp.latest]</badge>
+                  </crow>
                 </crow>
+                <code>@[comp.namespace]/@[comp.slug]</code>
+                <p text-muted>@[comp.description]</p>
               </crow>
             </crow>
           </card>
