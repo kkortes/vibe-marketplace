@@ -45,23 +45,40 @@
 blueprint {
   --cell: calc(var(--grid-size) / 2);
   display: block;
+  position: relative;
   min-height: 100dvh;
 }
 
-container {
-  --frame: min(var(--cell) * 25, round(down, 100% - var(--cell), var(--cell) * 2) + var(--cell));
-  width: var(--frame);
-  margin-inline: round(down, (100% - var(--frame)) / 2, var(--cell)) auto;
+:is(blueprint, sticky) {
+  isolation: isolate;
+}
+
+:is(blueprint, sticky)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(oklch(from var(--background) l c h / 0.85), transparent) fixed;
+}
+
+sheet {
   padding-inline: var(--cell);
 }
 
+container {
+  --frame: min(var(--cell) * 23, round(down, 100% - var(--cell), var(--cell) * 2) + var(--cell));
+  width: var(--frame);
+  margin-inline: round(down, (100% - var(--frame)) / 2, var(--cell)) auto;
+}
+
 sticky {
+  padding-inline: var(--cell);
   box-shadow: inset 0 -1px var(--border);
 }
 
 catalogue {
   display: grid;
-  grid-template-columns: repeat(auto-fill, calc(var(--cell) * 7));
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--cell) * 7), 1fr));
   grid-auto-rows: calc(var(--cell) * 6);
   gap: var(--cell);
 }
