@@ -69,18 +69,23 @@ blueprint {
 sheet {
   --line: linear-gradient(var(--border), var(--border));
   flex: 1;
-  padding-inline: var(--cell);
   background:
     var(--line) var(--cell) 0 / 1px 100% no-repeat,
-    var(--line) calc(100% - var(--cell)) 0 / 1px 100% no-repeat;
+    var(--line) round(down, 100% + 1px - var(--cell), var(--cell)) 0 / 1px 100% no-repeat;
+}
+
+:is(sheet, sticky) {
+  padding-inline: var(--cell) calc(100% - round(down, 100% - var(--cell), var(--cell)));
 }
 
 divider {
-  position: relative;
+  position: sticky;
+  top: calc(var(--unit) * 12);
+  z-index: 1;
   align-self: stretch;
   height: 1px;
-  margin: calc(var(--cell) / -2) calc(var(--cell) * -1) calc(var(--cell) / -2 - 1px);
-  background: var(--border);
+  margin-block: calc(var(--cell) / -2) calc(var(--cell) / -2 - 1px);
+  border-image: var(--line) fill 0 // 0 100vw;
 }
 
 divider::before,
@@ -88,7 +93,7 @@ divider::after {
   content: '';
   position: absolute;
   top: 50%;
-  left: var(--cell);
+  left: 0;
   translate: -50% -50%;
   width: 8px;
   height: 8px;
@@ -97,17 +102,13 @@ divider::after {
 }
 
 divider::after {
-  left: calc(100% - var(--cell));
+  left: 100%;
 }
 
 container {
   --frame: min(var(--cell) * 23, round(down, 100% - var(--cell), var(--cell) * 2) + var(--cell));
   width: var(--frame);
   margin-inline: round(down, (100% - var(--frame)) / 2, var(--cell)) auto;
-}
-
-sticky {
-  padding-inline: var(--cell);
 }
 
 catalogue {
