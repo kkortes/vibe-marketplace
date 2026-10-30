@@ -58,7 +58,10 @@
           <!-- else -->
           <sections>
             <section about>
-              <span sm text-muted>Managed by: @[namespace]</span>
+              <owner>
+                <span>Managed by</span>
+                <a href="/@[namespace]" primary><icon users></icon>@[namespace]</a>
+              </owner>
               <crow justify-between g-3 w-full>
                 <h1>@[component?.title]</h1>
                 <badge secondary>v@[$.showing()]</badge>
