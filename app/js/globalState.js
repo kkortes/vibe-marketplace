@@ -8,6 +8,6 @@ export default {
   authReady: !get('mkp-session'),
   wsConnected: false,
   userMenuOpen: false,
-  darkMode: get('mkp-darkMode'),
+  darkMode: get('mkp-darkMode') ?? true,
   notice: '',
 };

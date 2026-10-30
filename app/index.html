@@ -4,10 +4,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Vibe Components — components you point at</title>
+  <title>Viberary — components you point at</title>
   <meta name="description"
     content="A marketplace of Vibe components. Every one is plain HTML at a URL: one tag, no build step, no install." />
   <link rel="stylesheet" href="/css/stylecheat.css" />
+  <link rel="stylesheet" href="/css/blueprint.css" />
   <link rel="stylesheet" href="/modules/@ape-egg/codie/codie.css" />
   <script async src="https://accounts.google.com/gsi/client"></script>
 
@@ -23,8 +24,8 @@
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
-    <crow g-12 w-full sm:vertical>
-      <crow vertical left g-5 f-6 overflow-hidden>
+    <crow up g-12 w-full sm:vertical>
+      <crow vertical left g-6 f-1 overflow-hidden>
         <h1>Components you point at.</h1>
         <p lead max-w-160>
           Every component here is plain HTML living at a URL. Point a <code>&lt;component&gt;</code>
@@ -39,13 +40,13 @@
         </p>
       </crow>
 
-      <card vertical g-4 p="10" radius="20px" f-5>
+      <card vertical g-4 p="12" f-1 overflow-hidden>
         <h6>Rendered from that tag</h6>
         <component src="@[featured]" label="Items" step="1"></component>
       </card>
     </crow>
 
-    <crow left g-3 wrap w-full>
+    <crow left g-6 wrap w-full>
       <label f-1>
         <input type="search" placeholder="Search components" value="@[query]"
           oninput="$.query = this.value; $.filter()" />
@@ -68,15 +69,15 @@
     </crow>
 
     <!-- if loading -->
-    <crow w-full py="20" text-muted>Loading the catalogue…</crow>
+    <crow w-full py="12" text-muted>Loading the catalogue…</crow>
     <!-- else -->
     <!-- if matches.length -->
-    <crow left stretch wrap g-5 w-full>
+    <catalogue w-full>
       <!-- each matches as comp (comp.namespace + '/' + comp.slug) -->
-      <a href="/component.html?c=@[comp.namespace]/@[comp.slug]" secondary flex w="32%" sm:w="100%">
-        <card f-1 p-5 radius="16px" hover>
+      <a href="/component.html?c=@[comp.namespace]/@[comp.slug]" secondary flex>
+        <card f-1 p-6 hover>
           <crow up left g-4 f-1>
-            <card vertical w-12 h-12 f-0 p-0 rounded><icon @[comp.icon] w="6" h="6" text-primary></icon></card>
+            <card vertical w-12 h-12 f-0 p-0><icon @[comp.icon] w="6" h="6" text-primary></icon></card>
             <crow vertical left up g="1.5" f-1 h-full>
               <h5>@[comp.title]</h5>
               <code>@[comp.namespace]/@[comp.slug]</code>
@@ -90,9 +91,9 @@
         </card>
       </a>
       <!-- /each -->
-    </crow>
+    </catalogue>
     <!-- else -->
-    <crow w-full py="20" text-muted>
+    <crow w-full py="12" text-muted>
       <!-- if query -->Nothing matches “@[query]”.<!-- else -->No components published here yet.<!-- /if -->
     </crow>
     <!-- /if -->

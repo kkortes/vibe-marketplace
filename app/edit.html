@@ -4,8 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Live edit — Vibe Components</title>
+  <title>Live edit — Viberary</title>
   <link rel="stylesheet" href="/css/stylecheat.css" />
+  <link rel="stylesheet" href="/css/blueprint.css" />
   <link rel="stylesheet" href="/modules/@ape-egg/codie/codie.css" />
   <script async src="https://accounts.google.com/gsi/client"></script>
 
@@ -35,15 +36,15 @@
       </p>
     </crow>
 
-    <crow up g-6 w-full sm:vertical>
-      <card f-1 g-4 p-6 radius="16px">
+    <crow up g-12 w-full sm:vertical>
+      <card f-1 g-4 p-6 overflow-hidden>
         <h6>Markup</h6>
         <template codie dark highlight-html vibe-dehydrate></template>
       </card>
 
-      <card f-1 g-4 p-6 radius="16px">
+      <card f-1 g-4 p-6>
         <h6>Preview</h6>
-        <crow grid p-8 rounded bg-background>
+        <crow grid locked p="12" bg-background>
           <preview-host></preview-host>
         </crow>
 
@@ -82,7 +83,7 @@
       </card>
     </crow>
 
-    <card w-full g-4 p-6 radius="16px">
+    <card w-full g-4 p-6>
       <h6>Publish</h6>
       <!-- if user -->
       <!-- if mine.length -->

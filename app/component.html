@@ -4,8 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Component — Vibe Components</title>
+  <title>Component — Viberary</title>
   <link rel="stylesheet" href="/css/stylecheat.css" />
+  <link rel="stylesheet" href="/css/blueprint.css" />
   <script async src="https://accounts.google.com/gsi/client"></script>
 
   <script type="module">
@@ -19,7 +20,7 @@
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
     <!-- if missing -->
-    <crow w-full py="20" text-muted>@[missing]</crow>
+    <crow w-full py="12" text-muted>@[missing]</crow>
     <!-- else if component -->
 
     <crow vertical left g-3 w-full>
@@ -40,15 +41,15 @@
       <!-- /if -->
     </crow>
 
-    <crow up g-6 w-full sm:vertical>
-      <card f-1 g-4 p-6 radius="16px">
+    <crow up g-12 w-full sm:vertical>
+      <card f-1 g-4 p-6>
         <h6>Preview</h6>
-        <crow grid p-8 rounded bg-background>
+        <crow grid locked p="12" bg-background>
           <preview-host></preview-host>
         </crow>
       </card>
 
-      <card f-1 g-4 p-6 radius="16px">
+      <card f-1 g-4 p-6>
         <h6>Props</h6>
         <!-- if props.length -->
         <p text-muted>Change a value and the preview above re-renders as you type.</p>
@@ -109,7 +110,7 @@
       </card>
     </crow>
 
-    <card w-full g-4 p-6 radius="16px">
+    <card w-full g-4 p-6>
       <h6>Use it</h6>
       <crow justify-between g-4>
         <label>
@@ -143,7 +144,7 @@
       <!-- /if -->
     </card>
 
-    <card w-full g-4 p-6 radius="16px">
+    <card w-full g-4 p-6>
       <h6>Version history</h6>
       <!-- if user -->
       <table>
@@ -167,7 +168,7 @@
     </card>
 
     <!-- else -->
-    <crow w-full py="20" text-muted>Loading…</crow>
+    <crow w-full py="12" text-muted>Loading…</crow>
     <!-- /if -->
   </component>
 </body>

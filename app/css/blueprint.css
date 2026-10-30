@@ -1,0 +1,87 @@
+[stylecheat] {
+  --grid-unit: 8px;
+  --radius: 0px;
+  --background: oklch(0.965 0.018 250);
+  --foreground: oklch(0.3 0.11 260);
+  --card: oklch(0.985 0.01 250);
+  --popover: oklch(0.99 0.008 250);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.48 0.17 260);
+  --primary-foreground: oklch(0.98 0.01 250);
+  --secondary: oklch(0.93 0.025 250);
+  --secondary-foreground: var(--foreground);
+  --secondary-hover: oklch(0.9 0.035 250);
+  --muted: oklch(0.94 0.02 250);
+  --muted-foreground: oklch(0.5 0.07 258);
+  --border: oklch(0.48 0.12 258 / 0.35);
+  --input: oklch(0.99 0.006 250);
+  --sidebar-foreground: var(--foreground);
+  --shadow-color: oklch(0.35 0.1 260);
+  --slate: oklch(0.55 0.06 255);
+}
+
+[stylecheat].dark {
+  --background: oklch(0.29 0.095 260);
+  --foreground: oklch(0.96 0.02 240);
+  --card: oklch(0.32 0.1 260);
+  --popover: oklch(0.36 0.1 260);
+  --primary: oklch(0.88 0.08 220);
+  --primary-foreground: oklch(0.27 0.09 260);
+  --secondary: oklch(0.36 0.1 260);
+  --secondary-hover: oklch(0.4 0.1 260);
+  --muted: oklch(0.33 0.09 260);
+  --muted-foreground: oklch(0.8 0.05 240);
+  --border: oklch(0.9 0.05 230 / 0.35);
+  --input: oklch(0.26 0.09 260);
+  --typography-foreground: oklch(0.92 0.025 240);
+  --shadow-color: oklch(0.12 0.06 260);
+  --slate: oklch(0.8 0.05 240);
+}
+
+[grid][locked] {
+  background-attachment: scroll;
+}
+
+blueprint {
+  --cell: calc(var(--grid-size) / 2);
+  display: block;
+  min-height: 100dvh;
+}
+
+container {
+  --frame: min(var(--cell) * 25, round(down, 100% - var(--cell), var(--cell) * 2) + var(--cell));
+  width: var(--frame);
+  margin-inline: round(down, (100% - var(--frame)) / 2, var(--cell)) auto;
+  padding-inline: var(--cell);
+}
+
+sticky {
+  box-shadow: inset 0 -1px var(--border);
+}
+
+catalogue {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, calc(var(--cell) * 7));
+  grid-auto-rows: calc(var(--cell) * 6);
+  gap: var(--cell);
+}
+
+@media (width <= 768px) {
+  [stylecheat] {
+    --grid-unit: 4px;
+  }
+
+  catalogue {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+}
+
+:is(code, badge) {
+  border-radius: 0;
+}
+
+h6 {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}

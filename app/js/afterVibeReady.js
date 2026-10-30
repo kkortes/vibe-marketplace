@@ -1,8 +1,7 @@
-import { get, set } from '/js/localStorage.js';
+import { set } from '/js/localStorage.js';
+import globalState from '/js/globalState.js';
 
-if (get('mkp-darkMode')) {
-  document.body.classList.add('dark');
-}
+document.body.classList.toggle('dark', globalState.darkMode);
 
 const afterVibeReady = () => {
   window.$.on('afterUpdate', (current, prev) => {

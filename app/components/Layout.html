@@ -1,9 +1,11 @@
-<component src="/components/Topbar.html"></component>
-<container vertical left g-10 px-6 pt="10" pb="20">
-  <slot></slot>
-</container>
-<!-- if notice -->
-<crow position="fixed" l-0 r-0 b-6>
-  <card hover px-5 py-3 onclick="$.notice = ''">@[notice]</card>
-</crow>
-<!-- /if -->
+<blueprint grid locked>
+  <component src="/components/Topbar.html"></component>
+  <container vertical left g-12 pt="12" pb="24">
+    <slot></slot>
+  </container>
+  <!-- if notice -->
+  <crow position="fixed" l-0 r-0 b-6>
+    <card hover px-5 py-3 onclick="$.notice = ''">@[notice]</card>
+  </crow>
+  <!-- /if -->
+</blueprint>
