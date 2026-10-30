@@ -1,4 +1,4 @@
-import codie from '/modules/@ape-egg/codie/codie.js';
+import codie from '/modules/codie/codie.js';
 
 import { call } from '/js/ws.js';
 

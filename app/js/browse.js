@@ -1,4 +1,4 @@
-import codie from '/modules/@ape-egg/codie/codie.js';
+import codie from '/modules/codie/codie.js';
 
 import { SOURCE_URL } from '/js/env.js';
 import { address, pin } from '/js/pin.js';

@@ -1,4 +1,4 @@
-import aaw from '/modules/@ape-egg/async-await-websockets/client.js';
+import aaw from '/modules/async-await-websockets/client.js';
 
 import { WS_URL } from '/js/env.js';
 import { get, set } from '/js/localStorage.js';

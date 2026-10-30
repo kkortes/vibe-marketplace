@@ -1,4 +1,4 @@
-import vibe from '/modules/@ape-egg/vibe/index.js';
+import vibe from '/modules/vibe/index.js';
 
 import afterVibeReady from '/js/afterVibeReady.js';
 import globalState from '/js/globalState.js';

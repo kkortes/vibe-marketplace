@@ -172,6 +172,16 @@ true branch and every `<!-- each -->` row is gone from the DOM, with no console
 error and no failed request. It looks exactly like a page whose data never
 arrived — empty catalogue, no sign-in button — while `window.$` holds all of it.
 
+### Packages are served at `/modules/<name>/`, never under `@ape-egg`
+
+`bun run compile` moves the compiled `node_modules/@ape-egg` to `compiled/modules`,
+so the browser imports `/modules/vibe/index.js`. Cloudflare's asset server
+answers any path holding `@` with a 307 to its `%40` form, and a module's
+relative imports resolve against the redirected URL while the module map keys
+on the requested one. vibe's `index.js` ↔ `boot.js` cycle then loads `index.js`
+twice: `$.on('afterUpdate')` registered before boot lands in one copy and boot
+reads the other, so the theme toggle never saves or touches `body.dark`.
+
 ### A state method called from a binding is called unbound
 
 `@[showing()]` reaches the function but not the object, so `this` is undefined

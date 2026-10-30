@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "\"$(git rev-parse --path-format=absolute --git-common-dir)/../../dev.sh\" 'bun compile:watch & bunx wrangler dev --port=$PORT --ip=localhost'",
     "build": "bun compile",
-    "compile": "rm -rf compiled && bunx vibe compile && mv compiled/node_modules compiled/modules",
+    "compile": "rm -rf compiled && bunx vibe compile && mv compiled/node_modules/@ape-egg compiled/modules && rm -r compiled/node_modules",
     "compile:watch": "bun compile && bunx vibe compile --watch --no-clean",
     "test": "bun test",
     "fade": "bun scripts/fade.js"
