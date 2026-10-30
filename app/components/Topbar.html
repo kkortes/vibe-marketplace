@@ -1,11 +1,8 @@
 <sticky grid locked auto-shadow>
   <crow justify-between g-4 h-12 w-full>
     <a href="/" secondary><strong>Viberary</strong></a>
-    <nav flex f-1 sm:hide>
-      <a href="/" class="button" tertiary active="@[['/', '/index.html'].includes(path)]">Browse</a>
-    </nav>
     <crow>
-      <a href="/components" class="button" tertiary active="@[['/components', '/components.html'].includes(path)]">Components</a>
+      <a href="/components" class="button" tertiary title="Components" active="@[['/components', '/components.html'].includes(path)]"><icon components></icon></a>
       <a href="https://vibe.korte.kim" target="_blank" rel="noopener" class="button" tertiary title="Vibe docs"><icon logo-vibe></icon></a>
       <button tertiary title="Switch theme" onclick="$.darkMode = !$.darkMode">
         <!-- if darkMode --><icon light></icon><!-- else --><icon dark></icon><!-- /if -->
