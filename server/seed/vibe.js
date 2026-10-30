@@ -489,6 +489,52 @@ const copyButton = {
 </button>
 `,
     },
+    {
+      notes: 'Shows what it copies, so a command reads before it is taken.',
+      props: [
+        { name: 'label', type: 'text', default: 'Copy', description: 'Resting label.' },
+        { name: 'value', type: 'text', default: 'npm install @ape-egg/vibe', description: 'What lands on the clipboard.' },
+        { name: 'done', type: 'text', default: 'Copied', description: 'Label shown after a successful copy.' },
+        { name: 'shown', type: 'boolean', default: true, description: 'Shows the value as code beside the button.' },
+      ],
+      html: `
+<script type="module">
+  import component from '@ape-egg/vibe/component';
+
+  component({
+    copied: false,
+    async copy(value) {
+      await navigator.clipboard.writeText(value);
+      this.copied = true;
+    },
+  });
+</script>
+
+<copy-row>
+  <!-- if shown -->
+  <code>@[value]</code>
+  <!-- /if -->
+  <button secondary data-value="@[value]" onclick="this.copy(event.currentTarget.dataset.value)" onmouseleave="this.copied = false">
+    <!-- if this.copied -->@[done]<!-- else -->@[label]<!-- /if -->
+  </button>
+</copy-row>
+
+<style>
+  copy-row {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--unit, 4px) * 2);
+  }
+
+  copy-row code {
+    padding: calc(var(--unit, 4px) * 2) calc(var(--unit, 4px) * 3);
+    border-radius: var(--radius, 8px);
+    background: color-mix(in oklab, currentColor 6%, transparent);
+    font-size: calc(var(--unit, 4px) * 3.5);
+  }
+</style>
+`,
+    },
   ],
 };
 
