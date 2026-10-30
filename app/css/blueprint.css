@@ -266,7 +266,7 @@ section {
 }
 
 section[preview] > crow {
-  aspect-ratio: 1;
+  aspect-ratio: 3 / 2;
   width: 100%;
   overflow: hidden;
 }
