@@ -61,6 +61,10 @@
               </crow>
               <p lead max-w-160>@[component?.description]</p>
               <tags>
+                <crow left g-2 w-full>
+                  <span sm text-muted>URL</span>
+                  <a href="@[$.url()]" target="_blank" primary sm>@[$.url()]</a>
+                </crow>
                 <crow left g-2 wrap>
                   <span sm text-muted>Auto tags</span>
                   <!-- each tags as tag -->

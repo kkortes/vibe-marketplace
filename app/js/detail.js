@@ -87,6 +87,12 @@ export const state = {
     return this.component && this.showing() < this.component.latest;
   },
 
+  // The bytes behind the selected tab. A tab opened on the #v<n> form would
+  // show the latest, since the fragment never reaches the server.
+  url() {
+    return source(SOURCE_URL, this.namespace, this.slug, this.tab);
+  },
+
   // A boolean prop is carried the way HTML carries one — the attribute is there
   // or it is not; dismissable="false" would read as true. An array or an object
   // has no literal form an attribute can hold, so it is shown bound instead.
