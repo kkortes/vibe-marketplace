@@ -19,7 +19,7 @@
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
-    <box main solid>
+    <box main solid paper>
       <!-- if user -->
       <versions>
         <tabs primary versions namespaces>
@@ -62,8 +62,8 @@
           <crow vertical left g-3 w-full>
             <h1>Components</h1>
             <p lead max-w-160>
-              A namespace is your corner of the catalogue. Anyone can make one, and everything published
-              under it is addressed by <code>your-namespace/your-component.html</code>.
+              Your namespaces and the components in them. A namespace is the first part of every address,
+              <code>your-namespace/your-component.html</code>; pick one in the tabs above to list only its components.
             </p>
           </crow>
         </container>
@@ -86,14 +86,14 @@
             </tbody>
           </table>
           <!-- else -->
-          <p text-muted>Nothing published yet.</p>
+          <p text-muted>No components in your namespaces yet.</p>
           <!-- /if -->
         </card>
         <!-- else -->
         <card w-full g-4 p-6>
           <p text-muted>
-            Browsing and editing are open to everyone. Publishing is what needs an account — sign in
-            from the top right.
+            Anyone can browse the catalogue, open a component and try changes in its code — nothing is
+            saved. Making a namespace needs an account: sign in from the top right.
           </p>
         </card>
         <!-- /if -->
