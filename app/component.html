@@ -41,14 +41,7 @@
           <!-- else -->
           <crow vertical left g-3>
             <breadcrumb><a href="/" secondary>Browse</a><span current>@[namespace]</span></breadcrumb>
-            <crow left g-2 wrap>
-              <h1>@[component?.title]</h1>
-              <button tertiary title="Copy the tag" onclick="$.copy()"><icon copy></icon></button>
-              <button tertiary title="Pin to this version" disabled="@[!user]" active="@[pinned]" onclick="$.pinned = !$.pinned"><icon pin></icon></button>
-              <!-- if !user -->
-              <span sm text-muted>For pinning a version, log in</span>
-              <!-- /if -->
-            </crow>
+            <h1>@[component?.title]</h1>
             <p lead max-w-160>@[component?.description]</p>
             <crow left g-3 wrap>
               <badge secondary>@[component?.category]</badge>
