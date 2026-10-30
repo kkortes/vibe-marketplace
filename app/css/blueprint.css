@@ -571,15 +571,20 @@ tabs[versions] > tab[active] {
   background-color: var(--card);
 }
 
-tabs[versions] > tab[new] {
-  border-color: var(--border);
-  border-style: dotted dotted solid;
-}
-
 tabs[versions] > tab {
   flex-shrink: 0;
   width: calc(var(--unit) * 24);
   height: calc(var(--unit) * 12);
+}
+
+tabs[namespaces] > tab {
+  width: auto;
+  padding-inline: calc(var(--unit) * 6);
+}
+
+tabs[namespaces] > tab[new] {
+  outline: 1px dotted var(--border);
+  outline-offset: calc(var(--unit) * -2);
 }
 
 :is(code, badge) {
