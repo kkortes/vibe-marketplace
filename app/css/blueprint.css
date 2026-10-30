@@ -67,7 +67,8 @@ blueprint {
   --cell: calc(var(--grid-size) / 2);
   --line: linear-gradient(var(--border), var(--border));
   --gutter: calc(100% - round(down, 100% - var(--grid-size), var(--grid-size)));
-  --inset: calc(var(--unit) * 6);
+  --pad: calc(var(--unit) * 6);
+  --inset: var(--pad);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -152,7 +153,7 @@ box {
   align-items: flex-start;
   align-self: stretch;
   gap: var(--cell);
-  padding-block: var(--cell);
+  padding-block: var(--pad);
   height: calc-size(auto, round(up, size, var(--cell)));
 }
 
