@@ -66,11 +66,12 @@ html {
 blueprint {
   --cell: calc(var(--grid-size) / 2);
   --line: linear-gradient(var(--border), var(--border));
-  --gutter: calc(100% - round(down, 100% - var(--grid-size), var(--grid-size)));
+  --gutter: calc(100cqw - round(down, 100cqw - var(--grid-size), var(--grid-size)));
   --pad: calc(var(--unit) * 6);
   --inset: var(--pad);
   display: flex;
   flex-direction: column;
+  container-type: inline-size;
   position: relative;
   min-height: 100dvh;
   isolation: isolate;
@@ -85,7 +86,8 @@ blueprint::before {
   mask: url(fade.svg) round(nearest, 50%, var(--grid-size)) 0 / calc(var(--grid-size) * 43) calc(var(--grid-size) * 28) no-repeat;
 }
 
-blueprint::after {
+blueprint::after,
+sheet sticky::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -119,16 +121,15 @@ sheet sticky {
   z-index: 2;
   order: 0;
   align-self: stretch;
-  margin-inline: calc(var(--inset) * -1);
-  padding: var(--pad) var(--inset);
+  margin-inline: calc((var(--grid-size) + var(--inset)) * -1) calc((var(--gutter) + var(--inset)) * -1);
+  padding: var(--pad) calc(var(--gutter) + var(--inset)) var(--pad) calc(var(--grid-size) + var(--inset));
   height: calc-size(auto, round(up, size, var(--cell)));
-  box-shadow: inset 1px 0 var(--border);
 }
 
 sheet sticky > divider {
   position: absolute;
   top: 0;
-  inset-inline: 0;
+  inset-inline: var(--grid-size) var(--gutter);
   margin: 0;
   transition: top 300ms var(--ease-out);
 }
