@@ -11,16 +11,14 @@
   <script async src="https://accounts.google.com/gsi/client"></script>
 
   <script>
-    // This page answers both /component.html?c=<namespace>/<slug> and the bare
-    // /<namespace>/<slug>, so vibe is told where its manifest lives instead of
-    // deriving it from a path that has none.
+    // The Worker serves this page at /<namespace>/<slug>, a path vibe would
+    // derive no manifest from, so it is told where the manifest lives.
     window.__MANIFEST__ = '/vibe-hyperspeed/component.html.manifest.js';
 
     // The card a visitor clicked carries this name on the catalogue, so the
     // browser morphs it into the main box. It has to be set before the first
     // paint, which is earlier than any module runs.
-    const c = new URLSearchParams(location.search).get('c') || location.pathname.slice(1);
-    document.documentElement.style.setProperty('--main', `c-${c.replace('/', '-')}`);
+    document.documentElement.style.setProperty('--main', `c-${location.pathname.slice(1).replace('/', '-')}`);
   </script>
 
   <script type="module">

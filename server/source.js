@@ -42,6 +42,8 @@ const revision = async (c, namespace, slug, version) => {
   return c.html(found.html);
 };
 
+app.get('/:namespace/:slug/edit', (c) => c.env.ASSETS.fetch(new URL('/edit', c.req.url)));
+
 app.get('/:namespace/:slug/:pin', (c) => {
   const [, version] = c.req.param('pin').match(PINNED) || [];
   if (!version) return c.notFound();

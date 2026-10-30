@@ -2,9 +2,11 @@ import codie from '/modules/@ape-egg/codie/codie.js';
 
 import { call } from '/js/ws.js';
 
-const params = new URLSearchParams(location.search);
-const target = params.get('c');
-const [namespace, slug] = target ? target.split('/') : [params.get('ns') || '', ''];
+// A new revision opens at /<namespace>/<slug>/edit; a new component opens at
+// /edit.html?ns=<namespace>.
+const [, editing, editingSlug] = location.pathname.match(/^\/([^/]+)\/([^/]+)\/edit$/) || [];
+const namespace = editing || new URLSearchParams(location.search).get('ns') || '';
+const slug = editingSlug || '';
 
 const STARTER = `<script type="module">
   import component from '@ape-egg/vibe/component';

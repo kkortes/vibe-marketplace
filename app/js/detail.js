@@ -4,10 +4,9 @@ import { SOURCE_URL } from '/js/env.js';
 import { address, source } from '/js/pin.js';
 import { call } from '/js/ws.js';
 
-// The page is reached as /component.html?c=<namespace>/<slug> or as the bare
-// /<namespace>/<slug> the Worker serves it at.
+// The Worker serves this page at the component's own address, /<namespace>/<slug>.
 const params = new URLSearchParams(location.search);
-const [namespace, slug] = (params.get('c') || location.pathname.slice(1)).split('/');
+const [namespace, slug] = location.pathname.slice(1).split('/');
 
 const readable = (value) => JSON.stringify(value, null, 2);
 

@@ -10,6 +10,12 @@
   <link rel="stylesheet" href="/modules/@ape-egg/codie/codie.css" />
   <script async src="https://accounts.google.com/gsi/client"></script>
 
+  <script>
+    // The Worker serves this page at /<namespace>/<slug>/edit, a path vibe would
+    // derive no manifest from, so it is told where the manifest lives.
+    window.__MANIFEST__ = '/vibe-hyperspeed/edit.html.manifest.js';
+  </script>
+
   <script type="module">
     import boot from '/js/boot.js';
     import { load, state } from '/js/editor.js';
