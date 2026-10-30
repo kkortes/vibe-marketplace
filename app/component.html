@@ -41,7 +41,13 @@
           <tab active="@[n === tab]" onclick="$.show(@[n])">v@[n]</tab>
           <!-- /each -->
         </tabs>
+        <!-- if !user -->
+        <button tertiary title="Try changes in the code — nothing is saved" active="@[coding]" onclick="$.coding = !$.coding"><icon embed></icon>Code</button>
+        <!-- else if $.owns() -->
         <button tertiary title="Edit the code" active="@[coding]" onclick="$.coding = !$.coding"><icon pencil></icon>Edit</button>
+        <!-- else -->
+        <button tertiary title="Clone into a namespace of your own and edit" active="@[coding]" onclick="$.coding = !$.coding"><icon fork></icon>Clone &amp; edit</button>
+        <!-- /if -->
         <button tertiary title="Close" onclick="$.close()"><icon cross></icon>Close</button>
       </versions>
       <slider>

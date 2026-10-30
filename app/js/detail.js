@@ -78,6 +78,11 @@ export const state = {
   // whatever was published last and carries no hash.
   tab: 0,
   tags: [],
+  mine: [],
+
+  owns() {
+    return this.mine.some(({ slug }) => slug === this.namespace);
+  },
 
   showing() {
     return this.version || this.component?.latest || 0;
@@ -198,6 +203,15 @@ export const state = {
 };
 
 export const load = async () => {
+  if (window.$.user) window.$.mine = await call('auth/namespaces/mine');
+
   await window.$.show(hashed() || Number(params.get('v')) || 0);
   addEventListener('hashchange', () => window.$.show(hashed()));
+
+  window.$.on(
+    'afterUpdate',
+    async (current, previous) =>
+      current.user !== previous.user &&
+      (window.$.mine = current.user ? await call('auth/namespaces/mine') : []),
+  );
 };
