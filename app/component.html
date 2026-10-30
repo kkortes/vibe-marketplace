@@ -106,18 +106,15 @@
             <section props inert="@[coding]">
               <h6>Props</h6>
               <!-- if props.length -->
-              <p text-muted>Change a value and the preview above re-renders as you type.</p>
-
               <table>
                 <tbody>
                   <!-- each props as prop (prop.name) -->
                   <tr>
-                    <td px-0 py-4>
+                    <td py-4>
                       <crow vertical left g-2>
                         <crow left g-2 wrap w-full>
                           <code>@[prop.name]</code>
                           <badge bg-hollow>@[prop.type]</badge>
-                          <span sm text-muted ml-auto>default @[prop.default]</span>
                         </crow>
                         <p text-muted>@[prop.description]</p>
         
@@ -133,7 +130,7 @@
                         <input type="checkbox" role="switch" checked="@[values[prop.name]]"
                           onchange="$.values['@[prop.name]'] = event.currentTarget.checked" />
                         <!-- else if prop.type === 'number' -->
-                        <input type="number" w-full value="@[values[prop.name]]"
+                        <input type="number" w-full placeholder='Defaults to "@[prop.default]"' value="@[values[prop.name]]"
                           oninput="$.values['@[prop.name]'] = Number(this.value)" />
                         <!-- else if prop.type === 'json' -->
                         <textarea rows="7" spellcheck="false" w-full value="@[drafts[prop.name]]"
@@ -142,7 +139,7 @@
                         <p text-red>Not valid JSON yet — the preview is still on the last value that parsed.</p>
                         <!-- /if -->
                         <!-- else -->
-                        <input type="text" w-full value="@[values[prop.name]]" oninput="$.values['@[prop.name]'] = this.value" />
+                        <input type="text" w-full placeholder='Defaults to "@[prop.default]"' value="@[values[prop.name]]" oninput="$.values['@[prop.name]'] = this.value" />
                         <!-- /if -->
                       </crow>
                     </td>
