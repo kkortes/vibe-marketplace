@@ -9,3 +9,4 @@ compiled
 .claude/*
 !.claude/launch.json
 .wrangler
+.eave/
