@@ -42,7 +42,7 @@
             </p>
           </crow>
 
-          <card vertical g-4 p="12" sm:p="6" f-1 overflow-hidden>
+          <card vertical g-4 p="12" sm:p="6" f-1 overflow-hidden paper>
             <h6>Rendered from that tag</h6>
             <component src="@[featured]" label="Items" step="1"></component>
           </card>
@@ -82,7 +82,7 @@
       <catalogue w-full>
         <!-- each matches as comp (comp.namespace + '/' + comp.slug) -->
         <a href="/component.html?c=@[comp.namespace]/@[comp.slug]" secondary flex>
-          <card f-1 p-6 hover>
+          <card f-1 p-6 hover paper>
             <crow up left g-4 f-1>
               <card vertical w-12 h-12 f-0 p-0><icon @[comp.icon] w="6" h="6" text-primary></icon></card>
               <crow vertical left up g="1.5" f-1 h-full>

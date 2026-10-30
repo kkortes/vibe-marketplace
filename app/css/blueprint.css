@@ -1,6 +1,10 @@
 [stylecheat] {
   --grid-unit: 8px;
   --radius: 0px;
+}
+
+[stylecheat],
+[paper] {
   --background: oklch(0.965 0.018 250);
   --foreground: oklch(0.3 0.11 260);
   --card: oklch(0.985 0.01 250);
@@ -16,8 +20,14 @@
   --border: oklch(0.48 0.12 258 / 0.35);
   --input: oklch(0.99 0.006 250);
   --sidebar-foreground: var(--foreground);
+  --typography-foreground: oklch(from var(--foreground) l c h / 0.9);
   --shadow-color: oklch(0.35 0.1 260);
+  --glare: oklch(1 0 0 / 0.8);
   --slate: oklch(0.55 0.06 255);
+}
+
+[paper] {
+  --card: oklch(1 0 0);
 }
 
 [stylecheat].dark {
@@ -99,7 +109,8 @@ box {
 }
 
 divider {
-  position: relative;
+  position: sticky;
+  top: calc(var(--unit) * 12);
   z-index: 2;
   align-self: stretch;
   height: 1px;
@@ -108,8 +119,6 @@ divider {
 }
 
 blueprint > divider {
-  position: sticky;
-  top: calc(var(--unit) * 12);
   margin-inline: var(--grid-size) var(--gutter);
 }
 
@@ -123,7 +132,7 @@ divider::after {
   width: 8px;
   height: 8px;
   border: 1px solid var(--border);
-  background: var(--background);
+  background: oklch(1 0 0);
 }
 
 divider::after {
