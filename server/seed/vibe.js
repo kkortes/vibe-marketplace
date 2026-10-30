@@ -34,8 +34,6 @@ const counter = {
     align-items: center;
     gap: calc(var(--unit, 4px) * 3);
     padding: calc(var(--unit, 4px) * 6);
-    border: 1px solid var(--border, #e4e4e7);
-    border-radius: var(--radius, 8px);
   }
 
   counter-value {
@@ -85,8 +83,6 @@ const counter = {
     align-items: center;
     gap: calc(var(--unit, 4px) * 3);
     padding: calc(var(--unit, 4px) * 6);
-    border: 1px solid var(--border, #e4e4e7);
-    border-radius: var(--radius, 8px);
   }
 
   counter-label {
@@ -155,8 +151,6 @@ const counter = {
     align-items: center;
     gap: calc(var(--unit, 4px) * 3);
     padding: calc(var(--unit, 4px) * 6);
-    border: 1px solid var(--border, #e4e4e7);
-    border-radius: var(--radius, 8px);
   }
 
   counter-label {
@@ -305,8 +299,6 @@ const statCard = {
     flex-direction: column;
     gap: calc(var(--unit, 4px) * 1);
     padding: calc(var(--unit, 4px) * 5);
-    border: 1px solid var(--border, #e4e4e7);
-    border-radius: var(--radius, 8px);
     min-width: calc(var(--unit, 4px) * 44);
   }
 
@@ -352,8 +344,6 @@ const statCard = {
     flex-direction: column;
     gap: calc(var(--unit, 4px) * 1);
     padding: calc(var(--unit, 4px) * 5);
-    border: 1px solid var(--border, #e4e4e7);
-    border-radius: var(--radius, 8px);
     min-width: calc(var(--unit, 4px) * 44);
   }
 
@@ -528,8 +518,6 @@ const copyButton = {
 
   copy-row code {
     padding: calc(var(--unit, 4px) * 2) calc(var(--unit, 4px) * 3);
-    border-radius: var(--radius, 8px);
-    background: color-mix(in oklab, currentColor 6%, transparent);
     font-size: calc(var(--unit, 4px) * 3.5);
   }
 </style>
