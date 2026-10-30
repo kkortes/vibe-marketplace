@@ -113,44 +113,44 @@
                   <!-- each props as prop (prop.name) -->
                   <tr>
                     <td py-4>
-                      <crow vertical left g-2>
-                        <crow left g-2 wrap w-full>
+                      <crow justify-between g-4 w-full>
+                        <crow left g-2>
                           <code>@[prop.name]</code>
                           <badge bg-hollow>@[prop.type]</badge>
                         </crow>
-                        <p text-muted>@[prop.description]</p>
-        
-                        <!-- if prop.type === 'select' -->
-                        <label w-full>
-                          <select w-full onchange="$.values['@[prop.name]'] = this.value">
-                            <!-- each prop.options as choice -->
-                            <option value="@[choice]" selected="@[values[prop.name] === choice]">@[choice]</option>
-                            <!-- /each -->
-                          </select>
-                        </label>
-                        <!-- else if prop.type === 'boolean' -->
-                        <input type="checkbox" role="switch" checked="@[values[prop.name]]"
-                          onchange="$.values['@[prop.name]'] = event.currentTarget.checked" />
-                        <!-- else if prop.type === 'number' -->
-                        <input type="number" w-full placeholder='Defaults to "@[prop.default]"' value="@[values[prop.name]]"
-                          oninput="$.values['@[prop.name]'] = Number(this.value)" />
-                        <!-- else if prop.type === 'json' -->
-                        <textarea rows="7" spellcheck="false" w-full value="@[drafts[prop.name]]"
-                          oninput="$.setJson('@[prop.name]', this.value)"></textarea>
-                        <!-- if invalid[prop.name] -->
-                        <p text-red>Not valid JSON yet — the preview is still on the last value that parsed.</p>
-                        <!-- /if -->
-                        <!-- else -->
-                        <input type="text" w-full placeholder='Defaults to "@[prop.default]"' value="@[values[prop.name]]" oninput="$.values['@[prop.name]'] = this.value" />
-                        <!-- /if -->
+                        <field>
+                          <!-- if prop.type === 'select' -->
+                          <label w-full>
+                            <select w-full onchange="$.values['@[prop.name]'] = this.value">
+                              <!-- each prop.options as choice -->
+                              <option value="@[choice]" selected="@[values[prop.name] === choice]">@[choice]</option>
+                              <!-- /each -->
+                            </select>
+                          </label>
+                          <!-- else if prop.type === 'boolean' -->
+                          <input type="checkbox" role="switch" checked="@[values[prop.name]]"
+                            onchange="$.values['@[prop.name]'] = event.currentTarget.checked" />
+                          <!-- else if prop.type === 'number' -->
+                          <input type="number" w-full placeholder='Defaults to "@[prop.default]"' value="@[values[prop.name]]"
+                            oninput="$.values['@[prop.name]'] = Number(this.value)" />
+                          <!-- else if prop.type === 'json' -->
+                          <textarea rows="7" spellcheck="false" w-full value="@[drafts[prop.name]]"
+                            oninput="$.setJson('@[prop.name]', this.value)"></textarea>
+                          <!-- else -->
+                          <input type="text" w-full placeholder='Defaults to "@[prop.default]"' value="@[values[prop.name]]" oninput="$.values['@[prop.name]'] = this.value" />
+                          <!-- /if -->
+                        </field>
                       </crow>
+                      <!-- if invalid[prop.name] -->
+                      <p text-red>Not valid JSON yet — the preview is still on the last value that parsed.</p>
+                      <!-- /if -->
                     </td>
                   </tr>
                   <!-- /each -->
                 </tbody>
               </table>
 
-              <button tertiary onclick="$.reset()">Reset to defaults</button>
+              <button tertiary w-full onclick="$.reset()"><icon reset></icon>Reset to defaults</button>
               <!-- if $.structured() -->
               <p text-muted>
                 An array or an object has no literal form an attribute can hold, so a json prop is passed
