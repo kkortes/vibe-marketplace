@@ -694,6 +694,11 @@ card[phantom] {
   outline-offset: calc(var(--unit) * -2);
 }
 
+card[warning] {
+  --border: var(--yellow);
+  border-radius: var(--unit);
+}
+
 section[about] textarea {
   display: block;
   width: 100%;
