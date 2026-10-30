@@ -7,64 +7,80 @@
   animation-timing-function: var(--ease-in-out);
 }
 
+@font-face {
+  font-family: 'Geist';
+  src: url(../fonts/Geist-Variable.woff2) format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 [stylecheat] {
   --grid-unit: 8px;
   --radius: 0px;
+  --ink: oklch(0.16 0.02 265);
+  --signal: oklch(0.89 0.17 98);
+  --font-body: var(--font-sans);
 }
 
 [stylecheat],
 [paper] {
-  --background: oklch(0.965 0.018 250);
-  --foreground: oklch(0.3 0.11 260);
-  --card: oklch(0.985 0.01 250);
-  --popover: oklch(0.99 0.008 250);
+  --background: oklch(0.975 0.004 265);
+  --foreground: var(--ink);
+  --card: oklch(1 0 0);
+  --popover: oklch(1 0 0);
   --popover-foreground: var(--foreground);
-  --primary: oklch(0.48 0.17 260);
-  --primary-foreground: oklch(0.98 0.01 250);
-  --secondary: oklch(0.93 0.025 250);
+  --primary: oklch(0.5 0.24 264);
+  --primary-foreground: oklch(1 0 0);
+  --primary-text: var(--primary);
+  --secondary: oklch(0.94 0.006 265);
   --secondary-foreground: var(--foreground);
-  --secondary-hover: oklch(0.9 0.035 250);
-  --muted: oklch(0.94 0.02 250);
-  --muted-foreground: oklch(0.5 0.07 258);
-  --border: oklch(0.48 0.12 258 / 0.35);
-  --input: oklch(0.99 0.006 250);
+  --secondary-hover: oklch(0.9 0.01 265);
+  --muted: oklch(0.95 0.006 265);
+  --muted-foreground: oklch(0.42 0.03 265);
+  --border: oklch(0.16 0.02 265 / 0.9);
+  --input: oklch(1 0 0);
   --sidebar-foreground: var(--foreground);
-  --typography-foreground: oklch(from var(--foreground) l c h / 0.9);
-  --shadow-color: oklch(0.35 0.1 260);
-  --glare: oklch(1 0 0 / 0.8);
-  --slate: oklch(0.55 0.06 255);
+  --typography-foreground: var(--foreground);
+  --shadow-color: var(--ink);
+  --shadow-xs: none;
+  --glare: transparent;
+  --slate: oklch(0.55 0.03 265);
 }
 
 [paper] {
-  --card: oklch(1 0 0);
   --sidebar: var(--background);
-  --primary-text: var(--primary);
-  --primary-hover: oklch(from var(--primary) calc(l - 0.05) c h);
+  --primary-hover: oklch(from var(--primary) calc(l - 0.06) c h);
   --ring-inset: inset 0 0 0 var(--hairline) var(--border);
-  --focus-ring: 0 0 0 calc(var(--unit) * 0.75) oklch(from var(--primary) l c h / 0.35);
+  --focus-ring: 0 0 0 2px var(--primary);
 }
 
 [stylecheat].dark {
-  --background: oklch(0.29 0.095 260);
-  --foreground: oklch(0.96 0.02 240);
-  --card: oklch(0.32 0.1 260);
-  --popover: oklch(0.36 0.1 260);
-  --primary: oklch(0.88 0.08 220);
-  --primary-foreground: oklch(0.27 0.09 260);
-  --secondary: oklch(0.36 0.1 260);
-  --secondary-hover: oklch(0.4 0.1 260);
-  --muted: oklch(0.33 0.09 260);
-  --muted-foreground: oklch(0.8 0.05 240);
-  --border: oklch(0.9 0.05 230 / 0.35);
-  --input: oklch(0.26 0.09 260);
-  --typography-foreground: oklch(0.92 0.025 240);
-  --shadow-color: oklch(0.12 0.06 260);
-  --slate: oklch(0.8 0.05 240);
+  --background: oklch(0.13 0.015 265);
+  --foreground: oklch(0.97 0.005 265);
+  --card: oklch(0.17 0.02 265);
+  --popover: oklch(0.2 0.02 265);
+  --primary: oklch(0.58 0.24 264);
+  --primary-foreground: oklch(1 0 0);
+  --primary-hover: oklch(from var(--primary) calc(l + 0.06) c h);
+  --primary-text: oklch(0.76 0.14 258);
+  --secondary: oklch(0.21 0.02 265);
+  --secondary-hover: oklch(0.26 0.025 265);
+  --muted: oklch(0.19 0.02 265);
+  --muted-foreground: oklch(0.78 0.02 265);
+  --border: oklch(0.97 0.005 265 / 0.85);
+  --input: oklch(0.1 0.015 265);
+  --shadow-color: oklch(0 0 0);
+  --focus-ring: 0 0 0 2px var(--primary-text);
+}
+
+::selection {
+  background-color: var(--signal);
+  color: var(--ink);
 }
 
 [grid][locked] {
-  --major: oklch(from var(--border) l c h / 0.176);
-  --minor: oklch(from var(--border) l c h / 0.064);
+  --major: oklch(from var(--border) l c h / 0.12);
+  --minor: oklch(from var(--border) l c h / 0.045);
   --lines:
     linear-gradient(to right, var(--major) 0 1px, transparent 1px),
     linear-gradient(to bottom, var(--major) 0 1px, transparent 1px),
@@ -127,8 +143,8 @@ sticky {
 }
 
 sticky[grid][locked] {
-  --major: oklch(from var(--border) l c h / 0.11);
-  --minor: oklch(from var(--border) l c h / 0.04);
+  --major: oklch(from var(--border) l c h / 0.08);
+  --minor: oklch(from var(--border) l c h / 0.03);
   background-image: none;
 }
 
@@ -158,10 +174,17 @@ sticky:not(sheet sticky) {
   }
 }
 
-sticky a strong {
-  font-size: calc(var(--unit) * 4.5);
+a[logo] strong {
+  display: flex;
+  align-items: center;
+  height: calc(var(--unit) * 12);
+  padding-inline: calc(var(--unit) * 4);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  font-size: calc(var(--unit) * 5);
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.02em;
 }
 
 sheet sticky {
@@ -248,8 +271,21 @@ dialog {
   color: inherit;
 }
 
-[stylecheat]:not(.dark) dialog::backdrop {
-  background-color: oklch(1 0 0 / 0.4);
+dialog::backdrop {
+  background-color: oklch(from var(--ink) l c h / 0.6);
+}
+
+:is(dialog, user-menu, publishing) card,
+card[notice] {
+  box-shadow:
+    inset 0 0 0 2px var(--border),
+    calc(var(--unit) * 2) calc(var(--unit) * 2) 0 var(--primary);
+}
+
+card[notice] {
+  --surface: var(--foreground);
+  color: var(--background);
+  font-weight: 600;
 }
 
 snippet {
@@ -403,13 +439,16 @@ section[preview] > h6 {
   left: calc(var(--pad) - var(--label) * 1.5);
   z-index: 1;
   padding: var(--label) calc(var(--label) * 1.5);
-  border: 1px solid var(--border);
-  background-color: var(--card);
 }
 
 crow[preview] {
   background-color: var(--input);
   overflow: hidden;
+}
+
+box[hero] crow[preview] {
+  --border: oklch(1 0 0);
+  background-color: var(--primary);
 }
 
 section[preview] > crow {
@@ -470,15 +509,12 @@ divider::after {
   translate: -50% -50%;
   width: 8px;
   height: 8px;
-  border: 1px solid var(--border);
-  background: oklch(1 0 0);
+  background: var(--primary);
   transition: box-shadow var(--slide);
 }
 
 blueprint:has(box[coding]) :is(blueprint > divider, box[main] + divider)::before {
-  box-shadow:
-    var(--opened) 0 0 -1px oklch(1 0 0),
-    var(--opened) 0 0 0 var(--border);
+  box-shadow: var(--opened) 0 0 var(--primary);
 }
 
 divider::after {
@@ -496,6 +532,38 @@ card[paper] component button[secondary] {
   background-color: var(--input);
   color: var(--primary);
   box-shadow: inset 0 0 0 1px var(--border);
+}
+
+catalogue > card {
+  box-shadow:
+    inset 0 0 0 1px var(--border),
+    inset 0 calc(var(--unit) * 1.5) var(--primary);
+  transition:
+    translate var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+catalogue > card[hover]:hover {
+  translate: calc(var(--unit) * -1) calc(var(--unit) * -1);
+  box-shadow:
+    inset 0 0 0 1px var(--border),
+    inset 0 calc(var(--unit) * 1.5) var(--primary),
+    calc(var(--unit) * 2) calc(var(--unit) * 2) 0 var(--primary);
+}
+
+:is(catalogue, section[about]) :is(h5, owner) + badge {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: none;
+  font-weight: 700;
+}
+
+:is(catalogue, section[about]) badge[active],
+:is(button, a)[tertiary][active] {
+  --active-background: var(--foreground);
+  --primary-text: var(--background);
+  background-color: var(--foreground);
+  color: var(--background);
 }
 
 card[paper] component button[secondary] {
@@ -579,6 +647,11 @@ catalogue {
     grid-template-columns: minmax(0, 1fr);
     grid-auto-rows: auto;
   }
+
+  box[hero] h1 {
+    font-size: calc(var(--unit) * 10);
+    line-height: calc(var(--unit) * 11);
+  }
 }
 
 icon[copy] {
@@ -617,8 +690,11 @@ tabs[versions]::after {
   order: -1;
 }
 
-tabs[versions] > tab[active] {
-  background-color: var(--card);
+tabs[primary][versions] > tab[active] {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 700;
 }
 
 tabs[versions] > tab {
@@ -666,9 +742,47 @@ tabs[namespaces] > tab[new]:hover::before {
   transform: scale(0.95);
 }
 
+h1 {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+box[hero] h1 {
+  font-size: calc(var(--unit) * 15);
+  line-height: calc(var(--unit) * 15);
+}
+
+h5 {
+  font-weight: 700;
+}
+
 h6 {
+  width: fit-content;
+  padding: var(--unit) calc(var(--unit) * 2);
+  background-color: var(--foreground);
+  color: var(--background);
+  font-size: calc(var(--unit) * 3);
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+}
+
+mark {
+  padding-inline: calc(var(--unit) * 1.5);
+  background-color: var(--signal);
+  color: var(--ink);
+  box-decoration-break: clone;
+}
+
+:is(tags, sticky, dialog) crow > span[text-muted] {
+  font-size: calc(var(--unit) * 3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+button:is([primary], [secondary], [tertiary]) {
+  font-weight: 600;
 }
 
 publishing {
@@ -695,8 +809,10 @@ card[phantom] {
 }
 
 card[warning] {
-  --border: var(--yellow);
-  border-radius: var(--unit);
+  --surface: var(--signal);
+  color: var(--ink);
+  box-shadow: none;
+  font-weight: 500;
 }
 
 section[about] textarea {
