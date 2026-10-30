@@ -59,7 +59,6 @@ export const state = {
   previewSource: '',
   pinned: false,
   missing: '',
-  origin: SOURCE_URL,
   coding: false,
   // Newest first: the strip lays them out reversed, so it reads 1 to latest and
   // opens scrolled to the latest.
