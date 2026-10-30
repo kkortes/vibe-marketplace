@@ -28,6 +28,10 @@ Vibe and Stylecheat and nothing else.
   deploy script.
 - `GOOGLE_CLIENT_ID` is a plain `vars` entry in `wrangler.jsonc`. A client id is
   public; the browser half carries the same value in `app/js/auth.js`.
+- Every pull request branch gets a Cloudflare preview bound to the
+  `viberary-preview` D1 (`previews` in `wrangler.jsonc`), and
+  `.github/workflows/preview-cleanup.yml` deletes it when the pull request
+  closes.
 
 ## Where components are stored
 
