@@ -370,7 +370,7 @@ container {
   margin-inline: round(down, (100% - var(--frame)) / 2, var(--cell)) auto;
 }
 
-catalogue badge,
+:is(catalogue, section[about]) badge,
 card[paper] component button[secondary] {
   background-color: var(--input);
   color: var(--primary);
