@@ -9,62 +9,60 @@
 
 [stylecheat] {
   --grid-unit: 8px;
-  --radius: 0px;
-}
-
-[stylecheat],
-[paper] {
-  --background: oklch(0.965 0.018 250);
-  --foreground: oklch(0.3 0.11 260);
-  --card: oklch(0.985 0.01 250);
-  --popover: oklch(0.99 0.008 250);
-  --popover-foreground: var(--foreground);
-  --primary: oklch(0.48 0.17 260);
-  --primary-foreground: oklch(0.98 0.01 250);
-  --secondary: oklch(0.93 0.025 250);
-  --secondary-foreground: var(--foreground);
-  --secondary-hover: oklch(0.9 0.035 250);
-  --muted: oklch(0.94 0.02 250);
-  --muted-foreground: oklch(0.5 0.07 258);
-  --border: oklch(0.48 0.12 258 / 0.35);
-  --input: oklch(0.99 0.006 250);
-  --sidebar-foreground: var(--foreground);
-  --typography-foreground: oklch(from var(--foreground) l c h / 0.9);
-  --shadow-color: oklch(0.35 0.1 260);
-  --glare: oklch(1 0 0 / 0.8);
-  --slate: oklch(0.55 0.06 255);
-}
-
-[paper] {
+  --radius: calc(var(--unit) * 5);
+  --radius-control: calc(var(--unit) * 2.5);
+  --depth: 1;
+  --background: oklch(0.975 0.006 255);
+  --foreground: oklch(0.27 0.03 262);
   --card: oklch(1 0 0);
-  --sidebar: var(--background);
-  --primary-text: var(--primary);
-  --primary-hover: oklch(from var(--primary) calc(l - 0.05) c h);
-  --ring-inset: inset 0 0 0 var(--hairline) var(--border);
-  --focus-ring: 0 0 0 calc(var(--unit) * 0.75) oklch(from var(--primary) l c h / 0.35);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.55 0.15 262);
+  --primary-foreground: oklch(0.99 0.005 255);
+  --secondary: oklch(0.95 0.012 255);
+  --secondary-foreground: var(--foreground);
+  --secondary-hover: oklch(0.92 0.018 255);
+  --muted: oklch(0.96 0.01 255);
+  --muted-foreground: oklch(0.52 0.03 260);
+  --border: oklch(0.45 0.05 260 / 0.16);
+  --input: oklch(0.985 0.004 255);
+  --sidebar-foreground: var(--foreground);
+  --typography-foreground: oklch(from var(--foreground) l c h / 0.88);
+  --shadow-color: oklch(0.35 0.06 262);
+  --glare: oklch(1 0 0 / 0.8);
+  --slate: oklch(0.6 0.03 258);
+  --tint: oklch(from var(--primary) l c h / 0.1);
+  --shadow-soft:
+    0 1px 2px oklch(from var(--shadow-color) l c h / calc(0.05 * var(--depth))),
+    0 calc(var(--unit) * 2) calc(var(--unit) * 6) calc(var(--unit) * -2) oklch(from var(--shadow-color) l c h / calc(0.1 * var(--depth)));
+  --shadow-raised:
+    0 1px 2px oklch(from var(--shadow-color) l c h / calc(0.06 * var(--depth))),
+    0 calc(var(--unit) * 4) calc(var(--unit) * 10) calc(var(--unit) * -3) oklch(from var(--shadow-color) l c h / calc(0.18 * var(--depth)));
 }
 
 [stylecheat].dark {
-  --background: oklch(0.29 0.095 260);
-  --foreground: oklch(0.96 0.02 240);
-  --card: oklch(0.32 0.1 260);
-  --popover: oklch(0.36 0.1 260);
-  --primary: oklch(0.88 0.08 220);
-  --primary-foreground: oklch(0.27 0.09 260);
-  --secondary: oklch(0.36 0.1 260);
-  --secondary-hover: oklch(0.4 0.1 260);
-  --muted: oklch(0.33 0.09 260);
-  --muted-foreground: oklch(0.8 0.05 240);
-  --border: oklch(0.9 0.05 230 / 0.35);
-  --input: oklch(0.26 0.09 260);
-  --typography-foreground: oklch(0.92 0.025 240);
-  --shadow-color: oklch(0.12 0.06 260);
-  --slate: oklch(0.8 0.05 240);
+  --depth: 3;
+  --background: oklch(0.2 0.025 262);
+  --foreground: oklch(0.94 0.012 250);
+  --card: oklch(0.245 0.03 262);
+  --popover: oklch(0.28 0.032 262);
+  --primary: oklch(0.8 0.1 245);
+  --primary-foreground: oklch(0.22 0.04 262);
+  --secondary: oklch(0.29 0.03 262);
+  --secondary-hover: oklch(0.33 0.035 262);
+  --muted: oklch(0.26 0.028 262);
+  --muted-foreground: oklch(0.74 0.03 250);
+  --border: oklch(0.85 0.04 250 / 0.13);
+  --input: oklch(0.22 0.027 262);
+  --typography-foreground: oklch(0.88 0.015 250);
+  --shadow-color: oklch(0.08 0.03 262);
+  --glare: oklch(1 0 0 / 0.04);
+  --slate: oklch(0.7 0.03 250);
 }
 
 [grid][locked] {
-  --major: oklch(from var(--border) l c h / 0.176);
-  --minor: oklch(from var(--border) l c h / 0.064);
+  --major: oklch(from var(--border) l c h / 0.12);
+  --minor: oklch(from var(--border) l c h / 0.045);
   --lines:
     linear-gradient(to right, var(--major) 0 1px, transparent 1px),
     linear-gradient(to bottom, var(--major) 0 1px, transparent 1px),
@@ -72,6 +70,10 @@
     linear-gradient(to bottom, var(--minor) 0 1px, transparent 1px);
   background-image: var(--lines);
   background-attachment: scroll;
+}
+
+card {
+  box-shadow: inset 0 0 0 1px var(--border), inset 0 2px var(--glare), var(--shadow-soft);
 }
 
 html {
@@ -82,7 +84,7 @@ blueprint {
   --cell: calc(var(--grid-size) / 2);
   --line: linear-gradient(var(--border), var(--border));
   --gutter: calc(100cqw - round(down, 100cqw - var(--grid-size), var(--grid-size)));
-  --pad: calc(var(--unit) * 6);
+  --pad: calc(var(--unit) * 8);
   --slide: 300ms cubic-bezier(0.7, 0, 0.2, 1);
   --opened: calc((100cqw - var(--grid-size) - var(--gutter)) / 2);
   --inset: var(--pad);
@@ -158,10 +160,25 @@ sticky:not(sheet sticky) {
   }
 }
 
-sticky a strong {
-  font-size: calc(var(--unit) * 4.5);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+sticky a:has(> strong) {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--unit) * 2.5);
+}
+
+sticky a > img {
+  width: calc(var(--unit) * 7);
+  border-radius: calc(var(--unit) * 2);
+  box-shadow: var(--shadow-soft);
+}
+
+sticky a > strong {
+  font-size: calc(var(--unit) * 5);
+  letter-spacing: -0.02em;
+}
+
+user-menu > button {
+  border-radius: 50%;
 }
 
 sheet sticky {
@@ -222,12 +239,14 @@ box[solid] {
   --code: 50cqw;
   position: relative;
   container-type: size;
-  height: round(nearest, 100dvh - var(--unit) * 24, var(--cell));
+  height: calc(round(nearest, 100dvh - var(--unit) * 24, var(--cell)) - var(--unit) * 8);
   overflow: hidden;
   gap: 0;
-  margin-inline: calc(var(--inset) * -1);
+  margin: calc(var(--unit) * 4) calc(var(--inset) * -1);
   padding: 0;
+  border-radius: var(--radius);
   background: var(--card);
+  box-shadow: var(--ring-inset), var(--shadow-soft);
 }
 
 box[solid] > scroll {
@@ -248,8 +267,13 @@ dialog {
   color: inherit;
 }
 
-[stylecheat]:not(.dark) dialog::backdrop {
-  background-color: oklch(1 0 0 / 0.4);
+dialog::backdrop {
+  background-color: oklch(from var(--shadow-color) l c h / 0.2);
+  backdrop-filter: blur(4px);
+}
+
+:is(dialog, user-menu, publishing, crow[position='fixed']) card {
+  box-shadow: inset 0 0 0 1px var(--border), inset 0 2px var(--glare), var(--shadow-raised);
 }
 
 snippet {
@@ -259,8 +283,8 @@ snippet {
 
 snippet > button {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: calc(var(--unit) * 2);
+  right: calc(var(--unit) * 2);
 }
 
 slider {
@@ -340,8 +364,9 @@ owner {
   align-items: center;
   gap: calc(var(--unit) * 2);
   font-size: calc(var(--unit) * 3);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--muted-foreground);
 }
 
@@ -370,6 +395,14 @@ section[about] tags {
 catalogue > card {
   position: relative;
   width: round(down, 100%, var(--unit));
+  transition:
+    translate 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out);
+}
+
+catalogue > card[hover]:hover {
+  translate: 0 calc(var(--unit) * -1);
+  box-shadow: inset 0 0 0 1px var(--border), inset 0 2px var(--glare), var(--shadow-raised);
 }
 
 catalogue h5 > a::after {
@@ -402,9 +435,10 @@ section[preview] > h6 {
   top: calc(var(--pad) - var(--label));
   left: calc(var(--pad) - var(--label) * 1.5);
   z-index: 1;
-  padding: var(--label) calc(var(--label) * 1.5);
-  border: 1px solid var(--border);
+  padding: var(--label) calc(var(--label) * 2);
+  border-radius: 9999px;
   background-color: var(--card);
+  box-shadow: var(--ring-inset), var(--shadow-soft);
 }
 
 crow[preview] {
@@ -419,7 +453,8 @@ section[preview] > crow {
 
 container crow[preview] {
   aspect-ratio: 5 / 3;
-  box-shadow: var(--ring-inset);
+  border-radius: var(--radius);
+  box-shadow: var(--ring-inset), var(--shadow-soft);
 }
 
 section[props] {
@@ -468,16 +503,17 @@ divider::after {
   top: 50%;
   left: 0;
   translate: -50% -50%;
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border: 1px solid var(--border);
-  background: oklch(1 0 0);
+  border-radius: 50%;
+  background: var(--card);
   transition: box-shadow var(--slide);
 }
 
 blueprint:has(box[coding]) :is(blueprint > divider, box[main] + divider)::before {
   box-shadow:
-    var(--opened) 0 0 -1px oklch(1 0 0),
+    var(--opened) 0 0 -1px var(--card),
     var(--opened) 0 0 0 var(--border);
 }
 
@@ -492,19 +528,18 @@ container {
 }
 
 :is(catalogue, section[about]) badge,
-card[paper] component button[secondary] {
-  background-color: var(--input);
+crow[preview] > card component button[secondary] {
+  background-color: var(--tint);
   color: var(--primary);
-  box-shadow: inset 0 0 0 1px var(--border);
 }
 
-card[paper] component button[secondary] {
+crow[preview] > card component button[secondary] {
   width: calc(var(--unit) * 12);
   padding-inline: 0;
 }
 
-card[paper] component button[secondary]:hover {
-  background-color: var(--secondary);
+crow[preview] > card component button[secondary]:hover {
+  background-color: oklch(from var(--primary) l c h / 0.18);
 }
 
 :where(codie, [codie]) {
@@ -599,15 +634,20 @@ icon[js] {
 
 versions {
   display: flex;
+  align-items: center;
   align-self: stretch;
   flex-shrink: 0;
-  background-color: var(--background);
+  gap: var(--unit);
+  padding: calc(var(--unit) * 2) calc(var(--unit) * 3);
+  background-color: var(--muted);
   box-shadow: inset 0 -1px var(--border);
 }
 
 tabs[versions] {
   flex: 1;
   flex-direction: row-reverse;
+  align-items: center;
+  gap: var(--unit);
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
@@ -615,16 +655,20 @@ tabs[versions] {
 
 tabs[versions]::after {
   order: -1;
-}
-
-tabs[versions] > tab[active] {
-  background-color: var(--card);
+  border-bottom: 0;
 }
 
 tabs[versions] > tab {
   flex-shrink: 0;
-  width: calc(var(--unit) * 24);
-  height: calc(var(--unit) * 12);
+  width: calc(var(--unit) * 20);
+  height: calc(var(--unit) * 10);
+  border: 0;
+  border-radius: 9999px;
+}
+
+tabs[versions] > tab[active] {
+  background-color: var(--card);
+  box-shadow: var(--ring-inset), var(--shadow-soft);
 }
 
 tabs[namespaces] {
@@ -637,28 +681,7 @@ tabs[namespaces] > tab {
 }
 
 tabs[namespaces] > tab[new] {
-  position: relative;
-  isolation: isolate;
-}
-
-tabs[namespaces] > tab[new]::before {
-  content: '';
-  position: absolute;
-  inset: calc(var(--unit) * 2);
-  z-index: -1;
   border: 1px dashed var(--border);
-}
-
-tabs[namespaces] > tab[new]:hover {
-  background-color: transparent;
-}
-
-tabs[namespaces] > tab[new]:hover::before {
-  background-color: oklch(from var(--foreground) l c h / 0.03);
-}
-
-:is(code, badge) {
-  border-radius: 0;
 }
 
 :is(a, .a):is(.primary, .secondary, [primary], [secondary]):active,
@@ -668,7 +691,7 @@ tabs[namespaces] > tab[new]:hover::before {
 
 h6 {
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
 }
 
 publishing {
@@ -695,8 +718,7 @@ card[phantom] {
 }
 
 card[warning] {
-  --border: var(--yellow);
-  border-radius: var(--unit);
+  --border: oklch(from var(--yellow) l c h / 0.6);
 }
 
 section[about] textarea {
