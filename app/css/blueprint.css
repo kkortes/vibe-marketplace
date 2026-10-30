@@ -182,11 +182,50 @@ box[main][intro] {
 }
 
 box[solid] {
+  --code: 50cqw;
+  position: relative;
+  container-type: size;
   height: round(nearest, 100dvh - var(--unit) * 24, var(--cell));
   overflow: hidden;
   margin-inline: calc(var(--inset) * -1);
-  padding-inline: var(--inset);
+  padding: 0;
   background: var(--background);
+}
+
+controls {
+  position: absolute;
+  top: var(--pad);
+  right: var(--inset);
+  z-index: 1;
+  display: flex;
+}
+
+slider {
+  display: flex;
+  height: 100%;
+  translate: calc(var(--code) * -1);
+  transition: translate 400ms var(--ease-in-out);
+}
+
+box[coding] slider {
+  translate: none;
+}
+
+slider > codie {
+  flex: 0 0 var(--code);
+  height: 100%;
+  min-block-size: 0;
+  overflow: hidden auto;
+  border-radius: 0;
+}
+
+pane {
+  display: flex;
+  flex: 0 0 100cqw;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--cell);
+  padding: var(--pad) var(--inset);
 }
 
 sheet:has(box[solid]) {
@@ -202,15 +241,9 @@ stage {
 
 columns {
   display: grid;
-  grid-template-columns: repeat(3, calc((100% - var(--cell)) / 2));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
   column-gap: var(--cell);
-  translate: calc(-50% - var(--cell) / 2);
-  transition: translate 400ms var(--ease-in-out);
-}
-
-box[coding] columns {
-  translate: none;
 }
 
 column {
@@ -280,15 +313,15 @@ card[paper] component button[secondary]:hover {
   background-color: var(--secondary);
 }
 
-:is(container, column) :is(codie, [codie]) {
+container [codie] {
   overflow: visible;
 }
 
-:is(container, column) :is(codie, [codie]) > * {
+:is(container, slider) :is(codie, [codie]) > * {
   min-width: 0;
 }
 
-:is(container, column) :is(codie, [codie]) .codie-layer {
+:is(container, slider) :is(codie, [codie]) .codie-layer {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -318,16 +351,13 @@ catalogue {
     --frame: 100%;
   }
 
-  columns {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--cell);
-    translate: none;
+  box[solid] {
+    --code: 100cqw;
   }
 
-  box:not([coding]) column:first-child {
-    display: none;
+  columns {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--cell);
   }
 
   catalogue {
