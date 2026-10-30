@@ -33,16 +33,18 @@
       <controls>
         <button tertiary title="Edit the code" active="@[coding]" onclick="$.coding = !$.coding"><icon pencil></icon></button>
       </controls>
-      <tabs primary versions>
-        <!-- each tabs as n -->
-        <tab active="@[n === version]" onclick="$.show(@[n])">@[n]</tab>
-        <!-- /each -->
-      </tabs>
+      <versions>
+        <tabs primary versions>
+          <!-- each tabs as n -->
+          <tab active="@[n === version]" onclick="$.show(@[n])">@[n]</tab>
+          <!-- /each -->
+        </tabs>
+        <button tertiary title="Close" onclick="$.close()"><icon cross></icon></button>
+      </versions>
       <slider>
         <codie highlight-html inert="@[!coding]"></codie>
         <pane>
           <trail>
-            <button tertiary title="Back" onclick="$.close()"><icon chevron-left></icon></button>
             <a href="@[origin]/@[namespace]/@[slug].html" target="_blank" rel="noopener" secondary><span text-muted>@[origin]/@[namespace]/</span>@[slug]<span text-muted>.html</span></a>
             <crow>
               <button tertiary title="Copy the tag" onclick="$.copy()"><icon copy></icon></button>
