@@ -67,7 +67,7 @@ blueprint {
   --cell: calc(var(--grid-size) / 2);
   --line: linear-gradient(var(--border), var(--border));
   --gutter: calc(100% - round(down, 100% - var(--grid-size), var(--grid-size)));
-  --inset: calc(var(--unit) * 12);
+  --inset: calc(var(--unit) * 6);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -125,7 +125,7 @@ blueprint::after {
 
 sticky {
   z-index: 1;
-  padding-inline: calc(var(--grid-size) + var(--inset) / 2) var(--gutter);
+  padding-inline: calc(var(--grid-size) + var(--inset)) var(--gutter);
   background-color: oklch(from var(--background) l c h / 0.6);
   backdrop-filter: blur(16px) saturate(1.5);
 }
