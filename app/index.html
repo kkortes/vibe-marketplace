@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Viberary — components you point at</title>
+  <meta name="description"
+    content="A marketplace of Vibe components. Every one is plain HTML at a URL: one tag, no build step, no install." />
+  <link rel="stylesheet" href="/css/stylecheat.css" />
+  <link rel="stylesheet" href="/css/blueprint.css" />
+  <link rel="stylesheet" href="/modules/codie/codie.css" />
+  <script async src="https://accounts.google.com/gsi/client"></script>
+
+  <script>
+    // The Worker also serves this page at /tag/<name>, a path vibe would derive
+    // no manifest from, so it is told where the manifest lives.
+    window.__MANIFEST__ = '/vibe-hyperspeed/index.html.manifest.js';
+
+    // A visitor who has moved past the hero before gets the catalogue layout
+    // from the first paint, the search bar's line already under it.
+    localStorage.getItem('mkp-browsed') === 'true' && document.documentElement.setAttribute('browsed', '');
+  </script>
+
+  <script type="module">
+    import boot from '/js/boot.js';
+    import { load, state, edit, intro } from '/js/browse.js';
+
+    boot(state, load).on('ready', () => {
+      // Without the hero there is no tag to edit and nothing to collapse.
+      if (!window.$.hero) return;
+      edit();
+      intro();
+    });
+  </script>
+</head>
+
+<body stylecheat vibe-fouc>
+  <component src="/components/Layout.html">
+    <!-- if hero -->
+    <box main hero intro="@[!scrolled]">
+      <container>
+        <crow g-12 w-full sm:vertical>
+          <crow vertical left g-6 f-1 overflow-hidden>
+            <h1>Components for the web, without the ceremony.</h1>
+            <p lead max-w-160>
+              Browse and find beautiful looking HTML-components to use in your
+              <a href="https://vibe.korte.kim" target="_blank" rel="noopener" primary>Vibe</a>-powered app
+              - no install, no build step and nothing to keep in sync.
+            </p>
+            <p text-muted max-w-160>
+              Viberary lets you target a <code>#&lt;version-number&gt;</code> for a cached and stale version
+              of a component. Diving deeper you can use the
+              <a href="https://vibe.korte.kim/compiler/introduction.html" target="_blank" rel="noopener" primary>Vibe-compiler</a>
+              to download the HTML in your build step rather than relying on a dynamic fetch in runtime.
+            </p>
+            <card warning bg-yellow p-4 max-w-160>
+              <crow left up g-3>
+                <icon triangle-alert text-yellow></icon>
+                <span>
+                  Viberary is in early alpha and hosted simply for testing. The day this banner goes away,
+                  it is ready for production use. — 30 October 2026
+                </span>
+              </crow>
+            </card>
+          </crow>
+
+          <crow vertical g-6 f-1 overflow-hidden>
+            <template codie highlight-html vibe-dehydrate></template>
+            <crow grid locked center preview p="12" sm:p="6" w-full paper>
+              <card paper p-0>
+                <component src="@[demo.src]" label="@[demo.label]" step="@[demo.step]"></component>
+              </card>
+            </crow>
+          </crow>
+        </crow>
+      </container>
+    </box>
+    <!-- /if -->
+
+    <sticky grid locked auto-shadow>
+      <divider></divider>
+      <crow left g-6 wrap w-full>
+        <label f-1>
+          <input type="search" placeholder="Search components" value="@[query]"
+            oninput="$.query = this.value; $.filter()" />
+        </label>
+
+        <crow wrap>
+          <span text-muted>Auto tags</span>
+          <!-- each filters.auto as name -->
+          <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
+          <!-- /each -->
+          <span text-muted>User tags</span>
+          <!-- each filters.user as name -->
+          <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
+          <!-- /each -->
+        </crow>
+
+        <label flex g-2>
+          <input type="checkbox" role="switch" checked="@[all]" onchange="$.all = event.currentTarget.checked; $.filter()" />
+          All components
+        </label>
+      </crow>
+    </sticky>
+
+    <box>
+      <!-- if loading -->
+      <crow w-full py="12" text-muted>Loading the catalogue…</crow>
+      <!-- else -->
+      <!-- if matches.length -->
+      <component src="/components/Catalogue.html" items="@[matches]"></component>
+      <!-- else -->
+      <crow w-full py="12" text-muted>
+        <!-- if query -->Nothing matches “@[query]”.<!-- else -->No components published here yet.<!-- /if -->
+      </crow>
+      <!-- /if -->
+      <!-- /if -->
+    </box>
+  </component>
+</body>
+
+</html>

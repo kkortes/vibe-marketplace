@@ -1,0 +1,317 @@
+<script type="module">
+  import component from '/node_modules/@ape-egg/vibe/component.js';
+  component({});
+
+  let resolver = null;
+  let composer = null;
+  let uploader = null;
+
+  const payloadOf = (state) => ({
+    extra: state.extra,
+    count: Math.min(10, Math.max(1, Number(state.count) || 3)),
+    references: [
+      ...(state.drop?.selected ? [state.drop.path] : []),
+      ...state.images.filter((image) => image.selected).map((image) => image.path),
+    ],
+  });
+
+  const update = (patch) => {
+    const state = { ...$.promptModal, ...patch };
+    $.promptModal = { ...state, preview: composer(payloadOf(state)) };
+  };
+
+  window.promptModal = ({
+    title,
+    compose,
+    upload,
+    extra = '',
+    extraLabel = 'Extra context',
+    images = [],
+    count = 3,
+  }) =>
+    new Promise((resolve) => {
+      resolver = resolve;
+      composer = compose;
+      uploader = upload;
+      update({
+        open: true,
+        title: title || 'Prompt',
+        extra,
+        extraLabel,
+        count,
+        images,
+        drop: null,
+      });
+      // The count input is DOM-initialized: a value="@[…]" binding ships the raw
+      // marker in the compiled shell and number inputs warn on unparseable
+      // values. oninput still drives $.promptModal.count; this seeds the other
+      // direction once per open.
+      const input = document.querySelector('input[count-input]');
+      if (input) input.value = count;
+    });
+
+  const close = (payload) => {
+    $.promptModal = { ...$.promptModal, open: false };
+    resolver?.(payload);
+    resolver = composer = uploader = null;
+  };
+
+  window.promptModalCancel = () => close(null);
+
+  window.promptModalSubmit = () => {
+    const state = $.promptModal;
+    close({ ...payloadOf(state), instruction: state.preview });
+  };
+
+  window.promptModalExtra = (value) => update({ extra: value });
+
+  window.promptModalToggle = (image) =>
+    update({
+      images: $.promptModal.images.map((i) =>
+        i.path === image.path ? { ...i, selected: !i.selected } : i,
+      ),
+    });
+
+  window.promptModalDrop = async (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (!file || !uploader) return;
+    update({ drop: { ...(await uploader(file)), selected: true } });
+  };
+
+  window.promptModalDropToggle = () => {
+    const { drop } = $.promptModal;
+    if (drop) update({ drop: { ...drop, selected: !drop.selected } });
+  };
+</script>
+
+<modal-root fullscreen open="@[promptModal.open]">
+  <prompt-modal>
+    <prompt-modal-header>
+      <h3 cinzel m="0">@[promptModal.title]</h3>
+      <component src="/components/buttons/Cross.html" label="Close" onclick="promptModalCancel()">
+      </component>
+    </prompt-modal-header>
+
+    <prompt-modal-columns>
+      <prompt-modal-pane>
+        <prompt-modal-section grow>
+          <prompt-modal-label>Prompt — sent verbatim to the image model</prompt-modal-label>
+          <prompt-modal-dump>@[promptModal.preview]</prompt-modal-dump>
+        </prompt-modal-section>
+        <prompt-modal-section>
+          <prompt-modal-label>@[promptModal.extraLabel]</prompt-modal-label>
+          <textarea rows="8" oninput="promptModalExtra(this.value)">@[promptModal.extra]</textarea>
+        </prompt-modal-section>
+      </prompt-modal-pane>
+
+      <prompt-modal-pane>
+        <prompt-modal-section grow>
+          <prompt-modal-label
+            >Reference images — selected are attached to the request</prompt-modal-label
+          >
+          <prompt-modal-images>
+            <prompt-modal-drop
+              picked="@[promptModal.drop && promptModal.drop.selected]"
+              ondragover="event.preventDefault()"
+              ondrop="promptModalDrop(event)"
+              onclick="promptModalDropToggle()"
+            >
+              <!-- if promptModal.drop -->
+                <img data-src="@[promptModal.drop.url]" alt="dropped reference" />
+              <!-- else -->
+                <span>Drop an image here</span>
+              <!-- /if -->
+            </prompt-modal-drop>
+            <!-- each promptModal.images as image (image.path) -->
+              <prompt-modal-thumb
+                picked="@[image.selected]"
+                title="@[image.label]"
+                onclick="promptModalToggle(image)"
+              >
+                <img data-src="@[image.url]" alt="@[image.label]" />
+                <!-- if image.current -->
+                  <prompt-modal-thumb-badge>Current</prompt-modal-thumb-badge>
+                <!-- /if -->
+              </prompt-modal-thumb>
+            <!-- /each -->
+          </prompt-modal-images>
+        </prompt-modal-section>
+      </prompt-modal-pane>
+    </prompt-modal-columns>
+
+    <prompt-modal-footer>
+      <crow left g="2">
+        <prompt-modal-label>Parallel generations</prompt-modal-label>
+        <input
+          type="number"
+          min="1"
+          max="10"
+          value="3"
+          count-input
+          oninput="$.promptModal.count = this.value"
+        />
+      </crow>
+      <button primary onclick="promptModalSubmit()">Generate</button>
+    </prompt-modal-footer>
+  </prompt-modal>
+</modal-root>
+
+<style>
+  modal-root[fullscreen] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  prompt-modal {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--unit) * 4);
+    width: calc(100vw - var(--unit) * 8);
+    height: calc(100dvh - var(--unit) * 8);
+    padding: calc(var(--unit) * 5);
+    background: oklch(from var(--background) calc(l + 0.02) c h);
+    border-radius: calc(var(--unit) * 1);
+    box-shadow:
+      0 0 0 1px oklch(from var(--foreground) l c h / 0.1),
+      0 calc(var(--unit) * 4) calc(var(--unit) * 10) -2px var(--scrim-2);
+  }
+
+  prompt-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--unit) * 3);
+  }
+
+  prompt-modal-header [cross-button] {
+    width: calc(var(--unit) * 9);
+    height: calc(var(--unit) * 9);
+    font-size: calc(var(--unit) * 4);
+  }
+
+  prompt-modal-columns {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: calc(var(--unit) * 5);
+    flex: 1;
+    min-height: 0;
+  }
+
+  prompt-modal-pane {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--unit) * 4);
+    min-height: 0;
+  }
+
+  prompt-modal-section {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--unit) * 1.5);
+    min-height: 0;
+  }
+
+  prompt-modal-section[grow] {
+    flex: 1;
+  }
+
+  prompt-modal-label {
+    font-family: var(--font-accent);
+    font-size: calc(var(--unit) * 3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: oklch(from var(--foreground) l 0 h / 0.5);
+  }
+
+  prompt-modal-dump {
+    display: block;
+    flex: 1;
+    padding: calc(var(--unit) * 3);
+    overflow: auto;
+    font-family: monospace;
+    font-size: calc(var(--unit) * 2.75);
+    white-space: pre-wrap;
+    background: oklch(from var(--background) calc(l - 0.03) c h);
+    border-radius: calc(var(--unit) * 1);
+  }
+
+  prompt-modal-images {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: calc(var(--unit) * 2);
+    overflow: auto;
+  }
+
+  prompt-modal-thumb,
+  prompt-modal-drop {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    position: relative;
+    width: calc(var(--unit) * 24);
+    height: calc(var(--unit) * 30);
+    overflow: hidden;
+    cursor: pointer;
+    background: oklch(from var(--background) calc(l - 0.02) c h);
+    border: 2px solid transparent;
+    border-radius: calc(var(--unit) * 1);
+    transition: border-color 120ms;
+  }
+
+  prompt-modal-drop {
+    align-items: center;
+    text-align: center;
+    border: 2px dashed oklch(from var(--foreground) l c h / 0.25);
+    color: oklch(from var(--foreground) l 0 h / 0.5);
+    font-size: calc(var(--unit) * 3);
+    padding: calc(var(--unit) * 2);
+  }
+
+  prompt-modal-thumb:hover,
+  prompt-modal-drop:hover {
+    border-color: oklch(from var(--primary) l c h / 0.5);
+  }
+
+  prompt-modal-thumb[picked],
+  prompt-modal-drop[picked] {
+    border-color: var(--primary);
+  }
+
+  prompt-modal-thumb img,
+  prompt-modal-drop img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  prompt-modal-thumb-badge {
+    position: absolute;
+    top: var(--unit);
+    left: 50%;
+    translate: -50% 0;
+    padding: calc(var(--unit) * 0.5) calc(var(--unit) * 1.5);
+    font-family: var(--font-accent);
+    font-size: calc(var(--unit) * 2.25);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--background);
+    background: oklch(from var(--primary) l c h / 0.9);
+    border-radius: calc(var(--unit) * 0.5);
+  }
+
+  prompt-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--unit) * 3);
+  }
+
+  prompt-modal [count-input] {
+    min-width: calc(var(--unit) * 20);
+    width: calc(var(--unit) * 20);
+  }
+</style>

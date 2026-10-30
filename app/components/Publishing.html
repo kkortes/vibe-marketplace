@@ -1,0 +1,49 @@
+<!-- if unpublished -->
+<publishing position="fixed" r-6 b-6>
+  <!-- if !user -->
+  <button primary disabled><icon upload></icon>Publish component</button>
+  <tooltip>To edit a component you need to be logged in</tooltip>
+  <!-- else if $.owns() -->
+  <button primary onclick="$.ask()"><icon upload></icon>Publish component</button>
+  <tooltip>Publishing this version of the component will create a "v@[next]" version of it that's frozen and can never be removed</tooltip>
+  <!-- else -->
+  <!-- if picking -->
+  <user-backdrop position="fixed" t-0 r-0 b-0 l-0 onclick="$.picking = false"></user-backdrop>
+  <card position="absolute" b="14" r-0 w="52" p-2 g-1>
+    <span sm text-muted px-2 py-1>Put it under</span>
+    <!-- each mine as ns (ns.slug) -->
+    <button tertiary w-full onclick="$.carry('@[ns.slug]')">@[ns.slug]</button>
+    <!-- /each -->
+    <!-- if !mine.length -->
+    <p sm text-muted px-2>You own no namespace yet. <a href="/components" primary>Create one</a></p>
+    <!-- /if -->
+  </card>
+  <!-- /if -->
+  <button primary onclick="$.picking = !$.picking"><icon fork></icon>Open in my workspace</button>
+  <tooltip>Click to select what namespace to put it under</tooltip>
+  <!-- /if -->
+</publishing>
+<!-- /if -->
+
+<dialog publishing onclose="$.question = ''">
+  <card w="120" g-4 p-6>
+    <!-- if question === 'leave' -->
+    <h6>Your changes aren't published yet</h6>
+    <p>Navigating will discard your recent changes, are you sure?</p>
+    <crow right g-2 w-full>
+      <button tertiary onclick="$.dismiss()">Stay</button>
+      <button primary onclick="$.discard()">Discard changes</button>
+    </crow>
+    <!-- else if question === 'publish' -->
+    <h6>Publish @[unpublished?.namespace]/@[unpublished?.slug] v@[next]</h6>
+    <p>Are you sure? v@[next] is frozen the moment it lands and can never be edited or removed.</p>
+    <!-- if failure -->
+    <p text-red>@[failure]</p>
+    <!-- /if -->
+    <crow right g-2 w-full>
+      <button tertiary onclick="$.dismiss()">Cancel</button>
+      <button primary onclick="$.publish()">Publish</button>
+    </crow>
+    <!-- /if -->
+  </card>
+</dialog>

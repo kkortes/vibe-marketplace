@@ -3,13 +3,12 @@
   "version": "0.1.1",
   "type": "module",
   "scripts": {
-    "dev": "bun --watch index.js",
-    "start": "bun index.js"
+    "dev": "wrangler dev --port 1337",
+    "migrate": "wrangler d1 migrations apply viberary --local",
+    "seed": "bun seed.js"
   },
   "dependencies": {
-    "@ape-egg/async-await-websockets": "^3.7.1",
-    "dotenv": "^16.4.0",
-    "hono": "^4.12.3",
-    "mongodb": "^6.0.0"
+    "@ape-egg/async-await-websockets": "^3.9.0",
+    "hono": "^4.12.3"
   }
 }

@@ -1,0 +1,12 @@
+<blueprint grid locked>
+  <component src="/components/Topbar.html"></component>
+  <divider></divider>
+  <sheet vertical left up pb="24">
+    <slot></slot>
+  </sheet>
+  <!-- if notice -->
+  <crow position="fixed" l-0 r-0 b-6>
+    <card hover px-5 py-3 onclick="$.notice = ''">@[notice]</card>
+  </crow>
+  <!-- /if -->
+</blueprint>

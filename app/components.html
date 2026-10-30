@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Components — Viberary</title>
+  <link rel="stylesheet" href="/css/stylecheat.css" />
+  <link rel="stylesheet" href="/css/blueprint.css" />
+  <script async src="https://accounts.google.com/gsi/client"></script>
+
+  <script type="module">
+    import boot from '/js/boot.js';
+    import { load, state } from '/js/components.js';
+
+    boot(state, load);
+  </script>
+</head>
+
+<body stylecheat vibe-fouc>
+  <component src="/components/Layout.html">
+    <box main solid paper>
+      <!-- if user -->
+      <versions>
+        <tabs primary versions namespaces>
+          <tab active="@[!namespace]" onclick="$.namespace = ''">All</tab>
+          <!-- each mine as ns (ns.slug) -->
+          <tab active="@[ns.slug === namespace]" onclick="$.namespace = '@[ns.slug]'">@[ns.slug]</tab>
+          <!-- /each -->
+          <tab new onclick="$.compose()">New namespace</tab>
+        </tabs>
+      </versions>
+
+      <dialog namespace>
+        <card w="120" g-4 p-6>
+          <h6>New namespace</h6>
+          <p text-muted>
+            A namespace is your corner of the catalogue. Everything published under it is addressed by
+            <code>your-namespace/your-component.html</code>, so the slug becomes part of every address you publish.
+          </p>
+          <p>Once a component is published in a namespace, that namespace can no longer be deleted.</p>
+          <crow vertical left g="1.5" w-full>
+            <span sm text-muted>Slug</span>
+            <input type="text" w-full placeholder="acme" value="@[slug]" oninput="$.slug = this.value" />
+          </crow>
+          <label>
+            <input type="checkbox" role="switch" disabled />
+            Private <span text-muted>Coming soon</span>
+          </label>
+          <!-- if failure -->
+          <p text-red>@[failure]</p>
+          <!-- /if -->
+          <crow right g-2 w-full>
+            <button tertiary onclick="$.dismiss()">Cancel</button>
+            <button primary onclick="$.create()">Create</button>
+          </crow>
+        </card>
+      </dialog>
+      <!-- /if -->
+      <scroll>
+        <container>
+          <crow vertical left g-3 w-full>
+            <h1>Components</h1>
+            <!-- if user -->
+            <p lead max-w-160>
+              The namespaces your account owns and the components in them. A namespace is the first part of every address,
+              <code>your-namespace/your-component.html</code>.
+            </p>
+            <!-- else -->
+            <p lead max-w-160>
+              Viberary is a marketplace of Vibe components. Every component is plain HTML at its own address — point a
+              <code>&lt;component src&gt;</code> at it and it renders in your page.
+            </p>
+            <card w-full g-4 p-6>
+              <p text-muted>
+                Signed in, you can create namespaces, and under those namespaces create components. A namespace is the
+                first part of every address, <code>your-namespace/your-component.html</code>. Sign in from the top right.
+              </p>
+            </card>
+            <!-- /if -->
+          </crow>
+        </container>
+      </scroll>
+    </box>
+
+    <divider></divider>
+  </component>
+</body>
+
+</html>

@@ -2,6 +2,213 @@
 
 AI assistant guidance for working with this repository.
 
-## Git
+## What this is
 
-Never run `git add`, `git commit`, or `git push`. The user manages their own git workflow.
+A marketplace of Vibe components. A component is plain HTML at a URL; a consumer
+points a `<component src>` at it and it renders. The site itself is built with
+Vibe and Stylecheat and nothing else.
+
+## Hosting
+
+**Cloudflare, the whole stack: one Worker and one D1 database.**
+
+- The Worker is named `viberary` and `wrangler.jsonc` is its whole
+  configuration. It serves the front end, built into `compiled/`
+  (`bun run build`), as static assets, and runs `server/worker.js` for every
+  request no asset answers: the websocket at `/ws`, the component source at
+  `/<namespace>/<slug>.html`, and `/js/pin.js`, which goes through the Worker
+  first (`run_worker_first`) only so it carries CORS headers.
+- One origin serves all of it, so `ORIGIN` in `app/js/env.js` is the site, the
+  socket (`wss://…/ws`) and the component source alike. A namespace named like a
+  top-level asset folder or page would be shadowed by it, which is why `modules`,
+  `js`, `css`, `component`, `components`, `namespace` and `tag` are reserved —
+  `tag` because `/tag/<name>` is the frontpage filtered by that tag.
+- It is deployed with `bunx wrangler deploy` from the root, after
+  `bun run build`, to the developer's own Cloudflare account. There is no
+  deploy script.
+- `GOOGLE_CLIENT_ID` is a plain `vars` entry in `wrangler.jsonc`. A client id is
+  public; the browser half carries the same value in `app/js/auth.js`.
+
+## Where components are stored
+
+**In Cloudflare D1, bound to the Worker as `DB`. No component is ever a file of its own.**
+
+One D1 database, `viberary`. Its schema is `server/migrations/`, applied with
+`wrangler d1 migrations apply viberary` (`--local` for `wrangler dev`,
+`--remote` for the deployed one). D1 enforces foreign keys on its own. Four
+tables hold the catalogue; `users` and `sessions` hold Google sign-ins for
+`server/store.js`:
+
+| Table        | Holds | Mutable |
+|---|---|---|
+| `namespaces` | `slug`, `title`, `official`, `ownerId` | yes |
+| `components` | catalogue metadata per `namespace` + `slug`: `title`, `description`, `category`, `icon`, `latest`, `defaults`, `ownerId` | yes |
+| `revisions`  | one row per published version | **never** |
+| `tags`       | the auto tags (`app/js/tags.js`) of each component's latest revision, one row per tag, replaced on every publish so the frontpage can count them with `GROUP BY` | yes |
+
+**The source bytes of a component live in `revisions.html`** — a text column on
+the revision row, holding the component's markup exactly as published.
+There is no file per component, no object store, no CDN bucket. `server/source.js` reads
+that field and answers with it as `text/html`; that response *is* the component.
+
+A revision row is `{ namespace, slug, version, html, props, notes, authorId,
+authorName, createdAt }`. Revisions are insert-only. `revisions` has its primary
+key on `(namespace, slug, version)`, so a second write to a version that exists
+is an error rather than an edit — that key is what makes "frozen" a fact rather
+than a convention. Publishing bumps `components.latest` and inserts the new
+revision in one D1 batch, which is one transaction; it never updates an old one.
+
+D1 binds parameters by position only (`?` or `?NNN`), never by name.
+
+SQLite has no booleans or nested values: `components.defaults` and
+`revisions.props` are JSON text and `namespaces.official` is `0`/`1`. The
+decoders in `server/db.js` turn rows back into the shapes the client receives.
+
+`components.defaults` is a derived copy of the latest revision's prop defaults,
+kept so the catalogue can be listed in one call without fetching a revision per
+card. The frozen truth about props is `revisions.props`.
+
+The only files under `server/seed/` that look like components are inputs to the
+seed script: `server/seed/remote/*.html` are byte-for-byte copies of the
+webdev-game-stack remote components, read at seed time and written into
+`revisions.html` like any other publish. They are not served from disk.
+`server/seed.js` turns the catalogue into SQL and runs it through
+`wrangler d1 execute`.
+
+## Addresses and pinning
+
+- `GET /<namespace>/<slug>.html` — the latest revision. Short cache; it moves.
+- `GET /<namespace>/<slug>/vN.html` — revision N. Immutable cache; it cannot move.
+
+Without `.html` the same addresses are the website's pages: `/<namespace>/<slug>`
+is the component page, `/<namespace>` lists every component under it. Every list
+of components — the frontpage and `/<namespace>` — is
+`app/components/Catalogue.html`, handed the array as `items`.
+
+The address a visitor copies is `…/<slug>.html#vN`. A URL fragment is cut from a
+request before it is sent, so no server ever sees one — `js/pin.js` resolves it
+in the page into the version path above. The marketplace serves that resolver at
+`GET /js/pin.js` so a consumer needs one line to make the fragment form work.
+
+## Authentication
+
+**Google, and only Google, and it is stated rather than inherited.**
+
+- `server/worker.js` runs aaw through its Cloudflare entry,
+  `@ape-egg/async-await-websockets/cloudflare/index.js`, and passes it
+  `{ providers: [], store: store(env.DB) }`. `providers: []` registers no social
+  provider, so no HTTP `/auth/*` route exists. A Worker has no folder to scan,
+  so every event is listed by name in `server/worker.js`; a new file under
+  `server/events/` answers nothing until it is added there.
+- The only path to a session is this app's own `server/events/login/google.js`,
+  which verifies a Google ID token and calls aaw's `authenticate`.
+  `js/auth.js` holds the browser half and the client id.
+- `server/store.js` is the session store. aaw registers its built-in
+  `aaw/login`, `aaw/register` and `aaw/password/*` events whatever `providers`
+  says, so the store answers for them by name with "no password login here"
+  rather than failing on a missing method.
+- There is no GitHub sign-in anywhere in this repository. A GitHub prompt on a
+  `*.vercel.app` preview URL is Vercel's own deployment protection, not this app.
+
+Authorization is aaw's folder convention: everything under `server/events/auth/`
+requires a session, everything else is open. Reading and rendering a component
+need no account; version history, publishing and namespace creation do.
+
+## Layout
+
+`app/` is the compiler's whole world — `"source": "./app"` in the `vibe-compiler`
+config. Nothing outside it reaches the static output, which is what keeps server
+source and seed data off the static host. Anything added to `app/` as a
+top-level `.html` file becomes a page.
+
+- `app/` — pages flat at its root (`index.html`, `component.html`,
+  `components.html`, `namespace.html`), plus `components/` (the site's own
+  Layout, Topbar and Catalogue), `js/`,
+  `css/`, `fonts/` and `index.css`.
+- `server/` — the Worker: its websocket events, the component-source routes,
+  the D1 migrations and the seed.
+- `tests/` — runs under `bun test`.
+
+Pages compile as an MPA. There is no `pages/` tree, so the compiler's SPA mode
+(`--spa`) has nothing to compile and refuses with "SPA mode: needs a pages
+directory". Switching to SPA means moving `app/*.html` into `app/pages/`, and
+then dealing with three things MPA hides: `vibe()` seeds only missing keys once
+booted, so per-page state with colliding names (`props`, `slug`, `title`) leaks
+across navigations; `initWs`/`initAuth` in `js/boot.js` are once-per-app but
+`boot()` runs per fragment mount; and the `$.on('afterUpdate')` registrations in
+the page modules stack per navigation without teardown.
+
+## Running it
+
+Needs `bun install` in both the root and `server/`. `wrangler` is a root
+devDependency; the local D1 it simulates lives in `.wrangler/` (gitignored).
+
+```
+cd server && bun run migrate          # schema into the local D1
+cd server && bun run seed             # writes the vibe namespace + 18 components
+bun dev                               # compiler watch + the Worker on $PORT
+```
+
+One process: `bun dev` at the root compiles `app/` into `compiled/` and runs
+the Worker with `wrangler dev` on `$PORT`, the same Worker production runs. It
+serves the pages as assets, answers every marketplace read and write at `/ws`,
+serves the component source that `<component src>` fetches, and routes
+`/<namespace>/<slug>` to the component page. In dev the site, the socket and the
+source share the page's own origin (`app/js/env.js`), so `localhost:$PORT` and
+the HTTPS dev host behave alike. `bun dev` in `server/` still runs the Worker
+alone on `1337`; the site does not need it. `wrangler dev` needs `compiled/` to
+exist, so compile once before starting it.
+
+For the deployed database, the same two steps take `--remote`:
+`bunx wrangler d1 migrations apply viberary --remote` and
+`bun run seed --remote`, both in `server/`.
+
+### Never pass `--fouc-as-is` to a stamped build
+
+The compiler stamps values into the HTML and moves conditional branches and
+iteration templates into `compiled/vibe-hyperspeed/<page>.manifest.js`. The
+runtime decides whether to fetch that manifest by looking for the FOUC marker:
+
+```js
+// @ape-egg/vibe/runtime/pre-compiled-manifest.js
+const skipNetwork = !!document.querySelector("[vibe-fouc], .vibe-fouc");
+```
+
+So `vibe-fouc` present means "runtime mode, no manifest". On a build that has
+already been stamped, that combination is fatal and silent: every `<!-- if -->`
+true branch and every `<!-- each -->` row is gone from the DOM, with no console
+error and no failed request. It looks exactly like a page whose data never
+arrived — empty catalogue, no sign-in button — while `window.$` holds all of it.
+
+### Packages are served at `/modules/<name>/`, never under `@ape-egg`
+
+`bun run compile` moves the compiled `node_modules/@ape-egg` to `compiled/modules`,
+so the browser imports `/modules/vibe/index.js`. Cloudflare's asset server
+answers any path holding `@` with a 307 to its `%40` form, and a module's
+relative imports resolve against the redirected URL while the module map keys
+on the requested one. vibe's `index.js` ↔ `boot.js` cycle then loads `index.js`
+twice: `$.on('afterUpdate')` registered before boot lands in one copy and boot
+reads the other, so the theme toggle never saves or touches `body.dark`.
+
+### `compiled/` is emptied, never deleted
+
+`wrangler dev` watches `compiled/` itself. Deleting that folder ends the watch:
+wrangler keeps the asset list from the moment of the delete — mid-build, so
+pages and `js/` but no `modules/` — and serves it until restarted. vibe never
+loads and the page shows its raw markup ("Nothing matches “@[query]”").
+So `bun run compile` empties the folder and compiles with `--no-clean`, and a
+build run beside a live `bun dev` keeps the dev server current.
+
+### A state method called from a binding is called unbound
+
+`@[showing()]` reaches the function but not the object, so `this` is undefined
+inside it and the binding renders `undefined`. Call it on the state object:
+
+```html
+<span>v@[$.showing()]</span>       <!-- works -->
+<span>v@[showing()]</span>         <!-- renders "vundefined" -->
+```
+
+Same for conditionals: `<!-- if $.owns() -->`, not `<!-- if owns() -->`. A
+throwing conditional reads as false, so this one fails by quietly hiding a
+branch. Event handlers are unaffected — they already write `$.method()`.

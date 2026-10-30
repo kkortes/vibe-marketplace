@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Namespace — Viberary</title>
+  <link rel="stylesheet" href="/css/stylecheat.css" />
+  <link rel="stylesheet" href="/css/blueprint.css" />
+  <script async src="https://accounts.google.com/gsi/client"></script>
+
+  <script>
+    // The Worker serves this page at /<namespace>, a path vibe would derive no
+    // manifest from, so it is told where the manifest lives.
+    window.__MANIFEST__ = '/vibe-hyperspeed/namespace.html.manifest.js';
+  </script>
+
+  <script type="module">
+    import boot from '/js/boot.js';
+    import { load, state } from '/js/namespace.js';
+
+    boot(state, load);
+  </script>
+</head>
+
+<body stylecheat vibe-fouc>
+  <component src="/components/Layout.html">
+    <box main>
+      <h1>@[namespace]</h1>
+      <p lead max-w-160>Every component published under <code>@[namespace]/</code>.</p>
+    </box>
+
+    <sticky grid locked auto-shadow>
+      <divider></divider>
+      <crow left g-6 wrap w-full>
+        <label f-1>
+          <input type="search" placeholder="Search components" value="@[query]"
+            oninput="$.query = this.value; $.filter()" />
+        </label>
+
+        <crow wrap>
+          <span text-muted>Auto tags</span>
+          <!-- each filters.auto as name -->
+          <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
+          <!-- /each -->
+          <span text-muted>User tags</span>
+          <!-- each filters.user as name -->
+          <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
+          <!-- /each -->
+        </crow>
+      </crow>
+    </sticky>
+
+    <box>
+      <!-- if unpublished -->
+      <catalogue w-full>
+        <card p-5 g-4 paper phantom>
+          <crow up left g-4 f-1>
+            <crow vertical left up g="1.5" f-1>
+              <crow justify-between g-3 wrap w-full>
+                <h5>@[unpublished.title]</h5>
+                <badge secondary>Latest</badge>
+              </crow>
+              <code>@[namespace]/@[unpublished.slug]</code>
+              <p text-muted>@[unpublished.description]</p>
+            </crow>
+          </crow>
+          <p sm text-muted>Not published yet. Publishing it creates v@[next] under @[namespace]; leaving the page discards it.</p>
+        </card>
+      </catalogue>
+      <!-- /if -->
+      <!-- if loading -->
+      <crow w-full py="12" text-muted>Loading the namespace…</crow>
+      <!-- else -->
+      <!-- if matches.length -->
+      <component src="/components/Catalogue.html" items="@[matches]"></component>
+      <!-- else -->
+      <crow w-full py="12" text-muted>
+        <!-- if query -->Nothing matches “@[query]”.<!-- else -->No components published in @[namespace] yet.<!-- /if -->
+      </crow>
+      <!-- /if -->
+      <!-- /if -->
+    </box>
+
+    <component src="/components/Publishing.html"></component>
+  </component>
+</body>
+
+</html>

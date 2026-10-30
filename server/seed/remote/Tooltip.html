@@ -1,0 +1,364 @@
+<script type="module">
+  import component from '/node_modules/@ape-egg/vibe/component.js';
+  component({});
+
+  const OFFSET = 8;
+  let currentAnchor = null;
+  let currentLeave = null;
+
+  const detach = () => {
+    if (currentAnchor && currentLeave) {
+      currentAnchor.removeEventListener('mouseleave', currentLeave);
+    }
+    currentAnchor = null;
+    currentLeave = null;
+  };
+
+  const anchorPoint = (anchor, direction) => {
+    if (anchor instanceof Element) {
+      const r = anchor.getBoundingClientRect();
+      if (direction === 'down') return { x: r.left + r.width / 2, y: r.bottom };
+      if (direction === 'left') return { x: r.left, y: r.top + r.height / 2 };
+      if (direction === 'right') return { x: r.right, y: r.top + r.height / 2 };
+      if (direction === 'up') return { x: r.left + r.width / 2, y: r.top };
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    }
+    if (anchor && typeof anchor.x === 'number') {
+      return { x: anchor.x, y: anchor.y };
+    }
+    return { x: 0, y: 0 };
+  };
+
+  const looksLikeOptions = (v) =>
+    v && typeof v === 'object' && !(v instanceof Element) && typeof v.x !== 'number';
+
+  window.showTooltip = (props, arg2, arg3) => {
+    if (window.__dndDragging) return;
+    detach();
+
+    let options;
+    let anchor;
+    if (looksLikeOptions(arg2)) {
+      options = arg2;
+      anchor = arg3;
+    } else {
+      anchor = arg2;
+      options = arg3;
+    }
+    if (!anchor && typeof window.event === 'object' && window.event !== null) {
+      anchor = window.event.currentTarget;
+    }
+
+    const opts = options || {};
+    const direction = opts.direction || null;
+    const lock = !!opts.lock;
+    const persist = !!opts.persist;
+    const target = anchorPoint(anchor, direction);
+
+    let x = target.x;
+    let y = target.y;
+    if (!lock && anchor && typeof anchor.clientX === 'number') {
+      x = anchor.clientX;
+      y = anchor.clientY;
+    }
+
+    $.tooltip = {
+      x,
+      y,
+      targetX: target.x,
+      targetY: target.y,
+      visible: true,
+      props: props || {},
+      direction: direction || 'none',
+      lock,
+      persist,
+      compareSide: target.x < window.innerWidth / 2 ? 'compare-right' : 'compare-left',
+    };
+
+    if (anchor instanceof Element && !persist) {
+      currentAnchor = anchor;
+      currentLeave = () => window.hideTooltip();
+      anchor.addEventListener('mouseleave', currentLeave);
+    }
+  };
+
+  window.hideTooltip = () => {
+    detach();
+    if ($.tooltip) $.tooltip.visible = false;
+  };
+
+  // A removed element never fires mouseleave, so an anchor that leaves the DOM
+  // (modal closed, row re-rendered) would orphan its tooltip. Every removal in
+  // Vibe happens through a flush — check the anchor right after each one.
+  $.on('afterUpdate', () => {
+    if (currentAnchor && !currentAnchor.isConnected) window.hideTooltip();
+  });
+
+  let bodyLeft = 0;
+  let bodyTop = 0;
+
+  const setCut = (clientX, clientY) => {
+    const body = document.querySelector('tooltip-body[cramped]');
+    if (!body) return;
+    body.style.setProperty('--cut-x', `${clientX - bodyLeft}px`);
+    body.style.setProperty('--cut-y', `${clientY - bodyTop}px`);
+  };
+
+  document.addEventListener('mousemove', (e) => {
+    if (!$.tooltip?.visible) return;
+    if (!$.tooltip.lock) {
+      $.tooltip.x = e.clientX;
+      $.tooltip.y = e.clientY;
+    }
+    setCut(e.clientX, e.clientY);
+  });
+
+  const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+
+  const positionTooltip = () => {
+    if (!$.tooltip?.visible) return;
+    const body = document.querySelector('tooltip-body');
+    if (!body) return;
+
+    const r = body.getBoundingClientRect();
+    const w = r.width;
+    const h = r.height;
+    if (w === 0 || h === 0) return;
+
+    const main = body.querySelector('tooltip-main') || body;
+    const mr = main.getBoundingClientRect();
+    const mw = mr.width;
+    const mh = mr.height;
+    const offX = mr.left - r.left;
+    const offY = mr.top - r.top;
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const fx = $.tooltip.x;
+    const fy = $.tooltip.y;
+    const dir = $.tooltip.direction;
+
+    let mainLeft;
+    let mainTop;
+    if (dir === 'up') {
+      mainLeft = fx - mw / 2;
+      mainTop = fy - mh - OFFSET;
+    } else if (dir === 'down') {
+      mainLeft = fx - mw / 2;
+      mainTop = fy + OFFSET;
+    } else if (dir === 'left') {
+      mainLeft = fx - mw - OFFSET;
+      mainTop = fy - mh / 2;
+    } else if (dir === 'right') {
+      mainLeft = fx + OFFSET;
+      mainTop = fy - mh / 2;
+    } else {
+      mainLeft = fx - mw / 2;
+      mainTop = fy - mh / 2;
+    }
+
+    const idealLeft = mainLeft - offX;
+    const idealTop = mainTop - offY;
+    const vpLeft = clamp(idealLeft, 0, Math.max(0, vw - w));
+    const vpTop = clamp(idealTop, 0, Math.max(0, vh - h));
+
+    const cramped = dir === 'left' || dir === 'right' ? vpLeft !== idealLeft : vpTop !== idealTop;
+    const wasCramped = body.hasAttribute('cramped');
+    body.toggleAttribute('cramped', cramped);
+
+    bodyLeft = vpLeft;
+    bodyTop = vpTop;
+    if (cramped && !wasCramped) setCut(fx, fy);
+
+    body.style.left = `${vpLeft - fx}px`;
+    body.style.top = `${vpTop - fy}px`;
+
+    const pointer = body.querySelector('tooltip-pointer');
+    if (pointer && dir !== 'none') {
+      const inset = pointer.offsetWidth || 12;
+      if (dir === 'up' || dir === 'down') {
+        pointer.style.top = '';
+        pointer.style.left = `${clamp(fx - vpLeft, offX + inset, Math.max(offX + inset, offX + mw - inset))}px`;
+      } else {
+        pointer.style.left = '';
+        pointer.style.top = `${clamp(fy - vpTop, offY + inset, Math.max(offY + inset, offY + mh - inset))}px`;
+      }
+    }
+
+    body.setAttribute('positioned', '');
+  };
+
+  let bodyRO = null;
+  let observedBody = null;
+
+  const syncObserver = () => {
+    const body = document.querySelector('tooltip-body');
+    if (body === observedBody) return;
+    if (bodyRO) bodyRO.disconnect();
+    observedBody = body;
+    if (body) {
+      bodyRO = new ResizeObserver(positionTooltip);
+      bodyRO.observe(body);
+    }
+  };
+
+  $.on('afterUpdate', () => {
+    syncObserver();
+    positionTooltip();
+  });
+</script>
+
+<!-- if tooltip && tooltip.visible -->
+  <tooltip-layer style="left: @[tooltip.x]px; top: @[tooltip.y]px">
+    <tooltip-body
+      position="absolute"
+      @[tooltip.direction]
+      @[tooltip.props.element]
+      @[tooltip.compareSide]
+    >
+      <tooltip-main>
+        <slot></slot>
+      </tooltip-main>
+      <!-- if keys.alt && tooltip.props.compare?.length -->
+        <tooltip-compare>
+          <!-- each tooltip.props.compare as row (row.key) -->
+            <component src="/components/tooltip/Compare.html" props="@[row]"></component>
+          <!-- /each -->
+        </tooltip-compare>
+      <!-- /if -->
+      <tooltip-pointer position="absolute"></tooltip-pointer>
+    </tooltip-body>
+  </tooltip-layer>
+<!-- /if -->
+
+<style>
+  tooltip-layer {
+    position: fixed;
+    width: 0;
+    height: 0;
+    z-index: var(--z-tooltip, 100);
+    pointer-events: none;
+  }
+
+  tooltip-body {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--unit) * 2);
+    width: max-content;
+    height: auto;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    pointer-events: none;
+    filter: drop-shadow(0 calc(var(--unit) * 0.5) calc(var(--unit) * 1) var(--scrim-1));
+    transition:
+      opacity 180ms ease-out,
+      transform 180ms ease-out;
+  }
+
+  tooltip-main {
+    display: block;
+  }
+
+  tooltip-compare {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(var(--unit) * 2);
+  }
+
+  tooltip-body[compare-left] tooltip-compare {
+    order: -1;
+    align-items: flex-end;
+  }
+
+  tooltip-body[up] {
+    transform: translateY(calc(var(--unit) * -4));
+  }
+
+  tooltip-body[down] {
+    transform: translateY(calc(var(--unit) * 4));
+  }
+
+  tooltip-body[left] {
+    transform: translateX(calc(var(--unit) * -4));
+  }
+
+  tooltip-body[right] {
+    transform: translateX(calc(var(--unit) * 4));
+  }
+
+  tooltip-main > slot {
+    display: block;
+  }
+
+  tooltip-body[positioned] {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+
+  tooltip-pointer {
+    width: calc(var(--unit) * 3);
+    height: calc(var(--unit) * 3);
+    background: var(--tooltip-surface);
+    border: 1px solid var(--border);
+  }
+
+  tooltip-body:is([fire], [frost], [earth], [nature], [lightning]) tooltip-pointer {
+    border-color: oklch(from var(--element-color) l calc(c * 0.5) h / 0.5);
+    background: color-mix(in oklab, var(--tooltip-surface) 92%, var(--element-color));
+  }
+
+  tooltip-body:is([fire], [frost], [earth], [nature], [lightning])[down] tooltip-pointer {
+    background: color-mix(in oklab, var(--tooltip-surface) 86%, var(--element-color));
+  }
+
+  tooltip-body:is([fire], [frost], [earth], [nature], [lightning])[up] tooltip-pointer {
+    background: color-mix(in oklab, var(--tooltip-surface) 97%, var(--element-color));
+  }
+
+  tooltip-body[up] tooltip-pointer {
+    left: 50%;
+    bottom: 1px;
+    transform: translate(-50%, 50%) rotate(45deg);
+    clip-path: polygon(0% 100%, 100% 100%, 100% 0%);
+  }
+
+  tooltip-body[down] tooltip-pointer {
+    left: 50%;
+    top: 1px;
+    transform: translate(-50%, -50%) rotate(45deg);
+    clip-path: polygon(0% 0%, 0% 100%, 100% 0%);
+  }
+
+  tooltip-body[left] tooltip-pointer {
+    right: 1px;
+    top: 50%;
+    transform: translate(50%, -50%) rotate(45deg);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+  }
+
+  tooltip-body[right] tooltip-pointer {
+    left: 1px;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    clip-path: polygon(0% 0%, 0% 100%, 100% 100%);
+  }
+
+  tooltip-body[none] tooltip-pointer {
+    display: none;
+  }
+
+  tooltip-body[cramped] tooltip-pointer {
+    display: none;
+  }
+
+  tooltip-body[cramped] tooltip-main [tooltip-card] {
+    --cut-r: calc(var(--unit) * 10);
+    mask: radial-gradient(
+      circle var(--cut-r) at var(--cut-x, 50%) var(--cut-y, 50%),
+      rgba(0, 0, 0, 0.65) 55%,
+      #000 100%
+    );
+  }
+</style>

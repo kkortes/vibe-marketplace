@@ -1,0 +1,34 @@
+<sticky grid locked auto-shadow>
+  <crow justify-between g-4 h-12 w-full>
+    <a href="/" secondary onclick="$.browsed = false"><strong>Viberary</strong></a>
+    <crow>
+      <a href="/components" class="button" tertiary active="@[['/components', '/components.html'].includes(path)]"><icon components></icon>Manage components</a>
+      <a href="https://vibe.korte.kim" target="_blank" rel="noopener" class="button" tertiary title="Vibe docs"><icon logo-vibe></icon>What is Vibe?</a>
+      <button tertiary title="Switch theme" onclick="$.darkMode = !$.darkMode">
+        <!-- if darkMode --><icon light></icon><!-- else --><icon dark></icon><!-- /if -->
+      </button>
+      <!-- if authReady -->
+      <!-- if user -->
+      <user-menu position="relative">
+        <!-- if userMenuOpen --><user-backdrop position="fixed" t-0 r-0 b-0 l-0 onclick="$.userMenuOpen = false"></user-backdrop><!-- /if -->
+        <button primary w="12" h="12" p-0 onclick="$.userMenuOpen = !$.userMenuOpen">
+          <strong>@[user.name[0].toUpperCase()]</strong>
+        </button>
+        <!-- if userMenuOpen -->
+        <card position="absolute" t="12" r-0 w="52" p-2 g-1>
+          <strong px-2 py-1>@[user.name]</strong>
+          <span sm text-muted px-2>@[user.email]</span>
+          <hr />
+          <button primary w-full mt-1 onclick="$.signOut()">Sign out</button>
+        </card>
+        <!-- /if -->
+      </user-menu>
+      <!-- else -->
+      <button primary w="24" onclick="$.signIn()">Sign in</button>
+      <!-- /if -->
+      <!-- else -->
+      <span flex w="12" h="12" bg-slate animate-pulse></span>
+      <!-- /if -->
+    </crow>
+  </crow>
+</sticky>
