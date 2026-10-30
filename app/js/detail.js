@@ -2,6 +2,7 @@ import codie from '/modules/codie/codie.js';
 
 import { SOURCE_URL } from '/js/env.js';
 import { address, source } from '/js/pin.js';
+import { autoTags } from '/js/tags.js';
 import { call } from '/js/ws.js';
 
 // The Worker serves this page at the component's own address, /<namespace>/<slug>.
@@ -76,6 +77,7 @@ export const state = {
   // The selected tab: a pinned version, or 0 for Latest, which follows
   // whatever was published last and carries no hash.
   tab: 0,
+  tags: [],
 
   showing() {
     return this.version || this.component?.latest || 0;
@@ -172,6 +174,7 @@ export const state = {
       this.version = revision.version;
       this.tab = version;
       this.props = revision.props || [];
+      this.tags = autoTags(revision);
       this.previewSource = source(SOURCE_URL, namespace, slug, revision.version);
       this.reset();
       this.missing = '';

@@ -283,6 +283,13 @@ section {
   box-shadow: 0 0 0 1px var(--border);
 }
 
+tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--unit) * 6);
+  margin-top: auto;
+}
+
 section[preview] {
   position: relative;
   padding: 0;

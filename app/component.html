@@ -57,10 +57,21 @@
                 <crow g-2>
                   <badge secondary>@[namespace]/@[slug]</badge>
                   <badge secondary>v@[$.showing()]</badge>
-                  <badge secondary>@[component?.category]</badge>
                 </crow>
               </crow>
               <p lead max-w-160>@[component?.description]</p>
+              <tags>
+                <crow left g-2 wrap>
+                  <span sm text-muted>Auto tags</span>
+                  <!-- each tags as tag -->
+                  <badge secondary>@[tag]</badge>
+                  <!-- /each -->
+                </crow>
+                <crow left g-2 wrap>
+                  <span sm text-muted>User tags</span>
+                  <badge secondary>@[component?.category]</badge>
+                </crow>
+              </tags>
             </section>
             <!-- if component -->
             <section use>
