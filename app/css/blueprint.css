@@ -333,6 +333,10 @@ tags badge {
   width: calc-size(fit-content, round(up, size, var(--unit)));
 }
 
+section[about] tags {
+  row-gap: calc(var(--unit) * 2);
+}
+
 catalogue tags badge:not([active]) {
   padding-inline: 0;
   background: none;
