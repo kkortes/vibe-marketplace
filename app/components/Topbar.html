@@ -1,6 +1,13 @@
 <sticky grid locked auto-shadow>
   <crow justify-between g-4 h-12 w-full>
+    <!-- if path === '/component.html' -->
+    <crow g-2>
+      <button tertiary back title="Back" onclick="$.close()"><icon chevron-left></icon></button>
+      <span><span text-muted>@[origin]/@[namespace]/</span>@[slug]<span text-muted>.html</span></span>
+    </crow>
+    <!-- else -->
     <a href="/" secondary><strong>Viberary</strong></a>
+    <!-- /if -->
     <nav flex f-1 sm:hide>
       <a href="/" class="button" tertiary active="@[['/', '/index.html'].includes(path)]">Browse</a>
       <a href="/publish.html" class="button" tertiary active="@[path === '/publish.html']">Publish</a>

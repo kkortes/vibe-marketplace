@@ -54,6 +54,7 @@ export const state = {
   previewSource: '',
   pinned: false,
   missing: '',
+  origin: SOURCE_URL,
   coding: false,
 
   showing() {
