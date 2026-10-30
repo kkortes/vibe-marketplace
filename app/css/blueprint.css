@@ -269,6 +269,8 @@ section {
 
 section[preview] > crow {
   aspect-ratio: 3 / 2;
+  background-color: var(--input);
+  box-shadow: var(--ring-inset);
   width: 100%;
   overflow: hidden;
 }
