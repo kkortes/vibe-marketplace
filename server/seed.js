@@ -17,16 +17,28 @@ const catalogue = [...written, ...(await gameStack())].map((component) => ({
 
 const literal = (value) => (value == null ? 'NULL' : `'${String(value).replaceAll("'", "''")}'`);
 
-const values = (...row) => `(${row.map(literal).join(', ')})`;
+const row = (...cells) => cells.map(literal).join(', ');
+
+const values = (...cells) => `(${row(...cells)})`;
+
+// The vibe namespace belongs to the developer's Google account. Users get a
+// fresh id at first sign-in, so the account is seeded by its Google id and the
+// namespace points at whatever id that row holds — the login upsert keeps it.
+const OWNER = { googleId: '113094163908909945020', email: 'me@korte.kim', name: 'Kim Korte' };
+
+const owner = `(SELECT id FROM users WHERE googleId = ${literal(OWNER.googleId)})`;
 
 const sql = [
-  `INSERT INTO namespaces (slug, title, official, ownerId, createdAt) VALUES ('vibe', 'Vibe', 1, NULL, ${literal(now())})
-   ON CONFLICT (slug) DO UPDATE SET title = 'Vibe', official = 1, ownerId = NULL;`,
+  `INSERT INTO users (id, googleId, email, name, createdAt, updatedAt)
+   VALUES ${values(crypto.randomUUID(), OWNER.googleId, OWNER.email, OWNER.name, now(), now())}
+   ON CONFLICT (googleId) DO NOTHING;`,
+  `INSERT INTO namespaces (slug, title, official, ownerId, createdAt) VALUES ('vibe', 'Vibe', 1, ${owner}, ${literal(now())})
+   ON CONFLICT (slug) DO UPDATE SET title = 'Vibe', official = 1, ownerId = excluded.ownerId;`,
   "DELETE FROM revisions WHERE namespace = 'vibe';",
   "DELETE FROM components WHERE namespace = 'vibe';",
   ...catalogue.flatMap(({ slug, title, description, category, icon, versions }) => [
-    `INSERT INTO components (namespace, slug, title, description, category, icon, latest, defaults, ownerId, createdAt, updatedAt)
-     VALUES ${values('vibe', slug, title, description, category, icon, versions.length, JSON.stringify(defaults(versions.at(-1).props)), null, now(), now())};`,
+    `INSERT INTO components (namespace, slug, title, description, category, icon, latest, defaults, createdAt, updatedAt, ownerId)
+     VALUES (${row('vibe', slug, title, description, category, icon, versions.length, JSON.stringify(defaults(versions.at(-1).props)), now(), now())}, ${owner});`,
     ...versions.map(
       ({ html, props, notes }, i) =>
         `INSERT INTO revisions (namespace, slug, version, html, props, notes, authorId, authorName, createdAt)
