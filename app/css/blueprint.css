@@ -200,6 +200,18 @@ box[solid] {
   background: var(--card);
 }
 
+box[solid] > scroll {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  gap: var(--cell);
+  min-height: 0;
+  padding: var(--pad) var(--inset);
+  overflow-y: auto;
+}
+
 snippet {
   position: relative;
   align-self: stretch;
