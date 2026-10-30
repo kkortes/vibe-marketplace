@@ -49,9 +49,7 @@
       <slider>
         <codie highlight-html inert="@[!coding]"></codie>
         <pane>
-          <trail>
-            <button tertiary title="Copy the tag" onclick="$.copy()"><icon copy></icon></button>
-          </trail>
+          <trail></trail>
           <columns w-full>
             <!-- if missing -->
             <crow w-full py="12" text-muted>@[missing]</crow>
@@ -64,45 +62,42 @@
                 <badge secondary>@[component?.category]</badge>
                 <span text-muted>Showing v@[$.showing()] · latest is v@[component?.latest]</span>
               </crow>
+            </crow>
+            <!-- /if -->
+            <!-- if component -->
+            <card w-full g-4 p-6>
+              <crow justify-between w-full>
+                <h6>Use it</h6>
+                <button tertiary onclick="$.copy()"><icon copy></icon>Copy</button>
+              </crow>
+
               <!-- if $.outdated() -->
               <blockquote>
                 You are reading v@[$.showing()]. It is frozen and always will be — v@[component.latest] is
                 where the component is now.
               </blockquote>
               <!-- /if -->
-            </crow>
-            <!-- /if -->
-            <!-- if component -->
-            <card w-full g-4 p-6>
-              <h6>Use it</h6>
-              <crow justify-between g-4>
-                <label>
-                  <input type="checkbox" role="switch" checked="@[pinned]"
-                    onchange="$.pinned = event.currentTarget.checked" />
-                  <span>Pin to v@[$.showing()]</span>
-                </label>
-                <button secondary onclick="$.copy()">Copy</button>
-              </crow>
 
               <card p-4 overflow-auto><code>@[$.snippet()]</code></card>
 
-              <!-- if pinned -->
+              <!-- if tab -->
               <p text-muted>
-                Frozen. That tag renders v@[$.showing()] today and in five years — a published revision is
-                never edited, so the only way a component changes under you is a version you asked for.
+                Pinned to v@[tab]. The <code>#v@[tab]</code> on the address freezes the tag: a published
+                revision is never edited, so it renders exactly this version today and in five years. Pick
+                Latest above for a tag that follows every new version instead.
               </p>
 
               <h6 mt-4>What resolves the pin</h6>
               <p text-muted>
-                A <code>#v@[$.showing()]</code> fragment never reaches a server — it is cut from the request
+                A <code>#v@[tab]</code> fragment never reaches a server — it is cut from the request
                 before it is sent. This line resolves it in your page, before vibe reads the document.
               </p>
               <card p-4 overflow-auto><code>@[$.include()]</code></card>
               <!-- else -->
               <p text-muted>
-                Unpinned, and that is the whole cost of it: this tag renders the <em>latest</em> revision —
-                v@[component.latest] today, and whatever someone publishes tomorrow. Add
-                <code>#v@[$.showing()]</code> to the address to freeze it.
+                Latest: this tag carries no version, so it renders whatever was published last —
+                v@[component.latest] today, and the next version the moment it lands. Pick a numbered tab
+                above to pin the tag to that version for good.
               </p>
               <!-- /if -->
             </card>

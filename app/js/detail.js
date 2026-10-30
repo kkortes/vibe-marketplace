@@ -56,7 +56,6 @@ export const state = {
   invalid: {},
   version: 0,
   previewSource: '',
-  pinned: false,
   missing: '',
   coding: false,
   // Newest first: the strip lays them out reversed, so it reads 1 to latest and
@@ -89,7 +88,7 @@ export const state = {
       .filter(Boolean)
       .join('');
 
-    const at = this.pinned ? this.showing() : 0;
+    const at = this.tab;
 
     return `<component src="${address(SOURCE_URL, this.namespace, this.slug, at)}"${attrs}></component>`;
   },
