@@ -205,6 +205,11 @@ catalogue {
   border-radius: 0;
 }
 
+:is(a, .a):is(.primary, .secondary, [primary], [secondary]):active,
+:is(button, .button):is(.primary, .secondary, .tertiary, [primary], [secondary], [tertiary]):not(:disabled):active {
+  transform: scale(0.95);
+}
+
 h6 {
   text-transform: uppercase;
   letter-spacing: 0.1em;
