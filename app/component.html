@@ -33,14 +33,14 @@
       <controls>
         <button tertiary title="Edit the code" active="@[coding]" onclick="$.coding = !$.coding"><icon pencil></icon></button>
       </controls>
+      <tabs primary versions>
+        <!-- each tabs as n -->
+        <tab active="@[n === version]" onclick="$.show(@[n])">@[n]</tab>
+        <!-- /each -->
+      </tabs>
       <slider>
         <codie highlight-html inert="@[!coding]"></codie>
         <pane>
-          <tabs primary versions>
-            <!-- each tabs as n -->
-            <tab active="@[n === version]" onclick="$.show(@[n])">@[n]</tab>
-            <!-- /each -->
-          </tabs>
           <trail>
             <button tertiary title="Back" onclick="$.close()"><icon chevron-left></icon></button>
             <a href="@[origin]/@[namespace]/@[slug].html" target="_blank" rel="noopener" secondary><span text-muted>@[origin]/@[namespace]/</span>@[slug]<span text-muted>.html</span></a>
