@@ -55,8 +55,8 @@
               <a href="https://vibe.korte.kim/compiler/introduction.html" target="_blank" rel="noopener" primary>Vibe-compiler</a>
               to download the HTML in your build step rather than relying on a dynamic fetch in runtime.
             </p>
-            <card warning bg-yellow p-4 max-w-160>
-              <crow left up g-3>
+            <card warning bg-yellow p-6 max-w-160>
+              <crow left up g-2>
                 <icon triangle-alert text-yellow></icon>
                 <span>
                   Viberary is in early alpha and hosted simply for testing. The day this banner goes away,
@@ -88,11 +88,11 @@
         </label>
 
         <crow wrap>
-          <span text-muted>Auto tags</span>
+          <term>Auto tags</term>
           <!-- each filters.auto as name -->
           <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
           <!-- /each -->
-          <span text-muted>User tags</span>
+          <term>User tags</term>
           <!-- each filters.user as name -->
           <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
           <!-- /each -->

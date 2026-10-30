@@ -1,5 +1,5 @@
 <sticky grid locked auto-shadow>
-  <crow justify-between g-4 h-12 w-full>
+  <crow justify-between g-6 h-12 w-full>
     <a href="/" secondary onclick="$.browsed = false"><strong>Viberary</strong></a>
     <crow>
       <a href="/components" class="button" tertiary active="@[['/components', '/components.html'].includes(path)]"><icon components></icon>Manage components</a>
@@ -15,7 +15,7 @@
           <strong>@[user.name[0].toUpperCase()]</strong>
         </button>
         <!-- if userMenuOpen -->
-        <card position="absolute" t="12" r-0 w="52" p-2 g-1>
+        <card position="absolute" t="12" r-0 w="52" p-2 g-2>
           <strong px-2 py-1>@[user.name]</strong>
           <span sm text-muted px-2>@[user.email]</span>
           <hr />

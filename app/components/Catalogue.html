@@ -1,25 +1,23 @@
 <catalogue w-full>
   <!-- each items as comp (comp.namespace + '/' + comp.slug) -->
-  <card p-5 g-4 hover paper style="view-transition-name: c-@[comp.namespace]-@[comp.slug]">
-    <crow up left g-4 f-1>
-      <crow vertical left up g="1.5" f-1>
-        <crow justify-between g-3 wrap w-full>
-          <h5><a href="/@[comp.namespace]/@[comp.slug]" secondary>@[comp.title]</a></h5>
-          <badge secondary>v@[comp.latest]</badge>
-        </crow>
-        <code>@[comp.namespace]/@[comp.slug]</code>
-        <p text-muted>@[comp.description]</p>
+  <card p-6 g-6 hover paper style="view-transition-name: c-@[comp.namespace]-@[comp.slug]">
+    <crow vertical left up g-2 f-1 w-full>
+      <crow justify-between g-2 wrap w-full>
+        <h5><a href="/@[comp.namespace]/@[comp.slug]" secondary>@[comp.title]</a></h5>
+        <badge secondary>v@[comp.latest]</badge>
       </crow>
+      <code>@[comp.namespace]/@[comp.slug]</code>
+      <p text-muted>@[comp.description]</p>
     </crow>
     <tags>
       <crow left g-2 wrap>
-        <span sm text-muted>Auto tags</span>
+        <term>Auto tags</term>
         <!-- each comp.tags as name -->
         <a href="@[$.tagged(name)]" onclick="event.preventDefault(); $.pick('@[name]')"><badge secondary active="@[tag === name]"><!-- if name === 'JS' --><icon js></icon><!-- else if name === 'CSS' --><icon css-3></icon><!-- /if -->@[name]</badge></a>
         <!-- /each -->
       </crow>
       <crow left g-2 wrap>
-        <span sm text-muted>User tags</span>
+        <term>User tags</term>
         <a href="@[$.tagged(comp.category)]" onclick="event.preventDefault(); $.pick('@[comp.category]')"><badge secondary active="@[tag === comp.category]">@[comp.category]</badge></a>
       </crow>
     </tags>

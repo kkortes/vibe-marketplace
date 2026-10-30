@@ -9,8 +9,8 @@
   <!-- else -->
   <!-- if picking -->
   <user-backdrop position="fixed" t-0 r-0 b-0 l-0 onclick="$.picking = false"></user-backdrop>
-  <card position="absolute" b="14" r-0 w="52" p-2 g-1>
-    <span sm text-muted px-2 py-1>Put it under</span>
+  <card position="absolute" b="14" r-0 w="52" p-2 g-2>
+    <term px-2>Put it under</term>
     <!-- each mine as ns (ns.slug) -->
     <button tertiary w-full onclick="$.carry('@[ns.slug]')">@[ns.slug]</button>
     <!-- /each -->
@@ -26,7 +26,7 @@
 <!-- /if -->
 
 <dialog publishing onclose="$.question = ''">
-  <card w="120" g-4 p-6>
+  <card w="120" g-6 p-6>
     <!-- if question === 'leave' -->
     <h6>Your changes aren't published yet</h6>
     <p>Navigating will discard your recent changes, are you sure?</p>
