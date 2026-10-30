@@ -82,7 +82,7 @@ blueprint::before {
   inset: 0;
   z-index: -1;
   background: var(--background);
-  mask: url(fade.svg) round(nearest, 50%, var(--grid-size)) 0 / calc(var(--grid-size) * 31) calc(var(--grid-size) * 20) no-repeat;
+  mask: url(fade.svg) round(nearest, 50%, var(--grid-size)) 0 / calc(var(--grid-size) * 43) calc(var(--grid-size) * 28) no-repeat;
 }
 
 blueprint::after {
