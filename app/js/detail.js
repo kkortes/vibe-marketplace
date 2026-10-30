@@ -39,13 +39,6 @@ const preview = (html) => {
   mount();
 };
 
-// Publishing an edit carries everything but the markup over from the revision
-// it was made on.
-const edited = (html) => {
-  const { component: { title, description, category, icon }, revision: { props } } = window.$;
-  return { namespace, slug, title, description, category, icon, html, props };
-};
-
 let usage;
 
 // The tag under "Use it" is read-only and redrawn on every update, so it
@@ -59,7 +52,7 @@ const attach = (html) => {
   editor.code = html;
   editor.onEdit = ({ raw }) => {
     preview(raw);
-    window.$.unpublished = raw === window.$.revision.html ? null : edited(raw);
+    window.$.edit('html', raw);
   };
   window.$.unpublished = null;
 
@@ -143,6 +136,17 @@ export const state = {
   close() {
     const fromHere = document.referrer && new URL(document.referrer).origin === location.origin;
     this.leave(() => (fromHere ? history.back() : location.assign('/')));
+  },
+
+  // The markup, title and description are edited in place; whatever is not
+  // edited is published as the revision in view carries it. Editing back to
+  // what was there leaves nothing to publish.
+  edit(key, value) {
+    const { component: { title, description, category, icon }, revision: { html, props } } = this;
+    const original = { namespace, slug, title, description, category, icon, html, props };
+    const edited = { ...original, ...this.unpublished, [key]: value };
+
+    this.unpublished = ['html', 'title', 'description'].some((k) => edited[k] !== original[k]) ? edited : null;
   },
 
   // Another tab replaces the code in the editor.
