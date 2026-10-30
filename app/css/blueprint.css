@@ -306,11 +306,19 @@ section[preview] > h6 {
   background-color: var(--card);
 }
 
+crow[preview] {
+  background-color: var(--input);
+  overflow: hidden;
+}
+
 section[preview] > crow {
   aspect-ratio: 3 / 2;
-  background-color: var(--input);
   width: 100%;
-  overflow: hidden;
+}
+
+container crow[preview] {
+  aspect-ratio: 5 / 3;
+  box-shadow: var(--ring-inset);
 }
 
 section[props] {

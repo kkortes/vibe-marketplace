@@ -42,10 +42,11 @@
 
           <crow vertical g-6 f-1 overflow-hidden>
             <template codie highlight-html vibe-dehydrate></template>
-            <card vertical g-4 p="12" sm:p="6" w-full paper>
-              <h6>Rendered from that tag</h6>
-              <component src="@[demo.src]" label="@[demo.label]" step="@[demo.step]"></component>
-            </card>
+            <crow grid locked center preview p="12" sm:p="6" w-full paper>
+              <card paper>
+                <component src="@[demo.src]" label="@[demo.label]" step="@[demo.step]"></component>
+              </card>
+            </crow>
           </crow>
         </crow>
       </container>
