@@ -338,7 +338,7 @@ catalogue tags badge:not([active]) {
   background: none;
   box-shadow: none;
   color: var(--foreground);
-  font-weight: bold;
+  font-weight: normal;
 }
 
 section[preview] {
