@@ -13,7 +13,7 @@ export default {
   browsed: get('mkp-browsed') ?? false,
   path: location.pathname,
   notice: '',
-  // The tag picked in the catalogue. Only the frontpage filters in place;
+  // The tag picked in the catalogue. The frontpage and /<namespace> filter in place;
   // picking one anywhere else opens the frontpage filtered by it.
   tag: '',
   pick: (name) => location.assign(`/tag/${encodeURIComponent(name.toLowerCase())}`),
