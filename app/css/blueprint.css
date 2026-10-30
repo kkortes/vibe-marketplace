@@ -70,12 +70,12 @@ sheet {
   --line: linear-gradient(var(--border), var(--border));
   flex: 1;
   background:
-    var(--line) var(--cell) 0 / 1px 100% no-repeat,
-    var(--line) round(down, 100% + 1px - var(--cell), var(--cell)) 0 / 1px 100% no-repeat;
+    var(--line) var(--grid-size) 0 / 1px 100% no-repeat,
+    var(--line) round(down, 100% + 1px - var(--grid-size), var(--grid-size)) 0 / 1px 100% no-repeat;
 }
 
 :is(sheet, sticky) {
-  padding-inline: var(--cell) calc(100% - round(down, 100% - var(--cell), var(--cell)));
+  padding-inline: var(--grid-size) calc(100% - round(down, 100% - var(--grid-size), var(--grid-size)));
 }
 
 divider {
@@ -121,6 +121,10 @@ catalogue {
 @media (width <= 768px) {
   [stylecheat] {
     --grid-unit: 4px;
+  }
+
+  container {
+    --frame: 100%;
   }
 
   catalogue {
