@@ -4,8 +4,10 @@
     <crow g-2>
       <button tertiary back title="Back" onclick="$.close()"><icon chevron-left></icon></button>
       <span><span text-muted>@[origin]/@[namespace]/</span>@[slug]<span text-muted>.html</span></span>
-      <button tertiary title="Copy the tag" onclick="$.copy()"><icon copy></icon></button>
-      <button tertiary title="Pin to this version" disabled="@[!user]" active="@[pinned]" onclick="$.pinned = !$.pinned"><icon pin></icon></button>
+      <crow>
+        <button tertiary title="Copy the tag" onclick="$.copy()"><icon copy></icon></button>
+        <button tertiary title="Pin to this version" disabled="@[!user]" active="@[pinned]" onclick="$.pinned = !$.pinned"><icon pin></icon></button>
+      </crow>
       <!-- if !user -->
       <span sm text-muted>For pinning a version, log in</span>
       <!-- /if -->
