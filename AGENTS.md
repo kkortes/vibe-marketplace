@@ -20,8 +20,8 @@ Vibe and Stylecheat and nothing else.
   first (`run_worker_first`) only so it carries CORS headers.
 - One origin serves all of it, so `ORIGIN` in `app/js/env.js` is the site, the
   socket (`wss://…/ws`) and the component source alike. A namespace named like a
-  top-level asset folder would be shadowed by it, which is why `modules`, `js`
-  and `css` are reserved.
+  top-level asset folder would be shadowed by it, which is why `modules`, `js`,
+  `css` and `components` are reserved.
 - It is deployed with `bunx wrangler deploy` from the root, after
   `bun run build`, to the developer's own Cloudflare account. There is no
   deploy script.
@@ -115,7 +115,7 @@ source and seed data off the static host. Anything added to `app/` as a
 top-level `.html` file becomes a page.
 
 - `app/` — pages flat at its root (`index.html`, `component.html`,
-  `publish.html`), plus `components/` (the site's own Layout and Topbar), `js/`,
+  `components.html`), plus `components/` (the site's own Layout and Topbar), `js/`,
   `css/`, `fonts/` and `index.css`.
 - `server/` — the Worker: its websocket events, the component-source routes,
   the D1 migrations and the seed.
