@@ -114,7 +114,7 @@ config. Nothing outside it reaches the static output, which is what keeps server
 source and seed data off the static host. Anything added to `app/` as a
 top-level `.html` file becomes a page.
 
-- `app/` — pages flat at its root (`index.html`, `component.html`, `edit.html`,
+- `app/` — pages flat at its root (`index.html`, `component.html`,
   `publish.html`), plus `components/` (the site's own Layout and Topbar), `js/`,
   `css/`, `fonts/` and `index.css`.
 - `server/` — the Worker: its websocket events, the component-source routes,
