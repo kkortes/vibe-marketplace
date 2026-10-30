@@ -49,6 +49,13 @@
 }
 
 [grid][locked] {
+  --major: oklch(from var(--border) l c h / 0.22);
+  --minor: oklch(from var(--border) l c h / 0.08);
+  background-image:
+    linear-gradient(to right, var(--major) 0 1px, transparent 1px),
+    linear-gradient(to bottom, var(--major) 0 1px, transparent 1px),
+    linear-gradient(to right, var(--minor) 0 1px, transparent 1px),
+    linear-gradient(to bottom, var(--minor) 0 1px, transparent 1px);
   background-attachment: scroll;
 }
 
