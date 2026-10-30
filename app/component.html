@@ -45,7 +45,7 @@
         <codie highlight-html inert="@[!coding]"></codie>
         <pane>
           <trail>
-            <a href="@[origin]/@[namespace]/@[slug].html" target="_blank" rel="noopener" secondary><span text-muted>@[origin]/@[namespace]/</span>@[slug]<span text-muted>.html</span></a>
+            <a href="@[origin]/@[namespace]/@[slug]/v@[version].html" target="_blank" rel="noopener" secondary><span text-muted>@[origin]/@[namespace]/</span>@[slug]<span text-muted>.html#v@[version]</span></a>
             <crow>
               <button tertiary title="Copy the tag" onclick="$.copy()"><icon copy></icon></button>
               <button tertiary title="Pin to this version" disabled="@[!user]" active="@[pinned]" onclick="$.pinned = !$.pinned"><icon pin></icon></button>
