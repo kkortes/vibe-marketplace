@@ -229,7 +229,23 @@ slider > codie {
   height: 100%;
   min-block-size: 0;
   border-radius: 0;
-  box-shadow: 1px 0 var(--border);
+  box-shadow: none;
+}
+
+box[solid]::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: var(--code);
+  z-index: 1;
+  width: 1px;
+  background-color: var(--border);
+  translate: calc(var(--code) * -1);
+  transition: translate var(--slide);
+}
+
+box[coding]::after {
+  translate: none;
 }
 
 pane {
