@@ -138,16 +138,18 @@ devDependency; the local D1 it simulates lives in `.wrangler/` (gitignored).
 ```
 cd server && bun run migrate          # schema into the local D1
 cd server && bun run seed             # writes the vibe namespace + 18 components
-cd server && bun dev                  # wrangler dev: socket, source and assets on 1337
-bun dev                               # compiler watch + site on $PORT
+bun dev                               # compiler watch + the Worker on $PORT
 ```
 
-Two processes: `bun dev` at the root compiles `app/` into `compiled/` and
-serves it; `bun dev` in `server/` runs the Worker locally on `1337`, which
-answers every marketplace read and write at `/ws` and serves the component
-source that `<component src>` fetches. An empty catalogue with a live-looking
-page, or a preview stage that stays blank, means `1337` is not up. `wrangler
-dev` needs `compiled/` to exist, so compile once before starting it.
+One process: `bun dev` at the root compiles `app/` into `compiled/` and runs
+the Worker with `wrangler dev` on `$PORT`, the same Worker production runs. It
+serves the pages as assets, answers every marketplace read and write at `/ws`,
+serves the component source that `<component src>` fetches, and routes
+`/<namespace>/<slug>` to the component page. In dev the site, the socket and the
+source share the page's own origin (`app/js/env.js`), so `localhost:$PORT` and
+the HTTPS dev host behave alike. `bun dev` in `server/` still runs the Worker
+alone on `1337`; the site does not need it. `wrangler dev` needs `compiled/` to
+exist, so compile once before starting it.
 
 For the deployed database, the same two steps take `--remote`:
 `bunx wrangler d1 migrations apply viberary --remote` and
