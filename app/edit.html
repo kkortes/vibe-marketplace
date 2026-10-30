@@ -22,7 +22,7 @@
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
-    <box>
+    <box main>
       <crow vertical left g-3 w-full>
         <breadcrumb><a href="/" secondary>Browse</a><span current>@[namespace || 'new']</span></breadcrumb>
         <h1>
@@ -36,11 +36,7 @@
           you publish, and publishing always writes a new version.
         </p>
       </crow>
-    </box>
 
-    <divider></divider>
-
-    <box>
       <crow up g-12 w-full sm:vertical>
         <card f-1 g-4 p-6 w-full overflow-hidden>
           <h6>Markup</h6>
@@ -87,11 +83,7 @@
           <button secondary onclick="$.addProp()">Add a prop</button>
         </card>
       </crow>
-    </box>
 
-    <divider></divider>
-
-    <box>
       <card w-full g-4 p-6>
         <h6>Publish</h6>
         <!-- if user -->
@@ -175,6 +167,8 @@
         <!-- /if -->
       </card>
     </box>
+
+    <divider></divider>
   </component>
 </body>
 

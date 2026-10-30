@@ -26,7 +26,7 @@
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
-    <box main>
+    <box main solid>
       <!-- if missing -->
       <crow w-full py="12" text-muted>@[missing]</crow>
       <!-- else -->
@@ -48,12 +48,7 @@
         <!-- /if -->
       </crow>
       <!-- /if -->
-    </box>
-
-    <divider></divider>
-
-    <!-- if component -->
-    <box>
+      <!-- if component -->
       <crow up g-12 w-full sm:vertical>
         <card f-1 g-4 p-6>
           <h6>Preview</h6>
@@ -122,11 +117,7 @@
           <!-- /if -->
         </card>
       </crow>
-    </box>
 
-    <divider></divider>
-
-    <box>
       <card w-full g-4 p-6>
         <h6>Use it</h6>
         <crow justify-between g-4>
@@ -160,11 +151,7 @@
         </p>
         <!-- /if -->
       </card>
-    </box>
 
-    <divider></divider>
-
-    <box>
       <card w-full g-4 p-6>
         <h6>Version history</h6>
         <!-- if user -->
@@ -187,13 +174,12 @@
         </p>
         <!-- /if -->
       </card>
+      <!-- else if !missing -->
+      <crow w-full py="12" text-muted>Loading…</crow>
+      <!-- /if -->
     </box>
 
-    <!-- else if !missing -->
-    <box>
-      <crow w-full py="12" text-muted>Loading…</crow>
-    </box>
-    <!-- /if -->
+    <divider></divider>
   </component>
 </body>
 

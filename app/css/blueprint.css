@@ -177,8 +177,15 @@ box[main] {
   transition: height 250ms var(--ease-in-out);
 }
 
-box[main][intro] {
+box[main][intro],
+box[solid] {
   height: calc-size(auto, max(round(up, size, var(--cell)), round(nearest, 100dvh - var(--unit) * 24, var(--cell))));
+}
+
+box[solid] {
+  margin-inline: calc(var(--inset) * -1);
+  padding-inline: var(--inset);
+  background: var(--background);
 }
 
 box[main] + divider,

@@ -19,7 +19,7 @@
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
-    <box>
+    <box main>
       <container>
         <crow vertical left g-3 w-full>
           <h1>Publish</h1>
@@ -29,12 +29,8 @@
           </p>
         </crow>
       </container>
-    </box>
 
-    <divider></divider>
-
-    <!-- if user -->
-    <box>
+      <!-- if user -->
       <card w-full g-4 p-6>
         <h6>Your namespaces</h6>
         <!-- if mine.length -->
@@ -69,11 +65,7 @@
           <p text-muted>Lowercase words joined by dashes. It becomes part of every address you publish.</p>
         </crow>
       </card>
-    </box>
 
-    <divider></divider>
-
-    <box>
       <card w-full g-4 p-6>
         <h6>Your components</h6>
         <!-- if owned.length -->
@@ -93,17 +85,17 @@
         <p text-muted>Nothing published yet.</p>
         <!-- /if -->
       </card>
-    </box>
-    <!-- else -->
-    <box>
+      <!-- else -->
       <card w-full g-4 p-6>
         <p text-muted>
           Browsing and editing are open to everyone. Publishing is what needs an account — sign in
           from the top right.
         </p>
       </card>
+      <!-- /if -->
     </box>
-    <!-- /if -->
+
+    <divider></divider>
   </component>
 </body>
 
