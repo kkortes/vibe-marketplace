@@ -67,7 +67,7 @@ blueprint {
   --cell: calc(var(--grid-size) / 2);
   --line: linear-gradient(var(--border), var(--border));
   --gutter: calc(100% - round(down, 100% - var(--grid-size), var(--grid-size)));
-  --inset: 50px;
+  --inset: calc(var(--unit) * 12);
   display: flex;
   flex-direction: column;
   position: relative;
