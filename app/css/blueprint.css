@@ -77,16 +77,39 @@ blueprint {
 
 blueprint::before {
   content: '';
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(30% 55% at 47% 0, var(--background) 100%, transparent 0),
-    radial-gradient(36% 76% at 53% 0, oklch(from var(--background) l c h / 0.5) 100%, transparent 0),
-    radial-gradient(47% 88% at 48% 0, oklch(from var(--background) l c h / 0.333) 100%, transparent 0),
-    radial-gradient(52% 110% at 54% 0, oklch(from var(--background) l c h / 0.25) 100%, transparent 0),
-    radial-gradient(64% 121% at 49% 0, oklch(from var(--background) l c h / 0.2) 100%, transparent 0);
-  background-attachment: fixed;
+    radial-gradient(26% 34% at 50% 0, var(--background) 100%, transparent 0),
+    conic-gradient(
+      at 50% 0,
+      transparent 90deg,
+      oklch(from var(--background) l c h / 0.6) 90deg 104deg,
+      oklch(from var(--background) l c h / 1) 104deg 111deg,
+      oklch(from var(--background) l c h / 0.3) 111deg 129deg,
+      oklch(from var(--background) l c h / 0.85) 129deg 137deg,
+      oklch(from var(--background) l c h / 0.5) 137deg 152deg,
+      oklch(from var(--background) l c h / 1) 152deg 158deg,
+      oklch(from var(--background) l c h / 0.7) 158deg 176deg,
+      oklch(from var(--background) l c h / 0.4) 176deg 189deg,
+      oklch(from var(--background) l c h / 0.95) 189deg 197deg,
+      oklch(from var(--background) l c h / 0.55) 197deg 214deg,
+      oklch(from var(--background) l c h / 0.25) 214deg 221deg,
+      oklch(from var(--background) l c h / 0.8) 221deg 238deg,
+      oklch(from var(--background) l c h / 0.45) 238deg 251deg,
+      oklch(from var(--background) l c h / 0.7) 251deg 270deg,
+      transparent 0
+    );
+  mask-image: radial-gradient(
+    85% 150% at 50% 0,
+    #000 27%,
+    rgb(0 0 0 / 0.8) 0 41%,
+    rgb(0 0 0 / 0.6) 0 52%,
+    rgb(0 0 0 / 0.4) 0 68%,
+    rgb(0 0 0 / 0.2) 0 86%,
+    transparent 0
+  );
 }
 
 blueprint::after {
