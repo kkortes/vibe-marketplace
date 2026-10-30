@@ -64,13 +64,10 @@ blueprint {
   flex-direction: column;
   position: relative;
   min-height: 100dvh;
-}
-
-:is(blueprint, sticky) {
   isolation: isolate;
 }
 
-:is(blueprint, sticky)::before {
+blueprint::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -92,6 +89,11 @@ blueprint::after {
 sheet {
   --inset: 50px;
   flex: 1;
+}
+
+sticky {
+  z-index: 1;
+  background-color: oklch(from var(--background) l c h / 0.8);
 }
 
 :is(sheet, sticky) {
