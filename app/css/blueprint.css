@@ -235,7 +235,6 @@ pane {
   min-width: 0;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--cell);
   padding: 0 var(--inset) var(--pad);
 }
 
@@ -447,13 +446,6 @@ tabs[versions] > tab[active] {
 tabs[versions] > tab {
   flex-shrink: 0;
   width: calc(var(--unit) * 24);
-  height: calc(var(--unit) * 12);
-}
-
-trail {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--unit) * 2);
   height: calc(var(--unit) * 12);
 }
 
