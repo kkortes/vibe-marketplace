@@ -78,39 +78,11 @@ blueprint {
 
 blueprint::before {
   content: '';
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: -1;
-  background:
-    radial-gradient(26% 34% at 50% 0, var(--background) 100%, transparent 0),
-    conic-gradient(
-      at 50% 0,
-      transparent 90deg,
-      oklch(from var(--background) l c h / 0.6) 90deg 104deg,
-      oklch(from var(--background) l c h / 1) 104deg 111deg,
-      oklch(from var(--background) l c h / 0.3) 111deg 129deg,
-      oklch(from var(--background) l c h / 0.85) 129deg 137deg,
-      oklch(from var(--background) l c h / 0.5) 137deg 152deg,
-      oklch(from var(--background) l c h / 1) 152deg 158deg,
-      oklch(from var(--background) l c h / 0.7) 158deg 176deg,
-      oklch(from var(--background) l c h / 0.4) 176deg 189deg,
-      oklch(from var(--background) l c h / 0.95) 189deg 197deg,
-      oklch(from var(--background) l c h / 0.55) 197deg 214deg,
-      oklch(from var(--background) l c h / 0.25) 214deg 221deg,
-      oklch(from var(--background) l c h / 0.8) 221deg 238deg,
-      oklch(from var(--background) l c h / 0.45) 238deg 251deg,
-      oklch(from var(--background) l c h / 0.7) 251deg 270deg,
-      transparent 0
-    );
-  mask-image: radial-gradient(
-    85% 150% at 50% 0,
-    #000 27%,
-    rgb(0 0 0 / 0.8) 0 41%,
-    rgb(0 0 0 / 0.6) 0 52%,
-    rgb(0 0 0 / 0.4) 0 68%,
-    rgb(0 0 0 / 0.2) 0 86%,
-    transparent 0
-  );
+  background: var(--background);
+  mask: url(fade.svg) round(nearest, 50%, var(--grid-size)) 0 / calc(var(--grid-size) * 31) calc(var(--grid-size) * 20) no-repeat;
 }
 
 blueprint::after {
