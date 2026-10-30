@@ -200,12 +200,15 @@ box[solid] {
   background: var(--card);
 }
 
-controls {
+snippet {
+  position: relative;
+  align-self: stretch;
+}
+
+snippet > button {
   position: absolute;
-  top: calc(var(--unit) * 12);
+  top: 0;
   right: 0;
-  z-index: 1;
-  display: flex;
 }
 
 slider {

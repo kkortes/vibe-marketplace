@@ -34,9 +34,6 @@
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
     <box main solid paper coding="@[coding]">
-      <controls>
-        <button tertiary title="Edit the code" active="@[coding]" onclick="$.coding = !$.coding"><icon pencil></icon></button>
-      </controls>
       <versions>
         <tabs primary versions>
           <tab active="@[!tab]" onclick="$.show(0)">Latest</tab>
@@ -44,7 +41,8 @@
           <tab active="@[n === tab]" onclick="$.show(@[n])">v@[n]</tab>
           <!-- /each -->
         </tabs>
-        <button tertiary title="Close" onclick="$.close()"><icon cross></icon></button>
+        <button tertiary title="Edit the code" active="@[coding]" onclick="$.coding = !$.coding"><icon pencil></icon>Edit</button>
+        <button tertiary title="Close" onclick="$.close()"><icon cross></icon>Close</button>
       </versions>
       <slider>
         <codie highlight-html inert="@[!coding]"></codie>
@@ -64,10 +62,7 @@
             </section>
             <!-- if component -->
             <section use>
-              <crow justify-between w-full>
-                <h6>Use it</h6>
-                <button tertiary sm onclick="$.copy()"><icon copy></icon>Copy</button>
-              </crow>
+              <h6>Use it</h6>
 
               <!-- if $.outdated() -->
               <blockquote>
@@ -76,7 +71,10 @@
               </blockquote>
               <!-- /if -->
 
-              <codie usage highlight-html></codie>
+              <snippet>
+                <codie usage highlight-html></codie>
+                <button tertiary onclick="$.copy()"><icon copy></icon>Copy</button>
+              </snippet>
 
               <!-- if tab -->
               <p text-muted>
