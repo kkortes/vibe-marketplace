@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "type": "module",
   "scripts": {
-    "dev": "\"$(git rev-parse --path-format=absolute --git-common-dir)/../../dev.sh\" 'bun compile:watch & bunx wrangler dev --port=$PORT --ip=localhost --live-reload'",
+    "dev": "\"$(git rev-parse --path-format=absolute --git-common-dir)/../../dev.sh\" 'bun compile:watch & bunx wrangler dev --port=$PORT --ip=localhost'",
     "build": "bun compile",
     "compile": "rm -rf compiled && bunx vibe compile && mv compiled/node_modules compiled/modules",
     "compile:watch": "bun compile && bunx vibe compile --watch --no-clean",

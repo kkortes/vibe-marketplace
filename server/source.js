@@ -53,7 +53,10 @@ app.get('/:namespace/:slug/:pin', (c) => {
 
 // The same address without .html is the website's page for the component; with
 // .html it is the component's raw source. The ending decides, nothing else.
-app.get('/:namespace/:slug{[a-z0-9-]+}', (c) => c.env.ASSETS.fetch(new URL('/component', c.req.url)));
+// /cdn-cgi/ belongs to the Cloudflare runtime and is never a namespace.
+app.get('/:namespace/:slug{[a-z0-9-]+}', (c) =>
+  c.req.param('namespace') === 'cdn-cgi' ? c.notFound() : c.env.ASSETS.fetch(new URL('/component', c.req.url)),
+);
 
 app.get('/:namespace/:file{.+\\.html}', (c) =>
   revision(c, c.req.param('namespace'), c.req.param('file').replace('.html', '')),
