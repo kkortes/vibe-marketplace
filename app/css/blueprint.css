@@ -93,7 +93,8 @@ sheet {
 
 sticky {
   z-index: 1;
-  background-color: oklch(from var(--background) l c h / 0.8);
+  background-color: oklch(from var(--background) l c h / 0.6);
+  backdrop-filter: blur(16px) saturate(1.5);
 }
 
 :is(sheet, sticky) {
