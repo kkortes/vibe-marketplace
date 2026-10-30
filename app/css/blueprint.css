@@ -100,17 +100,26 @@ blueprint::after {
     var(--line) round(down, 100% + 1px - var(--grid-size), var(--grid-size)) 0 / 1px 100% no-repeat;
 }
 
-sheet {
-  flex: 1;
-}
-
 sticky {
   z-index: 1;
+  padding-inline: calc(var(--grid-size) + var(--inset)) var(--gutter);
   background-color: oklch(from var(--background) l c h / 0.6);
   backdrop-filter: blur(16px) saturate(1.5);
 }
 
-:is(sheet, sticky) {
+sticky[grid][locked] {
+  --major: oklch(from var(--border) l c h / 0.11);
+  --minor: oklch(from var(--border) l c h / 0.04);
+}
+
+sticky strong {
+  font-size: calc(var(--unit) * 4.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+sheet {
+  flex: 1;
   padding-inline: calc(var(--grid-size) + var(--inset)) calc(var(--gutter) + var(--inset));
 }
 
