@@ -9,6 +9,12 @@ export default {
   wsConnected: false,
   userMenuOpen: false,
   darkMode: get('mkp-darkMode') ?? true,
+  // Set once the frontpage search bar has stuck; the wordmark clears it.
+  browsed: get('mkp-browsed') ?? false,
   path: location.pathname,
   notice: '',
+  // The tag picked in the catalogue. Only the frontpage filters in place;
+  // picking one anywhere else opens the frontpage filtered by it.
+  tag: '',
+  pick: (name) => location.assign(`/tag/${encodeURIComponent(name.toLowerCase())}`),
 };

@@ -20,8 +20,9 @@ Vibe and Stylecheat and nothing else.
   first (`run_worker_first`) only so it carries CORS headers.
 - One origin serves all of it, so `ORIGIN` in `app/js/env.js` is the site, the
   socket (`wss://…/ws`) and the component source alike. A namespace named like a
-  top-level asset folder would be shadowed by it, which is why `modules`, `js`,
-  `css` and `components` are reserved.
+  top-level asset folder or page would be shadowed by it, which is why `modules`,
+  `js`, `css`, `component`, `components`, `namespace` and `tag` are reserved —
+  `tag` because `/tag/<name>` is the frontpage filtered by that tag.
 - It is deployed with `bunx wrangler deploy` from the root, after
   `bun run build`, to the developer's own Cloudflare account. There is no
   deploy script.
@@ -79,6 +80,11 @@ webdev-game-stack remote components, read at seed time and written into
 - `GET /<namespace>/<slug>.html` — the latest revision. Short cache; it moves.
 - `GET /<namespace>/<slug>/vN.html` — revision N. Immutable cache; it cannot move.
 
+Without `.html` the same addresses are the website's pages: `/<namespace>/<slug>`
+is the component page, `/<namespace>` lists every component under it. Every list
+of components — the frontpage, Your components on `/components` and
+`/<namespace>` — is `app/components/Catalogue.html`, handed the array as `items`.
+
 The address a visitor copies is `…/<slug>.html#vN`. A URL fragment is cut from a
 request before it is sent, so no server ever sees one — `js/pin.js` resolves it
 in the page into the version path above. The marketplace serves that resolver at
@@ -116,7 +122,8 @@ source and seed data off the static host. Anything added to `app/` as a
 top-level `.html` file becomes a page.
 
 - `app/` — pages flat at its root (`index.html`, `component.html`,
-  `components.html`), plus `components/` (the site's own Layout and Topbar), `js/`,
+  `components.html`, `namespace.html`), plus `components/` (the site's own
+  Layout, Topbar and Catalogue), `js/`,
   `css/`, `fonts/` and `index.css`.
 - `server/` — the Worker: its websocket events, the component-source routes,
   the D1 migrations and the seed.

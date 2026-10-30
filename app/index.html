@@ -12,11 +12,23 @@
   <link rel="stylesheet" href="/modules/codie/codie.css" />
   <script async src="https://accounts.google.com/gsi/client"></script>
 
+  <script>
+    // The Worker also serves this page at /tag/<name>, a path vibe would derive
+    // no manifest from, so it is told where the manifest lives.
+    window.__MANIFEST__ = '/vibe-hyperspeed/index.html.manifest.js';
+
+    // A visitor who has moved past the hero before gets the catalogue layout
+    // from the first paint, the search bar's line already under it.
+    localStorage.getItem('mkp-browsed') === 'true' && document.documentElement.setAttribute('browsed', '');
+  </script>
+
   <script type="module">
     import boot from '/js/boot.js';
     import { load, state, edit, intro } from '/js/browse.js';
 
     boot(state, load).on('ready', () => {
+      // Without the hero there is no tag to edit and nothing to collapse.
+      if (!window.$.hero) return;
       edit();
       intro();
     });
@@ -25,6 +37,7 @@
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
+    <!-- if hero -->
     <box main hero intro="@[!scrolled]">
       <container>
         <crow g-12 w-full sm:vertical>
@@ -51,6 +64,7 @@
         </crow>
       </container>
     </box>
+    <!-- /if -->
 
     <sticky grid locked auto-shadow>
       <divider></divider>
@@ -61,12 +75,12 @@
         </label>
 
         <crow wrap>
-          <button tertiary active="@[tag === 'All']" onclick="$.tag = 'All'; $.filter()">All</button>
+          <button tertiary active="@[tag === 'All']" onclick="$.pick('All')">All</button>
           <!-- each filters.auto as name -->
-          <button tertiary active="@[tag === name]" onclick="$.tag = '@[name]'; $.filter()">@[name]</button>
+          <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
           <!-- /each -->
           <!-- each filters.user as name -->
-          <button tertiary active="@[tag === name]" onclick="$.tag = '@[name]'; $.filter()">@[name]</button>
+          <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
           <!-- /each -->
         </crow>
 
@@ -82,37 +96,7 @@
       <crow w-full py="12" text-muted>Loading the catalogue…</crow>
       <!-- else -->
       <!-- if matches.length -->
-      <catalogue w-full>
-        <!-- each matches as comp (comp.namespace + '/' + comp.slug) -->
-        <a href="/@[comp.namespace]/@[comp.slug]" secondary flex>
-          <card f-1 p-5 g-4 hover paper style="view-transition-name: c-@[comp.namespace]-@[comp.slug]">
-            <crow up left g-4 f-1>
-              <card vertical w-12 h-12 f-0 p-0><icon @[comp.icon] w="6" h="6" text-primary></icon></card>
-              <crow vertical left up g="1.5" f-1>
-                <crow justify-between g-3 wrap w-full>
-                  <h5>@[comp.title]</h5>
-                  <badge secondary>v@[comp.latest]</badge>
-                </crow>
-                <code>@[comp.namespace]/@[comp.slug]</code>
-                <p text-muted>@[comp.description]</p>
-              </crow>
-            </crow>
-            <tags>
-              <crow left g-2 wrap>
-                <span sm text-muted>Auto tags</span>
-                <!-- each comp.tags as name -->
-                <badge secondary active="@[tag === name]"><!-- if name === 'JS' --><icon js></icon><!-- else if name === 'CSS' --><icon css-3></icon><!-- /if -->@[name]</badge>
-                <!-- /each -->
-              </crow>
-              <crow left g-2 wrap>
-                <span sm text-muted>User tags</span>
-                <badge secondary active="@[tag === comp.category]">@[comp.category]</badge>
-              </crow>
-            </tags>
-          </card>
-        </a>
-        <!-- /each -->
-      </catalogue>
+      <component src="/components/Catalogue.html" items="@[matches]"></component>
       <!-- else -->
       <crow w-full py="12" text-muted>
         <!-- if query -->Nothing matches “@[query]”.<!-- else -->No components published here yet.<!-- /if -->

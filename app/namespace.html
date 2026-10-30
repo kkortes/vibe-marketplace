@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Namespace — Viberary</title>
+  <link rel="stylesheet" href="/css/stylecheat.css" />
+  <link rel="stylesheet" href="/css/blueprint.css" />
+  <script async src="https://accounts.google.com/gsi/client"></script>
+
+  <script>
+    // The Worker serves this page at /<namespace>, a path vibe would derive no
+    // manifest from, so it is told where the manifest lives.
+    window.__MANIFEST__ = '/vibe-hyperspeed/namespace.html.manifest.js';
+  </script>
+
+  <script type="module">
+    import boot from '/js/boot.js';
+    import { load, state } from '/js/namespace.js';
+
+    boot(state, load);
+  </script>
+</head>
+
+<body stylecheat vibe-fouc>
+  <component src="/components/Layout.html">
+    <box main>
+      <h1>@[namespace]</h1>
+      <p lead max-w-160>Every component published under <code>@[namespace]/</code>.</p>
+    </box>
+
+    <box>
+      <!-- if loading -->
+      <crow w-full py="12" text-muted>Loading the namespace…</crow>
+      <!-- else -->
+      <!-- if listed.length -->
+      <component src="/components/Catalogue.html" items="@[listed]"></component>
+      <!-- else -->
+      <crow w-full py="12" text-muted>No components published in @[namespace] yet.</crow>
+      <!-- /if -->
+      <!-- /if -->
+    </box>
+  </component>
+</body>
+
+</html>
