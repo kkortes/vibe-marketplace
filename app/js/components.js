@@ -3,6 +3,8 @@ import { call } from '/js/ws.js';
 export const state = {
   mine: [],
   owned: [],
+  // The selected tab: a namespace slug, or '' for All.
+  namespace: '',
   slug: '',
   title: '',
 
@@ -29,6 +31,7 @@ const refresh = async () => {
   if (!window.$.user) {
     window.$.mine = [];
     window.$.owned = [];
+    window.$.namespace = '';
     return;
   }
 

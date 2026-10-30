@@ -20,6 +20,16 @@
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
     <box main>
+      <!-- if user -->
+      <versions>
+        <tabs primary versions>
+          <tab active="@[!namespace]" onclick="$.namespace = ''">All</tab>
+          <!-- each mine as ns (ns.slug) -->
+          <tab active="@[ns.slug === namespace]" onclick="$.namespace = '@[ns.slug]'">@[ns.slug]</tab>
+          <!-- /each -->
+        </tabs>
+      </versions>
+      <!-- /if -->
       <container>
         <crow vertical left g-3 w-full>
           <h1>Components</h1>
@@ -71,11 +81,13 @@
         <table>
           <tbody>
             <!-- each owned as comp (comp.namespace + '/' + comp.slug) -->
+            <!-- if !namespace || comp.namespace === namespace -->
             <tr>
               <td><code>@[comp.namespace]/@[comp.slug]</code></td>
               <td text-muted>@[comp.title] · v@[comp.latest]</td>
               <td><a href="/@[comp.namespace]/@[comp.slug]" secondary>View</a></td>
             </tr>
+            <!-- /if -->
             <!-- /each -->
           </tbody>
         </table>
