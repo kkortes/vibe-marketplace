@@ -209,6 +209,15 @@ card[paper] component button[secondary]:hover {
   background-color: var(--secondary);
 }
 
+container [codie] > * {
+  min-width: 0;
+}
+
+container [codie] .codie-layer {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 catalogue code {
   overflow-wrap: anywhere;
   white-space: normal;

@@ -13,12 +13,10 @@
   <script async src="https://accounts.google.com/gsi/client"></script>
 
   <script type="module">
-    import codie from '/modules/@ape-egg/codie/codie.js';
-
     import boot from '/js/boot.js';
-    import { load, state } from '/js/browse.js';
+    import { load, state, edit } from '/js/browse.js';
 
-    boot(state, load).on('ready', () => codie('[codie]'));
+    boot(state, load).on('ready', edit);
   </script>
 </head>
 
@@ -33,19 +31,19 @@
               Every component here is plain HTML living at a URL. Point a <code>&lt;component&gt;</code>
               tag at one and it renders — no install, no build step, nothing to keep in sync.
             </p>
-            <template codie highlight-html vibe-dehydrate>
-              <component src="https://viberary.korte.kim/vibe/counter.html#v3" label="Items" step="1"></component>
-            </template>
             <p text-muted max-w-160>
               The <code>#v3</code> pins that render to revision three, for good. Leave it off and the
               tag renders whatever the latest revision happens to be.
             </p>
           </crow>
 
-          <card vertical g-4 p="12" sm:p="6" f-1 overflow-hidden paper>
-            <h6>Rendered from that tag</h6>
-            <component src="@[featured]" label="Items" step="1"></component>
-          </card>
+          <crow vertical g-6 f-1 overflow-hidden>
+            <card vertical g-4 p="12" sm:p="6" w-full paper>
+              <h6>Rendered from that tag</h6>
+              <component src="@[demo.src]" label="@[demo.label]" step="@[demo.step]"></component>
+            </card>
+            <template codie highlight-html vibe-dehydrate></template>
+          </crow>
         </crow>
       </container>
     </box>
