@@ -8,7 +8,6 @@
     "seed": "bun seed.js"
   },
   "dependencies": {
-    "@ape-egg/async-await-websockets": "^3.9.0",
-    "hono": "^4.12.3"
+    "@ape-egg/async-await-websockets": "^3.9.0"
   }
 }
