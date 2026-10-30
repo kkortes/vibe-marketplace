@@ -14,15 +14,18 @@
 
   <script type="module">
     import boot from '/js/boot.js';
-    import { load, state, edit } from '/js/browse.js';
+    import { load, state, edit, intro } from '/js/browse.js';
 
-    boot(state, load).on('ready', edit);
+    boot(state, load).on('ready', () => {
+      edit();
+      intro();
+    });
   </script>
 </head>
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
-    <box>
+    <box main intro="@[!scrolled]">
       <container>
         <crow up g-12 w-full sm:vertical>
           <crow vertical left g-6 f-1 overflow-hidden>
@@ -81,7 +84,7 @@
       <catalogue w-full>
         <!-- each matches as comp (comp.namespace + '/' + comp.slug) -->
         <a href="/component.html?c=@[comp.namespace]/@[comp.slug]" secondary flex>
-          <card f-1 p-6 hover paper>
+          <card f-1 p-6 hover paper style="view-transition-name: c-@[comp.namespace]-@[comp.slug]">
             <crow up left g-4 f-1>
               <card vertical w-12 h-12 f-0 p-0><icon @[comp.icon] w="6" h="6" text-primary></icon></card>
               <crow vertical left up g="1.5" f-1>

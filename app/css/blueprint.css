@@ -1,3 +1,12 @@
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(*) {
+  animation-duration: 500ms;
+  animation-timing-function: var(--ease-in-out);
+}
+
 [stylecheat] {
   --grid-unit: 8px;
   --radius: 0px;
@@ -99,6 +108,7 @@ sheet sticky::before {
 }
 
 sticky {
+  view-transition-name: header;
   z-index: 1;
   padding-inline: calc(var(--grid-size) + var(--inset)) var(--gutter);
   background-color: oklch(from var(--background) l c h / 0.6);
@@ -117,6 +127,7 @@ sticky strong {
 }
 
 sheet sticky {
+  view-transition-name: none;
   top: calc(var(--unit) * 12);
   z-index: 2;
   order: 0;
@@ -155,6 +166,21 @@ box {
   height: calc-size(auto, round(up, size, var(--cell)));
 }
 
+box[main] {
+  view-transition-name: var(--main, none);
+  justify-content: center;
+  transition: height 700ms var(--ease-in-out);
+}
+
+box[main][intro] {
+  height: calc-size(auto, max(round(up, size, var(--cell)), round(nearest, 100dvh - var(--unit) * 24, var(--cell))));
+}
+
+box[main] + divider,
+box[main] + sticky > divider {
+  view-transition-name: second-line;
+}
+
 divider {
   position: sticky;
   top: calc(var(--unit) * 12);
@@ -166,6 +192,7 @@ divider {
 }
 
 blueprint > divider {
+  view-transition-name: header-line;
   z-index: 3;
   margin-inline: var(--grid-size) var(--gutter);
 }

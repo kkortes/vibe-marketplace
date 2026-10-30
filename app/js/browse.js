@@ -18,6 +18,7 @@ export const state = {
   scope: 'all',
   query: '',
   loading: true,
+  scrolled: false,
 
   filter() {
     const needle = this.query.trim().toLowerCase();
@@ -55,6 +56,13 @@ export const edit = () => {
       step: component.getAttribute('step') || '',
     };
   };
+};
+
+// The hero fills the first screen until the visitor first scrolls; a page that
+// opens already scrolled, like a reload halfway down, starts collapsed.
+export const intro = () => {
+  window.$.scrolled = scrollY > 0;
+  addEventListener('scroll', () => (window.$.scrolled = true), { once: true });
 };
 
 export const load = async () => {
