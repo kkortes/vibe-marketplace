@@ -3,7 +3,7 @@
     <!-- if path === '/component.html' -->
     <crow g-2>
       <button tertiary back title="Back" onclick="$.close()"><icon chevron-left></icon></button>
-      <span><span text-muted>@[origin]/@[namespace]/</span>@[slug]<span text-muted>.html</span></span>
+      <a href="@[origin]/@[namespace]/@[slug].html" target="_blank" rel="noopener" secondary><span text-muted>@[origin]/@[namespace]/</span>@[slug]<span text-muted>.html</span></a>
       <crow>
         <button tertiary title="Copy the tag" onclick="$.copy()"><icon copy></icon></button>
         <button tertiary title="Pin to this version" disabled="@[!user]" active="@[pinned]" onclick="$.pinned = !$.pinned"><icon pin></icon></button>
