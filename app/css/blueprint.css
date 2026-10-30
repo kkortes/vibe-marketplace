@@ -102,7 +102,7 @@ blueprint::after {
 
 sticky {
   z-index: 1;
-  padding-inline: calc(var(--grid-size) + var(--inset)) var(--gutter);
+  padding-inline: calc(var(--grid-size) + var(--inset) / 2) var(--gutter);
   background-color: oklch(from var(--background) l c h / 0.6);
   backdrop-filter: blur(16px) saturate(1.5);
 }
