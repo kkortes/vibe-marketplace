@@ -190,6 +190,15 @@ on the requested one. vibe's `index.js` ↔ `boot.js` cycle then loads `index.js
 twice: `$.on('afterUpdate')` registered before boot lands in one copy and boot
 reads the other, so the theme toggle never saves or touches `body.dark`.
 
+### `compiled/` is emptied, never deleted
+
+`wrangler dev` watches `compiled/` itself. Deleting that folder ends the watch:
+wrangler keeps the asset list from the moment of the delete — mid-build, so
+pages and `js/` but no `modules/` — and serves it until restarted. vibe never
+loads and the page shows its raw markup ("Nothing matches “@[query]”").
+So `bun run compile` empties the folder and compiles with `--no-clean`, and a
+build run beside a live `bun dev` keeps the dev server current.
+
 ### A state method called from a binding is called unbound
 
 `@[showing()]` reaches the function but not the object, so `this` is undefined

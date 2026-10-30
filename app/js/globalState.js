@@ -14,7 +14,11 @@ export default {
   path: location.pathname,
   notice: '',
   // The tag picked in the catalogue. The frontpage and /<namespace> filter in place;
-  // picking one anywhere else opens the frontpage filtered by it.
+  // picking one anywhere else opens the frontpage filtered by it. `tagged` is
+  // the address a tag link points at, so /<namespace> keeps its own.
   tag: '',
-  pick: (name) => location.assign(`/tag/${encodeURIComponent(name.toLowerCase())}`),
+  tagged: (name) => `/tag/${encodeURIComponent(name.toLowerCase())}`,
+  pick(name) {
+    location.assign(this.tagged(name));
+  },
 };

@@ -15,12 +15,12 @@
       <crow left g-2 wrap>
         <span sm text-muted>Auto tags</span>
         <!-- each comp.tags as name -->
-        <a href="/tag/@[name.toLowerCase()]" onclick="event.preventDefault(); $.pick('@[name]')"><badge secondary active="@[tag === name]"><!-- if name === 'JS' --><icon js></icon><!-- else if name === 'CSS' --><icon css-3></icon><!-- /if -->@[name]</badge></a>
+        <a href="@[$.tagged(name)]" onclick="event.preventDefault(); $.pick('@[name]')"><badge secondary active="@[tag === name]"><!-- if name === 'JS' --><icon js></icon><!-- else if name === 'CSS' --><icon css-3></icon><!-- /if -->@[name]</badge></a>
         <!-- /each -->
       </crow>
       <crow left g-2 wrap>
         <span sm text-muted>User tags</span>
-        <a href="/tag/@[comp.category.toLowerCase()]" onclick="event.preventDefault(); $.pick('@[comp.category]')"><badge secondary active="@[tag === comp.category]">@[comp.category]</badge></a>
+        <a href="@[$.tagged(comp.category)]" onclick="event.preventDefault(); $.pick('@[comp.category]')"><badge secondary active="@[tag === comp.category]">@[comp.category]</badge></a>
       </crow>
     </tags>
   </card>

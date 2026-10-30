@@ -9,10 +9,12 @@ const top = (names) =>
     .slice(0, 4)
     .map(([name]) => name);
 
+const [, namespace, , linked = ''] = location.pathname.split('/').map(decodeURIComponent);
+
 export const state = {
   ...publishing,
-  // The Worker serves this page at /<namespace>.
-  namespace: location.pathname.slice(1),
+  // The Worker serves this page at /<namespace> and /<namespace>/tag/<name>.
+  namespace,
   components: [],
   matches: [],
   filters: { auto: [], user: [] },
@@ -20,9 +22,13 @@ export const state = {
   query: '',
   loading: true,
 
-  // Picking the tag already picked unpicks it, back to every component.
+  tagged: (name) => `/${namespace}/tag/${encodeURIComponent(name.toLowerCase())}`,
+
+  // Picking the tag already picked unpicks it, back to every component. The
+  // filter lives in the address, so a tag can be linked and reloaded.
   pick(name) {
     this.tag = this.tag === name ? 'All' : name;
+    history.replaceState(null, '', this.tag === 'All' ? `/${namespace}` : this.tagged(this.tag));
     this.filter();
   },
 
@@ -44,6 +50,7 @@ export const load = async () => {
 
   window.$.components = components;
   window.$.filters = { auto: top(components.flatMap(({ tags }) => tags)), user: top(components.map(({ category }) => category)) };
+  window.$.tag = components.flatMap(({ tags, category }) => [...tags, category]).find((name) => name.toLowerCase() === linked) || 'All';
   window.$.loading = false;
   window.$.filter();
 

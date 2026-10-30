@@ -45,12 +45,16 @@ const revision = async (c, namespace, slug, version) => {
 // A tag filter is the frontpage with that tag picked. It sits before the
 // component and namespace routes, which is why "tag" is a reserved namespace;
 // bare /tag is the frontpage with nothing picked.
-app.get('/tag/:name?',(c) => c.env.ASSETS.fetch(new URL('/', c.req.url)));
+app.get('/tag/:name?', (c) => c.env.ASSETS.fetch(new URL('/', c.req.url)));
 
 // A bare namespace is the website's page listing what is published under it.
 // Pages compiled from app/ answer their own paths first, which is why
 // "component", "components" and "namespace" are reserved namespaces.
 app.get('/:namespace{[a-z0-9-]+}', (c) => c.env.ASSETS.fetch(new URL('/namespace', c.req.url)));
+
+// The same inside a namespace: its page with that tag picked, which is why no
+// component is slugged "tag".
+app.get('/:namespace/tag/:name?', (c) => c.env.ASSETS.fetch(new URL('/namespace', c.req.url)));
 
 app.get('/:namespace/:slug/:pin', (c) => {
   const [, version] = c.req.param('pin').match(PINNED) || [];

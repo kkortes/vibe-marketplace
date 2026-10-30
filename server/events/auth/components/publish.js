@@ -12,6 +12,7 @@ export default async (
   { db, identity },
 ) => {
   if (!slugPattern.test(String(slug))) throw Error('A slug is lowercase words joined by dashes');
+  if (slug === 'tag') throw Error('tag is reserved for /<namespace>/tag/<name>');
   if (!String(title).trim()) throw Error('A component needs a title');
   if (!String(html).trim()) throw Error('A component needs markup');
   if (!CATEGORIES.includes(category)) throw Error(`Category must be one of ${CATEGORIES.join(', ')}`);
