@@ -20,8 +20,9 @@ export const state = {
   query: '',
   loading: true,
 
+  // Picking the tag already picked unpicks it, back to every component.
   pick(name) {
-    this.tag = name;
+    this.tag = this.tag === name ? 'All' : name;
     this.filter();
   },
 

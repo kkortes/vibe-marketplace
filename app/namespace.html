@@ -39,12 +39,11 @@
         </label>
 
         <crow wrap>
-          <button tertiary active="@[tag === 'All']" onclick="$.pick('All')">All</button>
-          <span sm text-muted>Auto tags</span>
+          <span text-muted>Auto tags</span>
           <!-- each filters.auto as name -->
           <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
           <!-- /each -->
-          <span sm text-muted>User tags</span>
+          <span text-muted>User tags</span>
           <!-- each filters.user as name -->
           <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
           <!-- /each -->
