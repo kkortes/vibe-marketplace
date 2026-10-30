@@ -209,6 +209,10 @@ card[paper] component button[secondary]:hover {
   background-color: var(--secondary);
 }
 
+container [codie] {
+  overflow: visible;
+}
+
 container [codie] > * {
   min-width: 0;
 }
