@@ -235,7 +235,7 @@ pane {
   min-width: 0;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0 var(--inset) var(--pad);
+  padding: 0;
 }
 
 sheet:has(box[solid]) {
