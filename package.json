@@ -7,7 +7,8 @@
     "build": "bun compile",
     "compile": "rm -rf compiled && bunx vibe compile && mv compiled/node_modules compiled/modules",
     "compile:watch": "bun compile && bunx vibe compile --watch --no-clean",
-    "test": "bun test"
+    "test": "bun test",
+    "fade": "bun scripts/fade.js"
   },
   "dependencies": {
     "@ape-egg/async-await-websockets": "^3.9.0",
