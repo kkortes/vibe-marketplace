@@ -24,84 +24,88 @@
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
-    <container>
-      <crow up g-12 w-full sm:vertical>
-        <crow vertical left g-6 f-1 overflow-hidden>
-          <h1>Components you point at.</h1>
-          <p lead max-w-160>
-            Every component here is plain HTML living at a URL. Point a <code>&lt;component&gt;</code>
-            tag at one and it renders — no install, no build step, nothing to keep in sync.
-          </p>
-          <template codie highlight-html vibe-dehydrate>
-            <component src="https://viberary.korte.kim/vibe/counter.html#v3" label="Items" step="1"></component>
-          </template>
-          <p text-muted max-w-160>
-            The <code>#v3</code> pins that render to revision three, for good. Leave it off and the
-            tag renders whatever the latest revision happens to be.
-          </p>
-        </crow>
+    <box>
+      <container>
+        <crow up g-12 w-full sm:vertical>
+          <crow vertical left g-6 f-1 overflow-hidden>
+            <h1>Components you point at.</h1>
+            <p lead max-w-160>
+              Every component here is plain HTML living at a URL. Point a <code>&lt;component&gt;</code>
+              tag at one and it renders — no install, no build step, nothing to keep in sync.
+            </p>
+            <template codie highlight-html vibe-dehydrate>
+              <component src="https://viberary.korte.kim/vibe/counter.html#v3" label="Items" step="1"></component>
+            </template>
+            <p text-muted max-w-160>
+              The <code>#v3</code> pins that render to revision three, for good. Leave it off and the
+              tag renders whatever the latest revision happens to be.
+            </p>
+          </crow>
 
-        <card vertical g-4 p="12" sm:p="6" f-1 overflow-hidden>
-          <h6>Rendered from that tag</h6>
-          <component src="@[featured]" label="Items" step="1"></component>
-        </card>
-      </crow>
-    </container>
+          <card vertical g-4 p="12" sm:p="6" f-1 overflow-hidden>
+            <h6>Rendered from that tag</h6>
+            <component src="@[featured]" label="Items" step="1"></component>
+          </card>
+        </crow>
+      </container>
+    </box>
 
     <divider></divider>
 
-    <crow left g-6 wrap w-full>
-      <label f-1>
-        <input type="search" placeholder="Search components" value="@[query]"
-          oninput="$.query = this.value; $.filter()" />
-      </label>
+    <box>
+      <crow left g-6 wrap w-full>
+        <label f-1>
+          <input type="search" placeholder="Search components" value="@[query]"
+            oninput="$.query = this.value; $.filter()" />
+        </label>
 
-      <crow g="1.5" wrap>
-        <!-- each categories as name -->
-        <button tertiary active="@[category === name]" onclick="$.category = '@[name]'; $.filter()">@[name]</button>
-        <!-- /each -->
+        <crow g="1.5" wrap>
+          <!-- each categories as name -->
+          <button tertiary active="@[category === name]" onclick="$.category = '@[name]'; $.filter()">@[name]</button>
+          <!-- /each -->
+        </crow>
+
+        <label>
+          <select onchange="$.scope = this.value; $.filter()">
+            <option value="all">All namespaces</option>
+            <!-- each namespaces as ns -->
+            <option value="@[ns.slug]">@[ns.slug]</option>
+            <!-- /each -->
+          </select>
+        </label>
       </crow>
 
-      <label>
-        <select onchange="$.scope = this.value; $.filter()">
-          <option value="all">All namespaces</option>
-          <!-- each namespaces as ns -->
-          <option value="@[ns.slug]">@[ns.slug]</option>
-          <!-- /each -->
-        </select>
-      </label>
-    </crow>
-
-    <!-- if loading -->
-    <crow w-full py="12" text-muted>Loading the catalogue…</crow>
-    <!-- else -->
-    <!-- if matches.length -->
-    <catalogue w-full>
-      <!-- each matches as comp (comp.namespace + '/' + comp.slug) -->
-      <a href="/component.html?c=@[comp.namespace]/@[comp.slug]" secondary flex>
-        <card f-1 p-6 hover>
-          <crow up left g-4 f-1>
-            <card vertical w-12 h-12 f-0 p-0><icon @[comp.icon] w="6" h="6" text-primary></icon></card>
-            <crow vertical left up g="1.5" f-1 h-full>
-              <h5>@[comp.title]</h5>
-              <code>@[comp.namespace]/@[comp.slug]</code>
-              <p text-muted f-1>@[comp.description]</p>
-              <crow justify-between w-full mt-2>
-                <badge secondary>@[comp.category]</badge>
-                <span sm text-muted>v@[comp.latest]</span>
+      <!-- if loading -->
+      <crow w-full py="12" text-muted>Loading the catalogue…</crow>
+      <!-- else -->
+      <!-- if matches.length -->
+      <catalogue w-full>
+        <!-- each matches as comp (comp.namespace + '/' + comp.slug) -->
+        <a href="/component.html?c=@[comp.namespace]/@[comp.slug]" secondary flex>
+          <card f-1 p-6 hover>
+            <crow up left g-4 f-1>
+              <card vertical w-12 h-12 f-0 p-0><icon @[comp.icon] w="6" h="6" text-primary></icon></card>
+              <crow vertical left up g="1.5" f-1 h-full>
+                <h5>@[comp.title]</h5>
+                <code>@[comp.namespace]/@[comp.slug]</code>
+                <p text-muted f-1>@[comp.description]</p>
+                <crow justify-between w-full mt-2>
+                  <badge secondary>@[comp.category]</badge>
+                  <span sm text-muted>v@[comp.latest]</span>
+                </crow>
               </crow>
             </crow>
-          </crow>
-        </card>
-      </a>
-      <!-- /each -->
-    </catalogue>
-    <!-- else -->
-    <crow w-full py="12" text-muted>
-      <!-- if query -->Nothing matches “@[query]”.<!-- else -->No components published here yet.<!-- /if -->
-    </crow>
-    <!-- /if -->
-    <!-- /if -->
+          </card>
+        </a>
+        <!-- /each -->
+      </catalogue>
+      <!-- else -->
+      <crow w-full py="12" text-muted>
+        <!-- if query -->Nothing matches “@[query]”.<!-- else -->No components published here yet.<!-- /if -->
+      </crow>
+      <!-- /if -->
+      <!-- /if -->
+    </box>
   </component>
 </body>
 

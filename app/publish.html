@@ -19,82 +19,90 @@
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
-    <container>
-      <crow vertical left g-3 w-full>
-        <h1>Publish</h1>
-        <p lead max-w-160>
-          A namespace is your corner of the catalogue. Anyone can make one, and everything published
-          under it is addressed by <code>your-namespace/your-component.html</code>.
-        </p>
-      </crow>
-    </container>
+    <box>
+      <container>
+        <crow vertical left g-3 w-full>
+          <h1>Publish</h1>
+          <p lead max-w-160>
+            A namespace is your corner of the catalogue. Anyone can make one, and everything published
+            under it is addressed by <code>your-namespace/your-component.html</code>.
+          </p>
+        </crow>
+      </container>
+    </box>
 
     <divider></divider>
 
     <!-- if user -->
-    <card w-full g-4 p-6>
-      <h6>Your namespaces</h6>
-      <!-- if mine.length -->
-      <table>
-        <tbody>
-          <!-- each mine as ns (ns.slug) -->
-          <tr>
-            <td><code>@[ns.slug]</code></td>
-            <td text-muted>@[ns.title]</td>
-            <td><a href="/edit.html?ns=@[ns.slug]" secondary>New component</a></td>
-          </tr>
-          <!-- /each -->
-        </tbody>
-      </table>
-      <!-- else -->
-      <p text-muted>None yet. The form below makes one.</p>
-      <!-- /if -->
+    <box>
+      <card w-full g-4 p-6>
+        <h6>Your namespaces</h6>
+        <!-- if mine.length -->
+        <table>
+          <tbody>
+            <!-- each mine as ns (ns.slug) -->
+            <tr>
+              <td><code>@[ns.slug]</code></td>
+              <td text-muted>@[ns.title]</td>
+              <td><a href="/edit.html?ns=@[ns.slug]" secondary>New component</a></td>
+            </tr>
+            <!-- /each -->
+          </tbody>
+        </table>
+        <!-- else -->
+        <p text-muted>None yet. The form below makes one.</p>
+        <!-- /if -->
 
-      <h6 mt-4>Make a namespace</h6>
-      <crow up left g-4 wrap>
-        <crow vertical left g="1.5" w="50">
-          <span sm text-muted>Slug</span>
-          <input type="text" w-full placeholder="acme" value="@[slug]" oninput="$.slug = this.value" />
+        <h6 mt-4>Make a namespace</h6>
+        <crow up left g-4 wrap>
+          <crow vertical left g="1.5" w="50">
+            <span sm text-muted>Slug</span>
+            <input type="text" w-full placeholder="acme" value="@[slug]" oninput="$.slug = this.value" />
+          </crow>
+          <crow vertical left g="1.5" w="50">
+            <span sm text-muted>Title</span>
+            <input type="text" w-full placeholder="Acme" value="@[title]" oninput="$.title = this.value" />
+          </crow>
         </crow>
-        <crow vertical left g="1.5" w="50">
-          <span sm text-muted>Title</span>
-          <input type="text" w-full placeholder="Acme" value="@[title]" oninput="$.title = this.value" />
+        <crow vertical left g-3>
+          <button primary onclick="$.create()">Create</button>
+          <p text-muted>Lowercase words joined by dashes. It becomes part of every address you publish.</p>
         </crow>
-      </crow>
-      <crow vertical left g-3>
-        <button primary onclick="$.create()">Create</button>
-        <p text-muted>Lowercase words joined by dashes. It becomes part of every address you publish.</p>
-      </crow>
-    </card>
+      </card>
+    </box>
 
     <divider></divider>
 
-    <card w-full g-4 p-6>
-      <h6>Your components</h6>
-      <!-- if owned.length -->
-      <table>
-        <tbody>
-          <!-- each owned as comp (comp.namespace + '/' + comp.slug) -->
-          <tr>
-            <td><code>@[comp.namespace]/@[comp.slug]</code></td>
-            <td text-muted>@[comp.title] · v@[comp.latest]</td>
-            <td><a href="/component.html?c=@[comp.namespace]/@[comp.slug]" secondary>View</a></td>
-            <td><a href="/edit.html?c=@[comp.namespace]/@[comp.slug]" secondary>New revision</a></td>
-          </tr>
-          <!-- /each -->
-        </tbody>
-      </table>
-      <!-- else -->
-      <p text-muted>Nothing published yet.</p>
-      <!-- /if -->
-    </card>
+    <box>
+      <card w-full g-4 p-6>
+        <h6>Your components</h6>
+        <!-- if owned.length -->
+        <table>
+          <tbody>
+            <!-- each owned as comp (comp.namespace + '/' + comp.slug) -->
+            <tr>
+              <td><code>@[comp.namespace]/@[comp.slug]</code></td>
+              <td text-muted>@[comp.title] · v@[comp.latest]</td>
+              <td><a href="/component.html?c=@[comp.namespace]/@[comp.slug]" secondary>View</a></td>
+              <td><a href="/edit.html?c=@[comp.namespace]/@[comp.slug]" secondary>New revision</a></td>
+            </tr>
+            <!-- /each -->
+          </tbody>
+        </table>
+        <!-- else -->
+        <p text-muted>Nothing published yet.</p>
+        <!-- /if -->
+      </card>
+    </box>
     <!-- else -->
-    <card w-full g-4 p-6>
-      <p text-muted>
-        Browsing and editing are open to everyone. Publishing is what needs an account — sign in
-        from the top right.
-      </p>
-    </card>
+    <box>
+      <card w-full g-4 p-6>
+        <p text-muted>
+          Browsing and editing are open to everyone. Publishing is what needs an account — sign in
+          from the top right.
+        </p>
+      </card>
+    </box>
     <!-- /if -->
   </component>
 </body>
