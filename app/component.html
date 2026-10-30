@@ -52,26 +52,63 @@
           <trail>
             <button tertiary title="Copy the tag" onclick="$.copy()"><icon copy></icon></button>
           </trail>
-          <!-- if missing -->
-          <crow w-full py="12" text-muted>@[missing]</crow>
-          <!-- else -->
-          <crow vertical left g-3>
-            <breadcrumb><a href="/" secondary>Browse</a><span current>@[namespace]</span></breadcrumb>
-            <h1>@[component?.title]</h1>
-            <p lead max-w-160>@[component?.description]</p>
-            <crow left g-3 wrap>
-              <badge secondary>@[component?.category]</badge>
-              <code>@[namespace]/@[slug]</code>
-              <span text-muted>Showing v@[$.showing()] · latest is v@[component?.latest]</span>
+          <columns w-full>
+            <!-- if missing -->
+            <crow w-full py="12" text-muted>@[missing]</crow>
+            <!-- else -->
+            <crow vertical left g-3>
+              <breadcrumb><a href="/" secondary>Browse</a><span current>@[namespace]</span></breadcrumb>
+              <h1>@[component?.title]</h1>
+              <p lead max-w-160>@[component?.description]</p>
+              <crow left g-3 wrap>
+                <badge secondary>@[component?.category]</badge>
+                <code>@[namespace]/@[slug]</code>
+                <span text-muted>Showing v@[$.showing()] · latest is v@[component?.latest]</span>
+              </crow>
+              <!-- if $.outdated() -->
+              <blockquote>
+                You are reading v@[$.showing()]. It is frozen and always will be — v@[component.latest] is
+                where the component is now.
+              </blockquote>
+              <!-- /if -->
             </crow>
-            <!-- if $.outdated() -->
-            <blockquote>
-              You are reading v@[$.showing()]. It is frozen and always will be — v@[component.latest] is
-              where the component is now.
-            </blockquote>
             <!-- /if -->
-          </crow>
-          <!-- /if -->
+            <!-- if component -->
+            <card w-full g-4 p-6>
+              <h6>Use it</h6>
+              <crow justify-between g-4>
+                <label>
+                  <input type="checkbox" role="switch" checked="@[pinned]"
+                    onchange="$.pinned = event.currentTarget.checked" />
+                  <span>Pin to v@[$.showing()]</span>
+                </label>
+                <button secondary onclick="$.copy()">Copy</button>
+              </crow>
+
+              <card p-4 overflow-auto><code>@[$.snippet()]</code></card>
+
+              <!-- if pinned -->
+              <p text-muted>
+                Frozen. That tag renders v@[$.showing()] today and in five years — a published revision is
+                never edited, so the only way a component changes under you is a version you asked for.
+              </p>
+
+              <h6 mt-4>What resolves the pin</h6>
+              <p text-muted>
+                A <code>#v@[$.showing()]</code> fragment never reaches a server — it is cut from the request
+                before it is sent. This line resolves it in your page, before vibe reads the document.
+              </p>
+              <card p-4 overflow-auto><code>@[$.include()]</code></card>
+              <!-- else -->
+              <p text-muted>
+                Unpinned, and that is the whole cost of it: this tag renders the <em>latest</em> revision —
+                v@[component.latest] today, and whatever someone publishes tomorrow. Add
+                <code>#v@[$.showing()]</code> to the address to freeze it.
+              </p>
+              <!-- /if -->
+            </card>
+            <!-- /if -->
+          </columns>
           <!-- if component -->
           <stage>
             <columns>
@@ -81,40 +118,6 @@
                   <crow grid locked p="12" sm:p="0" bg-background>
                     <preview-host></preview-host>
                   </crow>
-                </card>
-
-                <card w-full g-4 p-6>
-                  <h6>Use it</h6>
-                  <crow justify-between g-4>
-                    <label>
-                      <input type="checkbox" role="switch" checked="@[pinned]"
-                        onchange="$.pinned = event.currentTarget.checked" />
-                      <span>Pin to v@[$.showing()]</span>
-                    </label>
-                    <button secondary onclick="$.copy()">Copy</button>
-                  </crow>
-
-                  <card p-4 overflow-auto><code>@[$.snippet()]</code></card>
-
-                  <!-- if pinned -->
-                  <p text-muted>
-                    Frozen. That tag renders v@[$.showing()] today and in five years — a published revision is
-                    never edited, so the only way a component changes under you is a version you asked for.
-                  </p>
-
-                  <h6 mt-4>What resolves the pin</h6>
-                  <p text-muted>
-                    A <code>#v@[$.showing()]</code> fragment never reaches a server — it is cut from the request
-                    before it is sent. This line resolves it in your page, before vibe reads the document.
-                  </p>
-                  <card p-4 overflow-auto><code>@[$.include()]</code></card>
-                  <!-- else -->
-                  <p text-muted>
-                    Unpinned, and that is the whole cost of it: this tag renders the <em>latest</em> revision —
-                    v@[component.latest] today, and whatever someone publishes tomorrow. Add
-                    <code>#v@[$.showing()]</code> to the address to freeze it.
-                  </p>
-                  <!-- /if -->
                 </card>
 
                 <card w-full g-4 p-6>

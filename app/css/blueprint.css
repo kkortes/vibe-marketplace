@@ -248,6 +248,7 @@ stage {
   min-height: 0;
   width: 100%;
   overflow: hidden auto;
+  scrollbar-width: none;
 }
 
 columns {
