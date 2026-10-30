@@ -290,6 +290,10 @@ tags {
   margin-top: auto;
 }
 
+tags badge {
+  width: calc-size(fit-content, round(up, size, var(--unit)));
+}
+
 section[preview] {
   position: relative;
   padding: 0;
