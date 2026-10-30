@@ -73,7 +73,18 @@ blueprint::before {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(at 50% 0, oklch(from var(--background) l c h / 0.85) 60%, transparent) fixed;
+  background: radial-gradient(
+      at 50% 0,
+      oklch(from var(--background) l c h / 0.8) 12.5%,
+      oklch(from var(--background) l c h / 0.686) 0 25%,
+      oklch(from var(--background) l c h / 0.571) 0 37.5%,
+      oklch(from var(--background) l c h / 0.457) 0 50%,
+      oklch(from var(--background) l c h / 0.343) 0 62.5%,
+      oklch(from var(--background) l c h / 0.229) 0 75%,
+      oklch(from var(--background) l c h / 0.114) 0 87.5%,
+      transparent 0
+    )
+    fixed;
 }
 
 blueprint::after {
