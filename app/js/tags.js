@@ -36,6 +36,8 @@ const state = (html) => /this\.\w+\s*(?:[-+*/]?=(?!=)|\+\+|--)|(?:\+\+|--)this\.
 
 const styled = (html) => /<style[\s>]|\sstyle=/.test(html);
 
+export const TAGS = ['PROPS', 'STATE', 'JS', 'CSS'];
+
 export const autoTags = ({ html, props }) =>
   [
     props?.length && 'PROPS',

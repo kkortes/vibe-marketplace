@@ -1,6 +1,7 @@
 import { now } from '../../../db.js';
 import { defaults, validate } from '../../../props.js';
 import { slug as slugPattern } from '../../../user.js';
+import { autoTags } from '../../../../app/js/tags.js';
 
 const CATEGORIES = ['Interactive', 'Forms', 'Layout', 'Navigation', 'Feedback'];
 
@@ -48,6 +49,12 @@ export default async (
          SELECT namespace, slug, latest, ?3, ?4, ?5, ?6, ?7, ?8 FROM components WHERE namespace = ?1 AND slug = ?2`,
       )
       .bind(namespace, slug, html, JSON.stringify(schema), notes, identity.id, identity.name, now()),
+    // The catalogue counts and filters by the latest revision's tags, so they
+    // are replaced with every publish.
+    db.prepare('DELETE FROM tags WHERE namespace = ? AND slug = ?').bind(namespace, slug),
+    ...autoTags({ html, props: schema }).map((tag) =>
+      db.prepare('INSERT INTO tags (namespace, slug, tag) VALUES (?, ?, ?)').bind(namespace, slug, tag),
+    ),
   ]);
 
   return { namespace, slug, version: bumped.results[0].latest };

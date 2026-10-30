@@ -61,18 +61,18 @@
         </label>
 
         <crow wrap>
-          <!-- each categories as name -->
-          <button tertiary active="@[category === name]" onclick="$.category = '@[name]'; $.filter()">@[name]</button>
+          <button tertiary active="@[tag === 'All']" onclick="$.tag = 'All'; $.filter()">All</button>
+          <!-- each filters.auto as name -->
+          <button tertiary active="@[tag === name]" onclick="$.tag = '@[name]'; $.filter()">@[name]</button>
+          <!-- /each -->
+          <!-- each filters.user as name -->
+          <button tertiary active="@[tag === name]" onclick="$.tag = '@[name]'; $.filter()">@[name]</button>
           <!-- /each -->
         </crow>
 
-        <label>
-          <select onchange="$.scope = this.value; $.filter()">
-            <option value="all">All namespaces</option>
-            <!-- each namespaces as ns -->
-            <option value="@[ns.slug]">@[ns.slug]</option>
-            <!-- /each -->
-          </select>
+        <label flex g-2>
+          <input type="checkbox" role="switch" checked="@[all]" onchange="$.all = event.currentTarget.checked; $.filter()" />
+          All components
         </label>
       </crow>
     </sticky>
@@ -91,13 +91,22 @@
               <crow vertical left up g="1.5" f-1>
                 <crow justify-between g-3 wrap w-full>
                   <h5>@[comp.title]</h5>
-                  <crow g-2>
-                    <badge secondary>@[comp.category]</badge>
-                    <badge secondary>v@[comp.latest]</badge>
-                  </crow>
+                  <badge secondary>v@[comp.latest]</badge>
                 </crow>
                 <code>@[comp.namespace]/@[comp.slug]</code>
                 <p text-muted>@[comp.description]</p>
+                <tags>
+                  <crow left g-2 wrap>
+                    <span sm text-muted>Auto tags</span>
+                    <!-- each comp.tags as name -->
+                    <badge secondary>@[name]</badge>
+                    <!-- /each -->
+                  </crow>
+                  <crow left g-2 wrap>
+                    <span sm text-muted>User tags</span>
+                    <badge secondary>@[comp.category]</badge>
+                  </crow>
+                </tags>
               </crow>
             </crow>
           </card>

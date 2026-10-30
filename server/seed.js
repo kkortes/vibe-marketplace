@@ -2,6 +2,7 @@ import gameStack from './seed/game-stack.js';
 import written from './seed/vibe.js';
 import { now } from './db.js';
 import { defaults, validate } from './props.js';
+import { autoTags } from '../app/js/tags.js';
 
 // `bun run seed` seeds the local D1 that `wrangler dev` reads; `bun run seed
 // --remote` seeds the deployed one.
@@ -31,6 +32,7 @@ const sql = [
         `INSERT INTO revisions (namespace, slug, version, html, props, notes, authorId, authorName, createdAt)
          VALUES ${values('vibe', slug, i + 1, html, JSON.stringify(props), notes, null, 'Vibe', now())};`,
     ),
+    ...autoTags(versions.at(-1)).map((tag) => `INSERT INTO tags (namespace, slug, tag) VALUES ${values('vibe', slug, tag)};`),
   ]),
 ].join('\n');
 
