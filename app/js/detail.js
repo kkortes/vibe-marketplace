@@ -10,6 +10,10 @@ const [namespace, slug] = location.pathname.slice(1).split('/');
 
 const readable = (value) => JSON.stringify(value, null, 2);
 
+// The version in view lives in the hash as #v<n>, the form a pinned address
+// carries; a bare #<n> is read too. No hash means the latest.
+const hashed = () => Number(location.hash.match(/^#v?(\d+)$/)?.[1]) || 0;
+
 // Which props a component takes is the thing being documented, so the attribute
 // *names* on the tag are data. That is the one place the page writes markup
 // instead of templating it — every value on it stays bound to `values`, so
@@ -155,6 +159,8 @@ export const state = {
       this.previewSource = source(SOURCE_URL, namespace, slug, revision.version);
       this.reset();
       this.missing = '';
+      // Replaced rather than pushed, so going back still leaves the page.
+      if (version) history.replaceState(null, '', `#v${revision.version}`);
     } catch ({ message }) {
       this.missing = message;
       return;
@@ -173,8 +179,10 @@ const loadVersions = async () => {
 };
 
 export const load = async () => {
-  await window.$.show(Number(params.get('v')) || 0);
+  await window.$.show(hashed() || Number(params.get('v')) || 0);
   await loadVersions();
+
+  addEventListener('hashchange', () => window.$.show(hashed()));
 
   window.$.on('afterUpdate', (current, previous) => current.user !== previous.user && loadVersions());
 };
