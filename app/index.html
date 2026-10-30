@@ -43,7 +43,10 @@
       <container>
         <crow g-12 w-full sm:vertical>
           <crow vertical left g-6 f-1 overflow-hidden>
-            <h1>Components for the web, without the ceremony.</h1>
+            <crow vertical left g-2>
+              <spec>Plain HTML at a URL</spec>
+              <h1>Components for the web, without the ceremony.</h1>
+            </crow>
             <p lead max-w-160>
               Browse and find beautiful looking HTML-components to use in your
               <a href="https://vibe.korte.kim" target="_blank" rel="noopener" primary>Vibe</a>-powered app
@@ -87,12 +90,12 @@
             oninput="$.query = this.value; $.filter()" />
         </label>
 
-        <crow wrap>
-          <span text-muted>Auto tags</span>
+        <crow filters wrap>
+          <spec>Auto tags</spec>
           <!-- each filters.auto as name -->
           <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
           <!-- /each -->
-          <span text-muted>User tags</span>
+          <spec>User tags</spec>
           <!-- each filters.user as name -->
           <button tertiary active="@[tag === name]" onclick="$.pick('@[name]')">@[name]</button>
           <!-- /each -->

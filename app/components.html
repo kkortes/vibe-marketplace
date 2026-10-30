@@ -20,7 +20,7 @@
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
-    <box main solid paper>
+    <box main solid>
       <!-- if user -->
       <versions>
         <tabs primary versions namespaces>
@@ -41,7 +41,7 @@
           </p>
           <p>Once a component is published in a namespace, that namespace can no longer be deleted.</p>
           <crow vertical left g="1.5" w-full>
-            <span sm text-muted>Slug</span>
+            <spec>Slug</spec>
             <input type="text" w-full placeholder="acme" value="@[slug]" oninput="$.slug = this.value" />
           </crow>
           <label>
@@ -61,6 +61,7 @@
       <scroll>
         <container>
           <crow vertical left g-3 w-full>
+            <spec>Manage</spec>
             <h1>Components</h1>
             <!-- if user -->
             <p lead max-w-160>
