@@ -34,7 +34,7 @@ Vibe and Stylecheat and nothing else.
 
 One D1 database, `viberary`. Its schema is `server/migrations/`, applied with
 `wrangler d1 migrations apply viberary` (`--local` for `wrangler dev`,
-`--remote` for the deployed one). D1 enforces foreign keys on its own. Three
+`--remote` for the deployed one). D1 enforces foreign keys on its own. Four
 tables hold the catalogue; `users` and `sessions` hold Google sign-ins for
 `server/store.js`:
 
@@ -43,6 +43,7 @@ tables hold the catalogue; `users` and `sessions` hold Google sign-ins for
 | `namespaces` | `slug`, `title`, `official`, `ownerId` | yes |
 | `components` | catalogue metadata per `namespace` + `slug`: `title`, `description`, `category`, `icon`, `latest`, `defaults`, `ownerId` | yes |
 | `revisions`  | one row per published version | **never** |
+| `tags`       | the auto tags (`app/js/tags.js`) of each component's latest revision, one row per tag, replaced on every publish so the frontpage can count them with `GROUP BY` | yes |
 
 **The source bytes of a component live in `revisions.html`** — a text column on
 the revision row, holding the component's markup exactly as published.
