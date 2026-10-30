@@ -236,7 +236,7 @@ pane {
   flex-direction: column;
   align-items: flex-start;
   gap: var(--cell);
-  padding: var(--pad) var(--inset);
+  padding: 0 var(--inset) var(--pad);
 }
 
 sheet:has(box[solid]) {
@@ -455,7 +455,6 @@ trail {
   align-items: center;
   gap: calc(var(--unit) * 2);
   height: calc(var(--unit) * 12);
-  margin-top: calc(var(--pad) * -1);
 }
 
 :is(code, badge) {
