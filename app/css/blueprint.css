@@ -77,6 +77,8 @@ blueprint {
   --line: linear-gradient(var(--border), var(--border));
   --gutter: calc(100cqw - round(down, 100cqw - var(--grid-size), var(--grid-size)));
   --pad: calc(var(--unit) * 6);
+  --slide: 300ms cubic-bezier(0.7, 0, 0.2, 1);
+  --opened: calc((100cqw - var(--grid-size) - var(--gutter)) / 2);
   --inset: var(--pad);
   display: flex;
   flex-direction: column;
@@ -194,8 +196,8 @@ box[solid] {
 
 controls {
   position: absolute;
-  top: var(--pad);
-  right: var(--inset);
+  top: 0;
+  right: 0;
   z-index: 1;
   display: flex;
 }
@@ -204,7 +206,7 @@ slider {
   display: flex;
   height: 100%;
   translate: calc(var(--code) * -1);
-  transition: translate 400ms var(--ease-in-out);
+  transition: translate var(--slide);
 }
 
 box[coding] slider {
@@ -215,7 +217,6 @@ slider > codie {
   flex: 0 0 var(--code);
   height: 100%;
   min-block-size: 0;
-  overflow: hidden auto;
   border-radius: 0;
 }
 
@@ -285,6 +286,13 @@ divider::after {
   height: 8px;
   border: 1px solid var(--border);
   background: oklch(1 0 0);
+  transition: box-shadow var(--slide);
+}
+
+blueprint:has(box[coding]) :is(blueprint > divider, box[main] + divider)::before {
+  box-shadow:
+    var(--opened) 0 0 -1px oklch(1 0 0),
+    var(--opened) 0 0 0 var(--border);
 }
 
 divider::after {
@@ -317,11 +325,11 @@ container [codie] {
   overflow: visible;
 }
 
-:is(container, slider) :is(codie, [codie]) > * {
+container [codie] > * {
   min-width: 0;
 }
 
-:is(container, slider) :is(codie, [codie]) .codie-layer {
+container [codie] .codie-layer {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -349,6 +357,10 @@ catalogue {
 
   container {
     --frame: 100%;
+  }
+
+  blueprint {
+    --opened: calc(100cqw - var(--grid-size) - var(--gutter));
   }
 
   box[solid] {

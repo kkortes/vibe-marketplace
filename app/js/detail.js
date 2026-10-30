@@ -35,6 +35,7 @@ const preview = (html) => {
 const attach = (html) => {
   editor ??= codie('codie');
   editor.editable = true;
+  editor.numberedRows = true;
   editor.code = html;
   editor.onEdit = ({ raw }) => preview(raw);
 };
