@@ -9,6 +9,8 @@ const afterVibeReady = () => {
       set('mkp-darkMode', current.darkMode);
       document.body.classList.toggle('dark', current.darkMode);
     }
+
+    if (current.browsed !== prev.browsed) set('mkp-browsed', current.browsed);
   });
 };
 

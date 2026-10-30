@@ -65,11 +65,12 @@
 [grid][locked] {
   --major: oklch(from var(--border) l c h / 0.176);
   --minor: oklch(from var(--border) l c h / 0.064);
-  background-image:
+  --lines:
     linear-gradient(to right, var(--major) 0 1px, transparent 1px),
     linear-gradient(to bottom, var(--major) 0 1px, transparent 1px),
     linear-gradient(to right, var(--minor) 0 1px, transparent 1px),
     linear-gradient(to bottom, var(--minor) 0 1px, transparent 1px);
+  background-image: var(--lines);
   background-attachment: scroll;
 }
 
@@ -123,13 +124,38 @@ sticky {
   view-transition-name: header;
   z-index: 1;
   padding-inline: calc(var(--grid-size) + var(--inset)) var(--gutter);
-  background-color: oklch(from var(--background) l c h / 0.6);
-  backdrop-filter: blur(16px) saturate(1.5);
 }
 
 sticky[grid][locked] {
   --major: oklch(from var(--border) l c h / 0.11);
   --minor: oklch(from var(--border) l c h / 0.04);
+  background-image: none;
+}
+
+sticky::after {
+  z-index: -1;
+}
+
+sticky:not(sheet sticky) {
+  animation: glass linear both;
+  animation-timeline: scroll(root);
+  animation-range: 0 1px;
+}
+
+@keyframes glass {
+  to {
+    backdrop-filter: blur(16px) saturate(1.5);
+  }
+}
+
+@container scroll-state(stuck: top) {
+  sticky::after {
+    background-color: oklch(from var(--background) l c h / 0.6);
+    background-image: var(--lines);
+    background-position: inherit;
+    background-size: inherit;
+    backdrop-filter: blur(16px) saturate(1.5);
+  }
 }
 
 sticky a strong {
@@ -161,6 +187,10 @@ sheet sticky > divider {
   sheet sticky > divider {
     top: 100%;
   }
+}
+
+[browsed] sheet sticky > divider {
+  top: 100%;
 }
 
 sheet {
@@ -335,6 +365,21 @@ tags badge {
 
 section[about] tags {
   row-gap: calc(var(--unit) * 2);
+}
+
+catalogue > card {
+  position: relative;
+}
+
+catalogue h5 > a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+catalogue tags a {
+  position: relative;
+  z-index: 1;
 }
 
 catalogue tags badge:not([active]) {
