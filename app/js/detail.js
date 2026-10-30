@@ -1,3 +1,5 @@
+import codie from '/modules/@ape-egg/codie/codie.js';
+
 import { SOURCE_URL } from '/js/env.js';
 import { address, source } from '/js/pin.js';
 import { call } from '/js/ws.js';
@@ -18,6 +20,25 @@ const mount = () => {
     `<component src="${window.$.previewSource}" ${attrs}></component>`;
 };
 
+let editor;
+let draft;
+
+// The code view renders through the same `<component src>` as the published
+// revision, from a blob of whatever is in the editor.
+const preview = (html) => {
+  draft && URL.revokeObjectURL(draft);
+  draft = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+  window.$.previewSource = draft;
+  mount();
+};
+
+const attach = (html) => {
+  editor ??= codie('codie');
+  editor.editable = true;
+  editor.code = html;
+  editor.onEdit = ({ raw }) => preview(raw);
+};
+
 export const state = {
   namespace,
   slug,
@@ -32,6 +53,7 @@ export const state = {
   previewSource: '',
   pinned: false,
   missing: '',
+  coding: false,
 
   showing() {
     return this.version || this.component?.latest || 0;
@@ -68,6 +90,13 @@ export const state = {
       '  resolvePins();',
       '</script>',
     ].join('\n');
+  },
+
+  // Back through history replays the card's morph in reverse and lands on the
+  // scroll position the visitor left; a shared link has nothing to go back to.
+  close() {
+    const fromHere = document.referrer && new URL(document.referrer).origin === location.origin;
+    fromHere ? history.back() : location.assign('/');
   },
 
   copy() {
@@ -126,6 +155,7 @@ export const state = {
 
     await window.$.ready;
     mount();
+    attach(window.$.revision.html);
   },
 };
 

@@ -7,6 +7,7 @@
   <title>Component — Viberary</title>
   <link rel="stylesheet" href="/css/stylecheat.css" />
   <link rel="stylesheet" href="/css/blueprint.css" />
+  <link rel="stylesheet" href="/modules/@ape-egg/codie/codie.css" />
   <script async src="https://accounts.google.com/gsi/client"></script>
 
   <script>
@@ -20,160 +21,178 @@
     import boot from '/js/boot.js';
     import { load, state } from '/js/detail.js';
 
-    boot(state, load);
+    // The code view mounts a fresh blob on every keystroke, so the component
+    // cache would only ever collect corpses.
+    boot(state, load, { noCache: true });
   </script>
 </head>
 
 <body stylecheat vibe-fouc>
   <component src="/components/Layout.html">
-    <box main solid>
-      <!-- if missing -->
-      <crow w-full py="12" text-muted>@[missing]</crow>
-      <!-- else -->
-      <crow vertical left g-3 w-full>
-        <breadcrumb><a href="/" secondary>Browse</a><span current>@[namespace]</span></breadcrumb>
-        <h1>@[component?.title]</h1>
-        <p lead max-w-160>@[component?.description]</p>
-        <crow left g-3 wrap>
-          <badge secondary>@[component?.category]</badge>
-          <code>@[namespace]/@[slug]</code>
-          <span text-muted>Showing v@[$.showing()] · latest is v@[component?.latest]</span>
-          <a href="/edit.html?c=@[namespace]/@[slug]" secondary><icon pencil></icon> Open in editor</a>
-        </crow>
-        <!-- if $.outdated() -->
-        <blockquote>
-          You are reading v@[$.showing()]. It is frozen and always will be — v@[component.latest] is
-          where the component is now.
-        </blockquote>
-        <!-- /if -->
-      </crow>
-      <!-- /if -->
-      <!-- if component -->
-      <crow up g-12 w-full sm:vertical>
-        <card f-1 g-4 p-6>
-          <h6>Preview</h6>
-          <crow grid locked p="12" sm:p="0" bg-background>
-            <preview-host></preview-host>
+    <box main solid coding="@[coding]">
+      <crow up h-auto justify-between g-6 w-full>
+        <!-- if missing -->
+        <crow w-full py="12" text-muted>@[missing]</crow>
+        <!-- else -->
+        <crow vertical left g-3 f-1>
+          <breadcrumb><a href="/" secondary>Browse</a><span current>@[namespace]</span></breadcrumb>
+          <h1>@[component?.title]</h1>
+          <p lead max-w-160>@[component?.description]</p>
+          <crow left g-3 wrap>
+            <badge secondary>@[component?.category]</badge>
+            <code>@[namespace]/@[slug]</code>
+            <span text-muted>Showing v@[$.showing()] · latest is v@[component?.latest]</span>
           </crow>
-        </card>
-
-        <card f-1 g-4 p-6>
-          <h6>Props</h6>
-          <!-- if props.length -->
-          <p text-muted>Change a value and the preview above re-renders as you type.</p>
-
-          <table>
-            <tbody>
-              <!-- each props as prop (prop.name) -->
-              <tr>
-                <td px-0 py-4>
-                  <crow vertical left g-2>
-                    <crow left g-2 wrap w-full>
-                      <code>@[prop.name]</code>
-                      <badge bg-hollow>@[prop.type]</badge>
-                      <span sm text-muted ml-auto>default @[prop.default]</span>
-                    </crow>
-                    <p text-muted>@[prop.description]</p>
-    
-                    <!-- if prop.type === 'select' -->
-                    <label w-full>
-                      <select w-full onchange="$.values['@[prop.name]'] = this.value">
-                        <!-- each prop.options as choice -->
-                        <option value="@[choice]" selected="@[values[prop.name] === choice]">@[choice]</option>
-                        <!-- /each -->
-                      </select>
-                    </label>
-                    <!-- else if prop.type === 'boolean' -->
-                    <input type="checkbox" role="switch" checked="@[values[prop.name]]"
-                      onchange="$.values['@[prop.name]'] = event.currentTarget.checked" />
-                    <!-- else if prop.type === 'number' -->
-                    <input type="number" w-full value="@[values[prop.name]]"
-                      oninput="$.values['@[prop.name]'] = Number(this.value)" />
-                    <!-- else if prop.type === 'json' -->
-                    <textarea rows="7" spellcheck="false" w-full value="@[drafts[prop.name]]"
-                      oninput="$.setJson('@[prop.name]', this.value)"></textarea>
-                    <!-- if invalid[prop.name] -->
-                    <p text-red>Not valid JSON yet — the preview is still on the last value that parsed.</p>
-                    <!-- /if -->
-                    <!-- else -->
-                    <input type="text" w-full value="@[values[prop.name]]" oninput="$.values['@[prop.name]'] = this.value" />
-                    <!-- /if -->
-                  </crow>
-                </td>
-              </tr>
-              <!-- /each -->
-            </tbody>
-          </table>
-
-          <button tertiary onclick="$.reset()">Reset to defaults</button>
-          <!-- if $.structured() -->
-          <p text-muted>
-            An array or an object has no literal form an attribute can hold, so a json prop is passed
-            bound to state of your own. The snippet below writes it that way.
-          </p>
+          <!-- if $.outdated() -->
+          <blockquote>
+            You are reading v@[$.showing()]. It is frozen and always will be — v@[component.latest] is
+            where the component is now.
+          </blockquote>
           <!-- /if -->
-          <!-- else -->
-          <p text-muted>This component takes no props. Point a tag at it and you are done.</p>
-          <!-- /if -->
-        </card>
-      </crow>
-
-      <card w-full g-4 p-6>
-        <h6>Use it</h6>
-        <crow justify-between g-4>
-          <label>
-            <input type="checkbox" role="switch" checked="@[pinned]"
-              onchange="$.pinned = event.currentTarget.checked" />
-            <span>Pin to v@[$.showing()]</span>
-          </label>
-          <button secondary onclick="$.copy()">Copy</button>
         </crow>
-
-        <card p-4 overflow-auto><code>@[$.snippet()]</code></card>
-
-        <!-- if pinned -->
-        <p text-muted>
-          Frozen. That tag renders v@[$.showing()] today and in five years — a published revision is
-          never edited, so the only way a component changes under you is a version you asked for.
-        </p>
-
-        <h6 mt-4>What resolves the pin</h6>
-        <p text-muted>
-          A <code>#v@[$.showing()]</code> fragment never reaches a server — it is cut from the request
-          before it is sent. This line resolves it in your page, before vibe reads the document.
-        </p>
-        <card p-4 overflow-auto><code>@[$.include()]</code></card>
-        <!-- else -->
-        <p text-muted>
-          Unpinned, and that is the whole cost of it: this tag renders the <em>latest</em> revision —
-          v@[component.latest] today, and whatever someone publishes tomorrow. Add
-          <code>#v@[$.showing()]</code> to the address to freeze it.
-        </p>
         <!-- /if -->
-      </card>
+        <crow>
+          <button tertiary title="Edit the code" active="@[coding]" onclick="$.coding = !$.coding"><icon pencil></icon></button>
+          <button tertiary title="Close" onclick="$.close()"><icon cross></icon></button>
+        </crow>
+      </crow>
+      <!-- if component -->
+      <stage>
+        <columns>
+          <column inert="@[!coding]">
+            <card w-full g-4 p-6>
+              <h6>Code</h6>
+              <codie dark highlight-html></codie>
+            </card>
+          </column>
+          <column>
+            <card w-full g-4 p-6>
+              <h6>Preview</h6>
+              <crow grid locked p="12" sm:p="0" bg-background>
+                <preview-host></preview-host>
+              </crow>
+            </card>
 
-      <card w-full g-4 p-6>
-        <h6>Version history</h6>
-        <!-- if user -->
-        <table>
-          <tbody>
-            <!-- each versions as rev (rev.version) -->
-            <tr bg-orange="@[rev.version === $.showing()]">
-              <td w-12><code>v@[rev.version]</code></td>
-              <td>@[rev.notes]</td>
-              <td sm text-muted>@[rev.authorName]</td>
-              <td><button tertiary onclick="$.show(@[rev.version])">View</button></td>
-            </tr>
-            <!-- /each -->
-          </tbody>
-        </table>
-        <!-- else -->
-        <p text-muted>
-          Every revision ever published is kept. Signing in is what opens the list — the control is in
-          the top right.
-        </p>
-        <!-- /if -->
-      </card>
+            <card w-full g-4 p-6>
+              <h6>Use it</h6>
+              <crow justify-between g-4>
+                <label>
+                  <input type="checkbox" role="switch" checked="@[pinned]"
+                    onchange="$.pinned = event.currentTarget.checked" />
+                  <span>Pin to v@[$.showing()]</span>
+                </label>
+                <button secondary onclick="$.copy()">Copy</button>
+              </crow>
+
+              <card p-4 overflow-auto><code>@[$.snippet()]</code></card>
+
+              <!-- if pinned -->
+              <p text-muted>
+                Frozen. That tag renders v@[$.showing()] today and in five years — a published revision is
+                never edited, so the only way a component changes under you is a version you asked for.
+              </p>
+
+              <h6 mt-4>What resolves the pin</h6>
+              <p text-muted>
+                A <code>#v@[$.showing()]</code> fragment never reaches a server — it is cut from the request
+                before it is sent. This line resolves it in your page, before vibe reads the document.
+              </p>
+              <card p-4 overflow-auto><code>@[$.include()]</code></card>
+              <!-- else -->
+              <p text-muted>
+                Unpinned, and that is the whole cost of it: this tag renders the <em>latest</em> revision —
+                v@[component.latest] today, and whatever someone publishes tomorrow. Add
+                <code>#v@[$.showing()]</code> to the address to freeze it.
+              </p>
+              <!-- /if -->
+            </card>
+
+            <card w-full g-4 p-6>
+              <h6>Version history</h6>
+              <!-- if user -->
+              <table>
+                <tbody>
+                  <!-- each versions as rev (rev.version) -->
+                  <tr bg-orange="@[rev.version === $.showing()]">
+                    <td w-12><code>v@[rev.version]</code></td>
+                    <td>@[rev.notes]</td>
+                    <td sm text-muted>@[rev.authorName]</td>
+                    <td><button tertiary onclick="$.show(@[rev.version])">View</button></td>
+                  </tr>
+                  <!-- /each -->
+                </tbody>
+              </table>
+              <!-- else -->
+              <p text-muted>
+                Every revision ever published is kept. Signing in is what opens the list — the control is in
+                the top right.
+              </p>
+              <!-- /if -->
+            </card>
+          </column>
+          <column inert="@[coding]">
+            <card w-full g-4 p-6>
+              <h6>Props</h6>
+              <!-- if props.length -->
+              <p text-muted>Change a value and the preview above re-renders as you type.</p>
+
+              <table>
+                <tbody>
+                  <!-- each props as prop (prop.name) -->
+                  <tr>
+                    <td px-0 py-4>
+                      <crow vertical left g-2>
+                        <crow left g-2 wrap w-full>
+                          <code>@[prop.name]</code>
+                          <badge bg-hollow>@[prop.type]</badge>
+                          <span sm text-muted ml-auto>default @[prop.default]</span>
+                        </crow>
+                        <p text-muted>@[prop.description]</p>
+        
+                        <!-- if prop.type === 'select' -->
+                        <label w-full>
+                          <select w-full onchange="$.values['@[prop.name]'] = this.value">
+                            <!-- each prop.options as choice -->
+                            <option value="@[choice]" selected="@[values[prop.name] === choice]">@[choice]</option>
+                            <!-- /each -->
+                          </select>
+                        </label>
+                        <!-- else if prop.type === 'boolean' -->
+                        <input type="checkbox" role="switch" checked="@[values[prop.name]]"
+                          onchange="$.values['@[prop.name]'] = event.currentTarget.checked" />
+                        <!-- else if prop.type === 'number' -->
+                        <input type="number" w-full value="@[values[prop.name]]"
+                          oninput="$.values['@[prop.name]'] = Number(this.value)" />
+                        <!-- else if prop.type === 'json' -->
+                        <textarea rows="7" spellcheck="false" w-full value="@[drafts[prop.name]]"
+                          oninput="$.setJson('@[prop.name]', this.value)"></textarea>
+                        <!-- if invalid[prop.name] -->
+                        <p text-red>Not valid JSON yet — the preview is still on the last value that parsed.</p>
+                        <!-- /if -->
+                        <!-- else -->
+                        <input type="text" w-full value="@[values[prop.name]]" oninput="$.values['@[prop.name]'] = this.value" />
+                        <!-- /if -->
+                      </crow>
+                    </td>
+                  </tr>
+                  <!-- /each -->
+                </tbody>
+              </table>
+
+              <button tertiary onclick="$.reset()">Reset to defaults</button>
+              <!-- if $.structured() -->
+              <p text-muted>
+                An array or an object has no literal form an attribute can hold, so a json prop is passed
+                bound to state of your own. The snippet below writes it that way.
+              </p>
+              <!-- /if -->
+              <!-- else -->
+              <p text-muted>This component takes no props. Point a tag at it and you are done.</p>
+              <!-- /if -->
+            </card>
+          </column>
+        </columns>
+      </stage>
       <!-- else if !missing -->
       <crow w-full py="12" text-muted>Loading…</crow>
       <!-- /if -->

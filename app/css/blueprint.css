@@ -177,15 +177,47 @@ box[main] {
   transition: height 250ms var(--ease-in-out);
 }
 
-box[main][intro],
-box[solid] {
+box[main][intro] {
   height: calc-size(auto, max(round(up, size, var(--cell)), round(nearest, 100dvh - var(--unit) * 24, var(--cell))));
 }
 
 box[solid] {
+  height: round(nearest, 100dvh - var(--unit) * 24, var(--cell));
+  overflow: hidden;
   margin-inline: calc(var(--inset) * -1);
   padding-inline: var(--inset);
   background: var(--background);
+}
+
+sheet:has(box[solid]) {
+  padding-bottom: 0;
+}
+
+stage {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden auto;
+}
+
+columns {
+  display: grid;
+  grid-template-columns: repeat(3, calc((100% - var(--cell)) / 2));
+  align-items: start;
+  column-gap: var(--cell);
+  translate: calc(-50% - var(--cell) / 2);
+  transition: translate 400ms var(--ease-in-out);
+}
+
+box[coding] columns {
+  translate: none;
+}
+
+column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cell);
+  min-width: 0;
 }
 
 box[main] + divider,
@@ -248,15 +280,15 @@ card[paper] component button[secondary]:hover {
   background-color: var(--secondary);
 }
 
-container [codie] {
+:is(container, column) :is(codie, [codie]) {
   overflow: visible;
 }
 
-container [codie] > * {
+:is(container, column) :is(codie, [codie]) > * {
   min-width: 0;
 }
 
-container [codie] .codie-layer {
+:is(container, column) :is(codie, [codie]) .codie-layer {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -284,6 +316,18 @@ catalogue {
 
   container {
     --frame: 100%;
+  }
+
+  columns {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--cell);
+    translate: none;
+  }
+
+  box:not([coding]) column:first-child {
+    display: none;
   }
 
   catalogue {
