@@ -56,6 +56,9 @@ export const state = {
   missing: '',
   origin: SOURCE_URL,
   coding: false,
+  // Newest first: the strip lays them out reversed, so it reads 1 to latest and
+  // opens scrolled to the latest.
+  tabs: [],
 
   showing() {
     return this.version || this.component?.latest || 0;
@@ -144,6 +147,7 @@ export const state = {
       });
 
       this.component = component;
+      this.tabs = Array.from({ length: component.latest }, (_, i) => component.latest - i);
       this.revision = revision;
       this.version = revision.version;
       this.props = revision.props || [];
