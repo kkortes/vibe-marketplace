@@ -92,7 +92,12 @@ blueprint::before {
   inset: 0;
   z-index: -1;
   background: var(--background);
-  mask: url(fade.svg) round(nearest, 50%, var(--grid-size)) 0 / calc(var(--grid-size) * 43) calc(var(--grid-size) * 28) no-repeat;
+  mask: url(fade.svg) round(nearest, 50%, var(--grid-size)) calc(var(--grid-size) * -28) / calc(var(--grid-size) * 43) calc(var(--grid-size) * 56) no-repeat;
+  transition: mask-position 250ms var(--ease-in-out);
+}
+
+blueprint:has(box[main][intro])::before {
+  mask-position: round(nearest, 50%, var(--grid-size)) calc(round(nearest, var(--unit) * 12 + round(nearest, 100dvh - var(--unit) * 24, var(--cell)) / 2, var(--grid-size)) - var(--grid-size) * 28);
 }
 
 blueprint::after,
@@ -169,7 +174,7 @@ box {
 box[main] {
   view-transition-name: var(--main, none);
   justify-content: center;
-  transition: height 700ms var(--ease-in-out);
+  transition: height 250ms var(--ease-in-out);
 }
 
 box[main][intro] {
