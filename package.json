@@ -13,7 +13,8 @@
   "dependencies": {
     "@ape-egg/async-await-websockets": "^3.9.0",
     "@ape-egg/codie": "^0.2.1",
-    "@ape-egg/vibe": "^4.3.23"
+    "@ape-egg/vibe": "^4.3.23",
+    "hono": "^4.12.3"
   },
   "devDependencies": {
     "@ape-egg/vibe-compiler": "^4.3.23",
