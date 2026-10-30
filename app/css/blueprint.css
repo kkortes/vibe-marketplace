@@ -60,6 +60,7 @@ blueprint {
   --cell: calc(var(--grid-size) / 2);
   --line: linear-gradient(var(--border), var(--border));
   --gutter: calc(100% - round(down, 100% - var(--grid-size), var(--grid-size)));
+  --inset: 50px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -87,7 +88,6 @@ blueprint::after {
 }
 
 sheet {
-  --inset: 50px;
   flex: 1;
 }
 
@@ -97,7 +97,7 @@ sticky {
 }
 
 :is(sheet, sticky) {
-  padding-inline: calc(var(--grid-size) + var(--inset, 0px)) calc(var(--gutter) + var(--inset, 0px));
+  padding-inline: calc(var(--grid-size) + var(--inset)) calc(var(--gutter) + var(--inset));
 }
 
 box {
@@ -116,7 +116,7 @@ divider {
   z-index: 2;
   align-self: stretch;
   height: 1px;
-  margin: 0 calc(var(--inset, 0px) * -1) -1px;
+  margin: 0 calc(var(--inset) * -1) -1px;
   border-image: var(--line) fill 0 // 0 100vw;
 }
 
@@ -164,7 +164,7 @@ catalogue {
     --grid-unit: 4px;
   }
 
-  sheet {
+  blueprint {
     --inset: 0px;
   }
 
