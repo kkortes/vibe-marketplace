@@ -1,18 +1,5 @@
 <sticky grid locked auto-shadow>
   <crow justify-between g-4 h-12 w-full>
-    <!-- if path === '/component.html' -->
-    <crow g-2>
-      <button tertiary back title="Back" onclick="$.close()"><icon chevron-left></icon></button>
-      <a href="@[origin]/@[namespace]/@[slug].html" target="_blank" rel="noopener" secondary><span text-muted>@[origin]/@[namespace]/</span>@[slug]<span text-muted>.html</span></a>
-      <crow>
-        <button tertiary title="Copy the tag" onclick="$.copy()"><icon copy></icon></button>
-        <button tertiary title="Pin to this version" disabled="@[!user]" active="@[pinned]" onclick="$.pinned = !$.pinned"><icon pin></icon></button>
-      </crow>
-      <!-- if !user -->
-      <span sm text-muted>For pinning a version, log in</span>
-      <!-- /if -->
-    </crow>
-    <!-- else -->
     <a href="/" secondary><strong>Viberary</strong></a>
     <nav flex f-1 sm:hide>
       <a href="/" class="button" tertiary active="@[['/', '/index.html'].includes(path)]">Browse</a>
@@ -22,7 +9,6 @@
         <svg width="0.875em" height="0.875em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
       </a>
     </nav>
-    <!-- /if -->
     <crow>
       <button tertiary title="Switch theme" onclick="$.darkMode = !$.darkMode">
         <!-- if darkMode --><icon light></icon><!-- else --><icon dark></icon><!-- /if -->

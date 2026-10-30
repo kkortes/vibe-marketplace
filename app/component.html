@@ -36,6 +36,17 @@
       <slider>
         <codie highlight-html inert="@[!coding]"></codie>
         <pane>
+          <trail>
+            <button tertiary title="Back" onclick="$.close()"><icon chevron-left></icon></button>
+            <a href="@[origin]/@[namespace]/@[slug].html" target="_blank" rel="noopener" secondary><span text-muted>@[origin]/@[namespace]/</span>@[slug]<span text-muted>.html</span></a>
+            <crow>
+              <button tertiary title="Copy the tag" onclick="$.copy()"><icon copy></icon></button>
+              <button tertiary title="Pin to this version" disabled="@[!user]" active="@[pinned]" onclick="$.pinned = !$.pinned"><icon pin></icon></button>
+            </crow>
+            <!-- if !user -->
+            <span sm text-muted>For pinning a version, log in</span>
+            <!-- /if -->
+          </trail>
           <!-- if missing -->
           <crow w-full py="12" text-muted>@[missing]</crow>
           <!-- else -->
