@@ -37,12 +37,24 @@ const preview = (html) => {
   mount();
 };
 
+let usage;
+
+// The tag under "Use it" is read-only and redrawn on every update, so it
+// follows the selected tab and every prop value as it is typed.
+const showUsage = () => (usage.code = window.$.snippet());
+
 const attach = (html) => {
   editor ??= codie('codie');
   editor.editable = true;
   editor.numberedRows = true;
   editor.code = html;
   editor.onEdit = ({ raw }) => preview(raw);
+
+  if (!usage) {
+    usage = codie('codie[usage]');
+    window.$.on('afterUpdate', showUsage);
+  }
+  showUsage();
 };
 
 export const state = {
@@ -76,21 +88,24 @@ export const state = {
   // A boolean prop is carried the way HTML carries one — the attribute is there
   // or it is not; dismissable="false" would read as true. An array or an object
   // has no literal form an attribute can hold, so it is shown bound instead.
+  // One attribute per row, the way the tag reads best once it is pasted.
   snippet() {
     const attrs = this.props
       .map(({ name, type }) =>
         type === 'boolean'
-          ? this.values[name] && ` ${name}`
+          ? this.values[name] && name
           : type === 'json'
-            ? ` ${name}="@[${name}]"`
-            : ` ${name}="${this.values[name]}"`,
+            ? `${name}="@[${name}]"`
+            : `${name}="${this.values[name]}"`,
       )
-      .filter(Boolean)
-      .join('');
+      .filter(Boolean);
 
-    const at = this.tab;
-
-    return `<component src="${address(SOURCE_URL, this.namespace, this.slug, at)}"${attrs}></component>`;
+    return [
+      '<component',
+      `  src="${address(SOURCE_URL, this.namespace, this.slug, this.tab)}"`,
+      ...attrs.map((attr) => `  ${attr}`),
+      '></component>',
+    ].join('\n');
   },
 
   include() {

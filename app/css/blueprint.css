@@ -332,17 +332,17 @@ card[paper] component button[secondary]:hover {
   background-color: var(--secondary);
 }
 
-container [codie] {
+:is(container [codie], codie[usage]) {
   overflow: visible;
 }
 
-container [codie] > * {
+:is(container [codie], codie[usage]) > * {
   min-width: 0;
 }
 
-container [codie] .codie-layer {
+:is(container [codie], codie[usage]) .codie-layer {
   white-space: pre-wrap;
-  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 catalogue code {
