@@ -6,23 +6,27 @@ export const state = {
   // The selected tab: a namespace slug, or '' for All.
   namespace: '',
   slug: '',
-  title: '',
+  failure: '',
+
+  compose() {
+    this.slug = '';
+    this.failure = '';
+    document.querySelector('dialog[namespace]').showModal();
+  },
+
+  dismiss() {
+    document.querySelector('dialog[namespace]').close();
+  },
 
   async create() {
-    this.notice = '';
-
     try {
-      const created = await call('auth/namespaces/create', {
-        slug: this.slug,
-        title: this.title,
-      });
+      const created = await call('auth/namespaces/create', { slug: this.slug });
 
       this.mine = [...this.mine, created];
+      this.dismiss();
       this.notice = `${created.slug} is yours. Publish anything you like under it.`;
-      this.slug = '';
-      this.title = '';
     } catch ({ message }) {
-      this.notice = message;
+      this.failure = message;
     }
   },
 };

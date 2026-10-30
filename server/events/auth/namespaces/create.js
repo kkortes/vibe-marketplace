@@ -13,7 +13,7 @@ export default async ({ slug, title }, { db, identity }) => {
   return decode(
     await db
       .prepare('INSERT INTO namespaces (slug, title, official, ownerId, createdAt) VALUES (?, ?, 0, ?, ?) RETURNING *')
-      .bind(slug, String(title).trim() || slug, identity.id, now())
+      .bind(slug, title?.trim() || slug, identity.id, now())
       .first(),
   );
 };

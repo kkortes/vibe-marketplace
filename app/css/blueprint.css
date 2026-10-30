@@ -573,7 +573,7 @@ tabs[versions] > tab[active] {
 
 tabs[versions] > tab[new] {
   border-color: var(--border);
-  border-style: dashed dashed solid;
+  border-style: dotted dotted solid;
 }
 
 tabs[versions] > tab {
