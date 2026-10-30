@@ -39,8 +39,9 @@
       </controls>
       <versions>
         <tabs primary versions>
+          <tab active="@[!tab]" onclick="$.show(0)">Latest</tab>
           <!-- each tabs as n -->
-          <tab active="@[n === version]" onclick="$.show(@[n])">@[n]</tab>
+          <tab active="@[n === tab]" onclick="$.show(@[n])">@[n]</tab>
           <!-- /each -->
         </tabs>
         <button tertiary title="Close" onclick="$.close()"><icon cross></icon></button>

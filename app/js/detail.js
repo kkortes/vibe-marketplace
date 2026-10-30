@@ -63,6 +63,9 @@ export const state = {
   // Newest first: the strip lays them out reversed, so it reads 1 to latest and
   // opens scrolled to the latest.
   tabs: [],
+  // The selected tab: a pinned version, or 0 for Latest, which follows
+  // whatever was published last and carries no hash.
+  tab: 0,
 
   showing() {
     return this.version || this.component?.latest || 0;
@@ -154,12 +157,13 @@ export const state = {
       this.tabs = Array.from({ length: component.latest }, (_, i) => component.latest - i);
       this.revision = revision;
       this.version = revision.version;
+      this.tab = version;
       this.props = revision.props || [];
       this.previewSource = source(SOURCE_URL, namespace, slug, revision.version);
       this.reset();
       this.missing = '';
       // Replaced rather than pushed, so going back still leaves the page.
-      if (version) history.replaceState(null, '', `#v${revision.version}`);
+      history.replaceState(null, '', version ? `#v${revision.version}` : location.pathname + location.search);
     } catch ({ message }) {
       this.missing = message;
       return;
