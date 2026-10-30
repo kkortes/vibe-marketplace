@@ -58,7 +58,7 @@ blueprint {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(oklch(from var(--background) l c h / 0.85), transparent) fixed;
+  background: radial-gradient(oklch(from var(--background) l c h / 0.85) 50%, transparent) fixed;
 }
 
 sheet {
