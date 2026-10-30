@@ -17,11 +17,11 @@
       <!-- if user -->
       <user-menu position="relative">
         <!-- if userMenuOpen --><user-backdrop position="fixed" t-0 r-0 b-0 l-0 onclick="$.userMenuOpen = false"></user-backdrop><!-- /if -->
-        <button primary w="9" h="9" p-0 radius="50%" onclick="$.userMenuOpen = !$.userMenuOpen">
+        <button primary w="12" h="12" p-0 onclick="$.userMenuOpen = !$.userMenuOpen">
           <strong>@[user.name[0].toUpperCase()]</strong>
         </button>
         <!-- if userMenuOpen -->
-        <card position="absolute" t="11" r-0 w="52" p-2 g-1>
+        <card position="absolute" t="12" r-0 w="52" p-2 g-1>
           <strong px-2 py-1>@[user.name]</strong>
           <span sm text-muted px-2>@[user.email]</span>
           <hr />
@@ -33,7 +33,7 @@
       <button primary w="24" onclick="$.signIn()">Sign in</button>
       <!-- /if -->
       <!-- else -->
-      <circle w="9" bg-slate animate-pulse></circle>
+      <span flex w="12" h="12" bg-slate animate-pulse></span>
       <!-- /if -->
     </crow>
   </crow>
