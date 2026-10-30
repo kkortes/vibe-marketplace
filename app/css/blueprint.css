@@ -369,6 +369,7 @@ section[about] tags {
 
 catalogue > card {
   position: relative;
+  width: round(down, 100%, var(--unit));
 }
 
 catalogue h5 > a::after {
