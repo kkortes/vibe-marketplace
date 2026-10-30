@@ -577,14 +577,34 @@ tabs[versions] > tab {
   height: calc(var(--unit) * 12);
 }
 
+tabs[namespaces] {
+  flex-direction: row;
+}
+
 tabs[namespaces] > tab {
   width: auto;
   padding-inline: calc(var(--unit) * 6);
 }
 
 tabs[namespaces] > tab[new] {
-  outline: 1px dotted var(--border);
-  outline-offset: calc(var(--unit) * -2);
+  position: relative;
+  isolation: isolate;
+}
+
+tabs[namespaces] > tab[new]::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--unit) * 2);
+  z-index: -1;
+  border: 1px dashed var(--border);
+}
+
+tabs[namespaces] > tab[new]:hover {
+  background-color: transparent;
+}
+
+tabs[namespaces] > tab[new]:hover::before {
+  background-color: oklch(from var(--foreground) l c h / 0.03);
 }
 
 :is(code, badge) {

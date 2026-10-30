@@ -23,11 +23,11 @@
       <!-- if user -->
       <versions>
         <tabs primary versions namespaces>
-          <tab new onclick="$.compose()">New namespace</tab>
           <tab active="@[!namespace]" onclick="$.namespace = ''">All</tab>
           <!-- each mine as ns (ns.slug) -->
           <tab active="@[ns.slug === namespace]" onclick="$.namespace = '@[ns.slug]'">@[ns.slug]</tab>
           <!-- /each -->
+          <tab new onclick="$.compose()">New namespace</tab>
         </tabs>
       </versions>
 
