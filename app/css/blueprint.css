@@ -212,6 +212,16 @@ box[solid] > scroll {
   overflow-y: auto;
 }
 
+dialog {
+  margin: auto;
+  background: none;
+  color: inherit;
+}
+
+[stylecheat]:not(.dark) dialog::backdrop {
+  background-color: oklch(1 0 0 / 0.4);
+}
+
 snippet {
   position: relative;
   align-self: stretch;
@@ -327,6 +337,7 @@ catalogue tags badge:not([active]) {
   padding-inline: 0;
   background: none;
   box-shadow: none;
+  color: var(--foreground);
   font-weight: bold;
 }
 
@@ -558,6 +569,11 @@ tabs[versions]::after {
 
 tabs[versions] > tab[active] {
   background-color: var(--card);
+}
+
+tabs[versions] > tab[new] {
+  border-color: var(--border);
+  border-style: dashed dashed solid;
 }
 
 tabs[versions] > tab {
