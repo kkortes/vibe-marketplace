@@ -332,6 +332,14 @@ card[paper] component button[secondary]:hover {
   background-color: var(--secondary);
 }
 
+:where(codie, [codie]) {
+  box-shadow: var(--ring-inset);
+}
+
+[stylecheat]:not(.dark) :is(codie, [codie]):not([dark]) {
+  --codie-bg: var(--input);
+}
+
 :is(container [codie], codie[usage]) {
   overflow: visible;
 }
