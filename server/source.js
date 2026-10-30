@@ -49,6 +49,10 @@ app.get('/:namespace/:slug/:pin', (c) => {
   return revision(c, c.req.param('namespace'), c.req.param('slug'), Number(version));
 });
 
+// The same address without .html is the website's page for the component; with
+// .html it is the component's raw source. The ending decides, nothing else.
+app.get('/:namespace/:slug{[a-z0-9-]+}', (c) => c.env.ASSETS.fetch(new URL('/component', c.req.url)));
+
 app.get('/:namespace/:file{.+\\.html}', (c) =>
   revision(c, c.req.param('namespace'), c.req.param('file').replace('.html', '')),
 );
