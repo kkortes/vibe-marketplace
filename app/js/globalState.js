@@ -8,7 +8,7 @@ export default {
   authReady: !get('mkp-session'),
   wsConnected: false,
   userMenuOpen: false,
-  darkMode: get('mkp-darkMode') ?? true,
+  darkMode: get('mkp-darkMode') ?? false,
   // Set once the frontpage search bar has stuck; the wordmark clears it.
   browsed: get('mkp-browsed') ?? false,
   path: location.pathname,
