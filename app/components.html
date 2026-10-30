@@ -65,6 +65,14 @@
               The namespaces your account owns and the components in them. A namespace is the first part of every address,
               <code>your-namespace/your-component.html</code>.
             </p>
+            <!-- if !user -->
+            <card w-full g-4 p-6>
+              <p text-muted>
+                Anyone can browse the catalogue, open a component and try changes in its code — nothing is
+                saved. Making a namespace needs an account: sign in from the top right.
+              </p>
+            </card>
+            <!-- /if -->
           </crow>
         </container>
 
@@ -88,13 +96,6 @@
           <!-- else -->
           <p text-muted>No components in your namespaces yet.</p>
           <!-- /if -->
-        </card>
-        <!-- else -->
-        <card w-full g-4 p-6>
-          <p text-muted>
-            Anyone can browse the catalogue, open a component and try changes in its code — nothing is
-            saved. Making a namespace needs an account: sign in from the top right.
-          </p>
         </card>
         <!-- /if -->
       </scroll>
