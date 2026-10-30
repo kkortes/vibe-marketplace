@@ -399,10 +399,6 @@ versions {
   background-color: var(--background);
 }
 
-versions > button {
-  box-shadow: inset 0 -1px var(--border);
-}
-
 tabs[versions] {
   flex: 1;
   flex-direction: row-reverse;
