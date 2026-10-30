@@ -101,12 +101,12 @@
               <crow left g-2 wrap>
                 <span sm text-muted>Auto tags</span>
                 <!-- each comp.tags as name -->
-                <badge secondary><!-- if name === 'JS' --><icon js></icon><!-- else if name === 'CSS' --><icon css></icon><!-- /if -->@[name]</badge>
+                <badge secondary active="@[tag === name]"><!-- if name === 'JS' --><icon js></icon><!-- else if name === 'CSS' --><icon css></icon><!-- /if -->@[name]</badge>
                 <!-- /each -->
               </crow>
               <crow left g-2 wrap>
                 <span sm text-muted>User tags</span>
-                <badge secondary>@[comp.category]</badge>
+                <badge secondary active="@[tag === comp.category]">@[comp.category]</badge>
               </crow>
             </tags>
           </card>

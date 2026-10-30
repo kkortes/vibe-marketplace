@@ -294,6 +294,13 @@ tags badge {
   width: calc-size(fit-content, round(up, size, var(--unit)));
 }
 
+catalogue tags badge:not([active]) {
+  padding-inline: 0;
+  background: none;
+  box-shadow: none;
+  font-weight: bold;
+}
+
 section[preview] {
   position: relative;
   padding: 0;
