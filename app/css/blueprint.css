@@ -42,9 +42,14 @@
   background-attachment: scroll;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 blueprint {
   --cell: calc(var(--grid-size) / 2);
-  display: block;
+  display: flex;
+  flex-direction: column;
   position: relative;
   min-height: 100dvh;
 }
@@ -62,7 +67,37 @@ blueprint {
 }
 
 sheet {
+  --line: linear-gradient(var(--border), var(--border));
+  flex: 1;
   padding-inline: var(--cell);
+  background:
+    var(--line) var(--cell) 0 / 1px 100% no-repeat,
+    var(--line) calc(100% - var(--cell)) 0 / 1px 100% no-repeat;
+}
+
+divider {
+  position: relative;
+  align-self: stretch;
+  height: 1px;
+  margin: calc(var(--cell) / -2) calc(var(--cell) * -1) calc(var(--cell) / -2 - 1px);
+  background: var(--border);
+}
+
+divider::before,
+divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: var(--cell);
+  translate: -50% -50%;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--border);
+  background: var(--background);
+}
+
+divider::after {
+  left: calc(100% - var(--cell));
 }
 
 container {
