@@ -9,5 +9,6 @@ export default {
   wsConnected: false,
   userMenuOpen: false,
   darkMode: get('mkp-darkMode') ?? true,
+  path: location.pathname,
   notice: '',
 };
