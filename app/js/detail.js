@@ -55,7 +55,6 @@ export const state = {
   drafts: {},
   invalid: {},
   version: 0,
-  versions: [],
   previewSource: '',
   pinned: false,
   missing: '',
@@ -175,17 +174,7 @@ export const state = {
   },
 };
 
-const loadVersions = async () => {
-  if (!window.$.user) return;
-
-  window.$.versions = await call('auth/components/versions', { namespace, slug });
-};
-
 export const load = async () => {
   await window.$.show(hashed() || Number(params.get('v')) || 0);
-  await loadVersions();
-
   addEventListener('hashchange', () => window.$.show(hashed()));
-
-  window.$.on('afterUpdate', (current, previous) => current.user !== previous.user && loadVersions());
 };

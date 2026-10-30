@@ -119,29 +119,6 @@
                     <preview-host></preview-host>
                   </crow>
                 </card>
-
-                <card w-full g-4 p-6>
-                  <h6>Version history</h6>
-                  <!-- if user -->
-                  <table>
-                    <tbody>
-                      <!-- each versions as rev (rev.version) -->
-                      <tr bg-orange="@[rev.version === $.showing()]">
-                        <td w-12><code>v@[rev.version]</code></td>
-                        <td>@[rev.notes]</td>
-                        <td sm text-muted>@[rev.authorName]</td>
-                        <td><button tertiary onclick="$.show(@[rev.version])">View</button></td>
-                      </tr>
-                      <!-- /each -->
-                    </tbody>
-                  </table>
-                  <!-- else -->
-                  <p text-muted>
-                    Every revision ever published is kept. Signing in is what opens the list — the control is in
-                    the top right.
-                  </p>
-                  <!-- /if -->
-                </card>
               </column>
               <column inert="@[coding]">
                 <card w-full g-4 p-6>
