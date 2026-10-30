@@ -24,7 +24,7 @@ export const state = {
 
       this.mine = [...this.mine, created];
       this.dismiss();
-      this.notice = `${created.slug} is yours. Its tab sits next to All.`;
+      this.notice = `${created.slug} is yours and has its own tab now.`;
     } catch ({ message }) {
       this.failure = message;
     }
