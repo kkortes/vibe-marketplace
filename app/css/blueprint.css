@@ -620,3 +620,26 @@ h6 {
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
+
+publishing {
+  z-index: 2;
+}
+
+publishing > tooltip {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--unit) * 2);
+  width: max-content;
+  max-width: calc(var(--unit) * 80);
+  white-space: normal;
+}
+
+publishing:hover:not(:has(card)) > tooltip {
+  opacity: 1;
+  translate: 0;
+}
+
+card[phantom] {
+  outline: 1px dashed var(--border);
+  outline-offset: calc(var(--unit) * -2);
+}

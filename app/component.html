@@ -36,9 +36,9 @@
     <box main solid paper coding="@[coding]">
       <versions>
         <tabs primary versions>
-          <tab active="@[!tab]" onclick="$.show(0)">Latest</tab>
+          <tab active="@[!tab]" onclick="$.open(0)">Latest</tab>
           <!-- each tabs as n -->
-          <tab active="@[n === tab]" onclick="$.show(@[n])">v@[n]</tab>
+          <tab active="@[n === tab]" onclick="$.open(@[n])">v@[n]</tab>
           <!-- /each -->
         </tabs>
         <!-- if !user -->
@@ -195,6 +195,8 @@
     </box>
 
     <divider></divider>
+
+    <component src="/components/Publishing.html"></component>
   </component>
 </body>
 

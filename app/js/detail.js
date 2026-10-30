@@ -2,6 +2,7 @@ import codie from '/modules/codie/codie.js';
 
 import { SOURCE_URL } from '/js/env.js';
 import { address, source } from '/js/pin.js';
+import { guard, state as publishing } from '/js/publishing.js';
 import { autoTags } from '/js/tags.js';
 import { call } from '/js/ws.js';
 
@@ -38,6 +39,13 @@ const preview = (html) => {
   mount();
 };
 
+// Publishing an edit carries everything but the markup over from the revision
+// it was made on.
+const edited = (html) => {
+  const { component: { title, description, category, icon }, revision: { props } } = window.$;
+  return { namespace, slug, title, description, category, icon, html, props };
+};
+
 let usage;
 
 // The tag under "Use it" is read-only and redrawn on every update, so it
@@ -49,7 +57,11 @@ const attach = (html) => {
   editor.editable = true;
   editor.numberedRows = true;
   editor.code = html;
-  editor.onEdit = ({ raw }) => preview(raw);
+  editor.onEdit = ({ raw }) => {
+    preview(raw);
+    window.$.unpublished = raw === window.$.revision.html ? null : edited(raw);
+  };
+  window.$.unpublished = null;
 
   if (!usage) {
     usage = codie('codie[usage]');
@@ -59,6 +71,7 @@ const attach = (html) => {
 };
 
 export const state = {
+  ...publishing,
   namespace,
   slug,
   component: null,
@@ -78,11 +91,6 @@ export const state = {
   // whatever was published last and carries no hash.
   tab: 0,
   tags: [],
-  mine: [],
-
-  owns() {
-    return this.mine.some(({ slug }) => slug === this.namespace);
-  },
 
   showing() {
     return this.version || this.component?.latest || 0;
@@ -134,7 +142,12 @@ export const state = {
   // scroll position the visitor left; a shared link has nothing to go back to.
   close() {
     const fromHere = document.referrer && new URL(document.referrer).origin === location.origin;
-    fromHere ? history.back() : location.assign('/');
+    this.leave(() => (fromHere ? history.back() : location.assign('/')));
+  },
+
+  // Another tab replaces the code in the editor.
+  open(version) {
+    this.leave(() => this.show(version));
   },
 
   copy() {
@@ -184,6 +197,7 @@ export const state = {
       this.revision = revision;
       this.version = revision.version;
       this.tab = version;
+      this.next = component.latest + 1;
       this.props = revision.props || [];
       this.tags = autoTags(revision);
       this.previewSource = source(SOURCE_URL, namespace, slug, revision.version);
@@ -203,15 +217,7 @@ export const state = {
 };
 
 export const load = async () => {
-  if (window.$.user) window.$.mine = await call('auth/namespaces/mine');
-
+  await guard();
   await window.$.show(hashed() || Number(params.get('v')) || 0);
   addEventListener('hashchange', () => window.$.show(hashed()));
-
-  window.$.on(
-    'afterUpdate',
-    async (current, previous) =>
-      current.user !== previous.user &&
-      (window.$.mine = current.user ? await call('auth/namespaces/mine') : []),
-  );
 };
