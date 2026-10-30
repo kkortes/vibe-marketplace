@@ -50,9 +50,8 @@
       </container>
     </box>
 
-    <divider></divider>
-
-    <box>
+    <sticky grid locked auto-shadow>
+      <divider></divider>
       <crow left g-6 wrap w-full>
         <label f-1>
           <input type="search" placeholder="Search components" value="@[query]"
@@ -74,7 +73,9 @@
           </select>
         </label>
       </crow>
+    </sticky>
 
+    <box>
       <!-- if loading -->
       <crow w-full py="12" text-muted>Loading the catalogue…</crow>
       <!-- else -->

@@ -114,6 +114,31 @@ sticky strong {
   letter-spacing: 0.08em;
 }
 
+sheet sticky {
+  top: calc(var(--unit) * 12);
+  z-index: 2;
+  order: 0;
+  align-self: stretch;
+  margin-inline: calc(var(--inset) * -1);
+  padding: var(--pad) var(--inset);
+  height: calc-size(auto, round(up, size, var(--cell)));
+  box-shadow: inset 1px 0 var(--border);
+}
+
+sheet sticky > divider {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  margin: 0;
+  transition: top 300ms var(--ease-out);
+}
+
+@container scroll-state(stuck: top) {
+  sheet sticky > divider {
+    top: 100%;
+  }
+}
+
 sheet {
   flex: 1;
   padding-inline: calc(var(--grid-size) + var(--inset)) calc(var(--gutter) + var(--inset));
@@ -140,6 +165,7 @@ divider {
 }
 
 blueprint > divider {
+  z-index: 3;
   margin-inline: var(--grid-size) var(--gutter);
 }
 
