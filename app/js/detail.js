@@ -12,6 +12,10 @@ const [namespace, slug] = location.pathname.slice(1).split('/');
 
 const readable = (value) => JSON.stringify(value, null, 2);
 
+// Stylecheat is a promise about the page a component lands in, not something
+// read off its markup, so its tag rides on the visitor's pick.
+const tagged = (revision, styling) => [...autoTags(revision), ...(styling === 'stylecheat' ? ['Stylecheat'] : [])];
+
 // The version in view lives in the hash as #v<n>, the form a pinned address
 // carries; a bare #<n> is read too. No hash means the latest.
 const hashed = () => Number(location.hash.match(/^#v?(\d+)$/)?.[1]) || 0;
@@ -84,6 +88,7 @@ export const state = {
   // whatever was published last and carries no hash.
   tab: 0,
   tags: [],
+  styling: 'inline',
 
   showing() {
     return this.version || this.component?.latest || 0;
@@ -149,6 +154,11 @@ export const state = {
     this.unpublished = ['html', 'title', 'description'].some((k) => edited[k] !== original[k]) ? edited : null;
   },
 
+  style(styling) {
+    this.styling = styling;
+    this.tags = tagged(this.revision, styling);
+  },
+
   // Another tab replaces the code in the editor.
   open(version) {
     this.leave(() => this.show(version));
@@ -203,7 +213,7 @@ export const state = {
       this.tab = version;
       this.next = component.latest + 1;
       this.props = revision.props || [];
-      this.tags = autoTags(revision);
+      this.tags = tagged(revision, this.styling);
       this.previewSource = source(SOURCE_URL, namespace, slug, revision.version);
       this.reset();
       this.missing = '';

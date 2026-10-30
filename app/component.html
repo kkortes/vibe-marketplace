@@ -79,13 +79,25 @@
               <!-- /if -->
               <tags>
                 <crow left g-2 w-full>
+                  <span sm text-muted>CSS Styling</span>
+                  <label sm>
+                    <select onchange="$.style(this.value)">
+                      <option value="inline" selected="@[styling === 'inline']">Inline styles</option>
+                      <option value="stylecheat" selected="@[styling === 'stylecheat']">Stylecheat</option>
+                    </select>
+                  </label>
+                  <!-- if styling === 'stylecheat' -->
+                  <a href="https://stylecheat.korte.kim" target="_blank" title="This component assumes you have Stylecheat installed in the place where it is being used" primary sm>stylecheat.korte.kim</a>
+                  <!-- /if -->
+                </crow>
+                <crow left g-2 w-full>
                   <span sm text-muted>URL</span>
                   <a href="@[$.url()]" target="_blank" primary sm>@[$.url()]</a>
                 </crow>
                 <crow left g-2 wrap>
                   <span sm text-muted>Auto tags</span>
                   <!-- each tags as tag -->
-                  <badge secondary><!-- if tag === 'JS' --><icon js></icon><!-- else if tag === 'CSS' --><icon css-3></icon><!-- /if -->@[tag]</badge>
+                  <badge secondary><!-- if tag === 'JS' --><icon js></icon><!-- else if tag === 'CSS' --><icon css-3></icon><!-- else if tag === 'Stylecheat' --><icon stylecheat-8></icon><!-- /if -->@[tag]</badge>
                   <!-- /each -->
                 </crow>
                 <crow left g-2 wrap>
