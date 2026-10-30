@@ -243,26 +243,36 @@ sheet:has(box[solid]) {
   padding-bottom: 0;
 }
 
-stage {
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-  overflow: hidden auto;
-  scrollbar-width: none;
-}
-
-columns {
+sections {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
-  column-gap: calc(var(--cell) / 2);
+  flex: 1;
+  grid-template: minmax(0, 1fr) auto / repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  width: 100%;
+  min-height: 0;
+  overflow: clip;
 }
 
-column {
+section {
   display: flex;
   flex-direction: column;
-  gap: calc(var(--cell) / 2);
+  align-items: flex-start;
+  gap: calc(var(--unit) * 4);
   min-width: 0;
+  padding: var(--pad);
+  overflow: hidden auto;
+  scrollbar-width: none;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+section[preview] > crow {
+  aspect-ratio: 1;
+  width: 100%;
+  overflow: hidden;
+}
+
+section[props] {
+  contain: size;
 }
 
 box[main] + divider,
@@ -386,9 +396,18 @@ catalogue {
     --code: 100cqw;
   }
 
-  columns {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: calc(var(--cell) / 2);
+  sections {
+    grid-template: none / minmax(0, 1fr);
+    overflow: hidden auto;
+    scrollbar-width: none;
+  }
+
+  section {
+    overflow: visible;
+  }
+
+  section[props] {
+    contain: none;
   }
 
   catalogue {
