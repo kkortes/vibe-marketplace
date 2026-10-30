@@ -75,17 +75,6 @@
             <!-- /if -->
           </crow>
         </container>
-
-        <!-- if user -->
-        <crow vertical left g-4 w-full>
-          <h6>Your components</h6>
-          <!-- if owned.length -->
-          <component src="/components/Catalogue.html" items="@[owned.filter((comp) => !namespace || comp.namespace === namespace)]"></component>
-          <!-- else -->
-          <p text-muted>No components in your namespaces yet.</p>
-          <!-- /if -->
-        </crow>
-        <!-- /if -->
       </scroll>
     </box>
 

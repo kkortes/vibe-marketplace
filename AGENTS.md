@@ -82,8 +82,8 @@ webdev-game-stack remote components, read at seed time and written into
 
 Without `.html` the same addresses are the website's pages: `/<namespace>/<slug>`
 is the component page, `/<namespace>` lists every component under it. Every list
-of components — the frontpage, Your components on `/components` and
-`/<namespace>` — is `app/components/Catalogue.html`, handed the array as `items`.
+of components — the frontpage and `/<namespace>` — is
+`app/components/Catalogue.html`, handed the array as `items`.
 
 The address a visitor copies is `…/<slug>.html#vN`. A URL fragment is cut from a
 request before it is sent, so no server ever sees one — `js/pin.js` resolves it
