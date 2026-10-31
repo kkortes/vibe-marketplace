@@ -42,7 +42,8 @@ export const state = {
 };
 
 export const load = async () => {
-  const components = (await call('components/list')).filter(({ namespace }) => namespace === window.$.namespace);
+  // Asked for by name, so an unlisted namespace lists its own components too.
+  const components = await call('components/list', { namespace });
 
   window.$.components = components;
   window.$.filters = { auto: top(components.flatMap(({ tags }) => tags)), user: top(components.map(({ category }) => category)) };

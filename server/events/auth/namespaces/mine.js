@@ -4,7 +4,7 @@ export default async (_, { db, identity }) =>
   (
     await db
       .prepare(
-        `SELECT namespaces.slug, title, official, count(components.slug) AS components FROM namespaces
+        `SELECT namespaces.slug, title, official, unlisted, count(components.slug) AS components FROM namespaces
          LEFT JOIN components ON components.namespace = namespaces.slug
          WHERE namespaces.ownerId = ? GROUP BY namespaces.slug ORDER BY namespaces.slug`,
       )
