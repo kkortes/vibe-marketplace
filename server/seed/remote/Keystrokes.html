@@ -51,9 +51,7 @@
 
 <keystrokes-root data-instance="@[this.instance]" disabled="@[disabled ? 'disabled' : '']" onchange="$.keys = event.detail">
   <!-- if debug -->
-  <keystrokes-debug>
-    <pre>@[this.map]</pre>
-  </keystrokes-debug>
+  <keystrokes-debug>@[this.map]</keystrokes-debug>
   <!-- /if -->
 </keystrokes-root>
 
@@ -66,11 +64,8 @@
     padding: 32px;
     background: #fff;
     color: #1f2937;
-    font-size: 12px;
+    font: 12px monospace;
+    white-space: pre;
     pointer-events: none;
-  }
-
-  keystrokes-debug pre {
-    margin: 0;
   }
 </style>
