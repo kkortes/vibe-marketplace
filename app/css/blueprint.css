@@ -410,6 +410,7 @@ section[preview] > h6 {
 crow[preview] {
   background-color: var(--input);
   overflow: hidden;
+  contain: paint;
 }
 
 section[preview] > crow {
