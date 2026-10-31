@@ -36,7 +36,7 @@ const state = (html) => /this\.\w+\s*(?:[-+*/]?=(?!=)|\+\+|--)|(?:\+\+|--)this\.
 
 const styled = (html) => /<style[\s>]|\sstyle=/.test(html);
 
-export const TAGS = ['Props', 'State', 'JS', 'CSS'];
+export const TAGS = ['Props', 'State', 'JS', 'CSS', 'Stylecheat'];
 
 // User tags: the category an author files a component under.
 export const CATEGORIES = ['Interactive', 'Forms', 'Layout', 'Navigation', 'Feedback', 'Game'];
@@ -48,3 +48,7 @@ export const autoTags = ({ html, props }) =>
     js(html) && 'JS',
     !styled(html) && 'CSS',
   ].filter(Boolean);
+
+// Stylecheat is a promise about the page a component lands in, not something
+// read off its markup, so its tag rides on the component's saved styling.
+export const stylingTags = (styling) => (styling === 'stylecheat' ? ['Stylecheat'] : []);

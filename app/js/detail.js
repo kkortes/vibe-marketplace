@@ -3,7 +3,7 @@ import codie from '/modules/codie/codie.js';
 import { SOURCE_URL } from '/js/env.js';
 import { address, source } from '/js/pin.js';
 import { guard, take, state as publishing } from '/js/publishing.js';
-import { autoTags } from '/js/tags.js';
+import { autoTags, stylingTags } from '/js/tags.js';
 import { call } from '/js/ws.js';
 
 // The Worker serves this page at the component's own address, /<namespace>/<slug>.
@@ -18,9 +18,7 @@ const UNPUBLISHED = { version: 0, html: '', props: [] };
 
 const STARTER = '<p>Hello from Viberary</p>\n';
 
-// Stylecheat is a promise about the page a component lands in, not something
-// read off its markup, so its tag rides on the component's styling.
-const tagged = (revision, styling) => [...autoTags(revision), ...(styling === 'stylecheat' ? ['Stylecheat'] : [])];
+const tagged = (revision, styling) => [...autoTags(revision), ...stylingTags(styling)];
 
 // The version in view lives in the hash as #v<n>, the form a pinned address
 // carries; a bare #<n> is read too. No hash means the latest.
@@ -160,11 +158,13 @@ export const state = {
     this.unpublished = !latest || ['html', 'title', 'description'].some((k) => edited[k] !== original[k]) ? edited : null;
   },
 
-  // Its owner saves the pick on the component; anyone else only tries it out.
+  // Its owner saves the pick on the component; anyone else only tries it out,
+  // so the tags follow only a saved pick.
   async style(styling) {
     this.styling = styling;
+    if (!this.owns()) return;
+    await call('auth/components/style', { namespace, slug, styling });
     this.tags = tagged(this.revision, styling);
-    this.owns() && (await call('auth/components/style', { namespace, slug, styling }));
   },
 
   // Another tab replaces the code in the editor.
