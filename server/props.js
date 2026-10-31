@@ -1,7 +1,8 @@
 // `json` is the type for a prop an attribute cannot spell: an array or an
 // object. It is passed by binding rather than as a literal, which is what the
-// docs and the copyable snippet both show.
-const TYPES = ['text', 'number', 'boolean', 'select', 'json'];
+// docs and the copyable snippet both show. `html` is no attribute at all: it is
+// the markup between the tags, which the component renders through its <slot>.
+const TYPES = ['text', 'number', 'boolean', 'select', 'json', 'html'];
 
 // The frozen truth about props lives on the revision. `defaults` is the copy
 // the catalogue carries, so a card can render a live preview without fetching
@@ -11,6 +12,9 @@ export const defaults = (props = []) =>
 
 export const validate = (props) => {
   if (!Array.isArray(props)) throw Error('Props must be a list');
+
+  if (props.filter(({ type }) => type === 'html').length > 1)
+    throw Error('Only one prop can be html: a tag has one place between its tags');
 
   return props.map(({ name, type, default: value, description = '', options = [] }) => {
     // An attribute name is lowercased by the HTML parser, and vibe matches prop
@@ -26,6 +30,9 @@ export const validate = (props) => {
 
     if (type === 'json' && (value === null || typeof value !== 'object'))
       throw Error(`Prop "${name}" is json and needs an array or object default`);
+
+    if (type === 'html' && typeof value !== 'string')
+      throw Error(`Prop "${name}" is html and needs markup as its default`);
 
     return { name, type, default: value, description, ...(type === 'select' && { options }) };
   });

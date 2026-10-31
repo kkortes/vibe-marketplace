@@ -71,4 +71,20 @@ describe('validate', () => {
   test('refuses anything that is not a list', () => {
     expect(() => validate({ label: 'text' })).toThrow();
   });
+
+  test('keeps markup for an html prop, the content between the tags', () => {
+    const [prop] = validate([{ name: 'slides', type: 'html', default: '<slide>One</slide>' }]);
+
+    expect(prop.default).toBe('<slide>One</slide>');
+  });
+
+  test('refuses an html prop without markup, or a second one', () => {
+    expect(() => validate([{ name: 'slides', type: 'html', default: [] }])).toThrow();
+    expect(() =>
+      validate([
+        { name: 'a', type: 'html', default: '' },
+        { name: 'b', type: 'html', default: '' },
+      ]),
+    ).toThrow();
+  });
 });
