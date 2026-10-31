@@ -44,7 +44,7 @@ tables hold the catalogue; `users` and `sessions` hold Google sign-ins for
 | Table        | Holds | Mutable |
 |---|---|---|
 | `namespaces` | `slug`, `title`, `official`, `unlisted`, `ownerId` | yes |
-| `components` | catalogue metadata per `namespace` + `slug`: `title`, `description`, `category`, `icon`, `latest`, `defaults`, `ownerId` | yes |
+| `components` | catalogue metadata per `namespace` + `slug`: `title`, `description`, `category`, `icon`, `styling`, `latest`, `defaults`, `ownerId` | yes |
 | `revisions`  | one row per published version | **never** |
 | `tags`       | the auto tags (`app/js/tags.js`) of each component's latest revision, one row per tag, replaced on every publish so the frontpage can count them with `GROUP BY` | yes |
 
@@ -75,6 +75,12 @@ decoders in `server/db.js` turn rows back into the shapes the client receives.
 and is raised by hand in the database. `auth/namespaces/create` checks it in the
 insert itself, and `auth/namespaces/delete` deletes only a namespace of the
 caller's own with no component in it.
+
+`components.styling` is `inline` or `stylecheat`: whether a component carries
+its own styles or assumes Stylecheat on the page it lands in. It is catalogue
+metadata, not part of a revision, so its owner changes it in place from the CSS
+Styling select on the component page (`auth/components/style`); for anyone else
+that select only previews the pick.
 
 `components.defaults` is a derived copy of the latest revision's prop defaults,
 kept so the catalogue can be listed in one call without fetching a revision per

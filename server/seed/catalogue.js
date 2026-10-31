@@ -20,6 +20,7 @@ export default await Promise.all(
       description: 'A top-right stack of notifications that fly in and fade out one by one. Post into it from anywhere with a notify event.',
       category: 'Feedback',
       icon: 'bell',
+      styling: 'stylecheat',
     },
     {
       file: 'Overlay.html',
@@ -29,6 +30,7 @@ export default await Promise.all(
       description: 'Shows any component over a dimmed, blurred backdrop that fades and scales in, and closes on Escape or a click outside it.',
       category: 'Layout',
       icon: 'layout',
+      styling: 'stylecheat',
       props: [
         {
           name: 'component',
@@ -58,6 +60,7 @@ export default await Promise.all(
       description: 'Shows your own slides over a dimmed, blurred backdrop that fades and scales in, and closes on Escape or a click outside them. Needs Stylecheat.',
       category: 'Layout',
       icon: 'images',
+      styling: 'stylecheat',
       props: [
         {
           name: 'open',
@@ -104,6 +107,7 @@ export default await Promise.all(
       description: 'Renders any component full-screen over a blurred backdrop, and hands it a close.',
       category: 'Layout',
       icon: 'layout',
+      styling: 'stylecheat',
       props: [
         {
           name: 'component',
@@ -131,6 +135,7 @@ export default await Promise.all(
       description: 'A trading card, full art or framed, in the colour of its element.',
       category: 'Game',
       icon: 'image',
+      styling: 'stylecheat',
       props: [
         { name: 'name', type: 'text', default: 'Oskar', description: 'Card name. Trusted HTML.' },
         {

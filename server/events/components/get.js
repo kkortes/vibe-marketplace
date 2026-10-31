@@ -6,7 +6,7 @@ export default async ({ namespace, slug, version }, { db }) => {
   const component = decodeComponent(
     await db
       .prepare(
-        'SELECT namespace, slug, title, description, category, icon, latest, defaults, createdAt, updatedAt FROM components WHERE namespace = ? AND slug = ?',
+        'SELECT namespace, slug, title, description, category, icon, styling, latest, defaults, createdAt, updatedAt FROM components WHERE namespace = ? AND slug = ?',
       )
       .bind(namespace, slug)
       .first(),

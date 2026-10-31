@@ -49,9 +49,9 @@ const sql = [
      ON CONFLICT (slug) DO UPDATE SET title = excluded.title, official = excluded.official, ownerId = excluded.ownerId;`,
     `DELETE FROM revisions WHERE namespace = ${literal(namespace)};`,
     `DELETE FROM components WHERE namespace = ${literal(namespace)};`,
-    ...components.flatMap(({ slug, title, description, category, icon, versions }) => [
-      `INSERT INTO components (namespace, slug, title, description, category, icon, latest, defaults, createdAt, updatedAt, ownerId)
-       VALUES (${row(namespace, slug, title, description, category, icon, versions.length, JSON.stringify(defaults(versions.at(-1).props)), now(), now())}, ${owner});`,
+    ...components.flatMap(({ slug, title, description, category, icon, styling = 'inline', versions }) => [
+      `INSERT INTO components (namespace, slug, title, description, category, icon, styling, latest, defaults, createdAt, updatedAt, ownerId)
+       VALUES (${row(namespace, slug, title, description, category, icon, styling, versions.length, JSON.stringify(defaults(versions.at(-1).props)), now(), now())}, ${owner});`,
       ...versions.map(
         ({ html, props, notes }, i) =>
           `INSERT INTO revisions (namespace, slug, version, html, props, notes, authorId, authorName, createdAt)
