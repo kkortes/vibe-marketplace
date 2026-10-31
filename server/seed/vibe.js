@@ -2,9 +2,124 @@
 // plain values for every theme variable, so they render on a page that has
 // never heard of stylecheat.
 
+const keystrokes = {
+  slug: 'keystrokes',
+  title: 'Keystrokes',
+  description: 'Tracks which game keys are held and hands the map to state of your own.',
+  category: 'Interactive',
+  icon: 'desktop',
+  versions: [
+    {
+      notes: 'Ported from the webdev-game-stack Keystrokes.',
+      props: [
+        {
+          name: 'keys',
+          type: 'json',
+          default: {},
+          description: 'Bind it to state of your own. Every press and release writes the full map there: each tracked key, true while held. Meta or Ctrl lets go of all of them.',
+        },
+        {
+          name: 'disabled',
+          type: 'boolean',
+          default: false,
+          description: 'Only Enter, Escape and both Shift keys get through while set, for when the game keyboard is off.',
+        },
+        {
+          name: 'debug',
+          type: 'boolean',
+          default: false,
+          description: 'Shows the held keys in a fixed corner at the bottom right.',
+        },
+      ],
+      html: `
+<script type="module">
+  import component from '@ape-egg/vibe/component';
+
+  const available = Object.fromEntries(
+    [
+      'keyw', 'keya', 'keys', 'keyd', 'keyi', 'keyq', 'keye', 'keyz', 'keyx', 'keyc',
+      'arrowright', 'arrowleft', 'arrowdown', 'arrowup',
+      'escape', 'enter', 'shiftleft', 'shiftright',
+      'digit1', 'digit2', 'digit3', 'digit4', 'digit5',
+      'numpad1', 'numpad2', 'numpad3', 'numpad4', 'numpad5', 'numpad6', 'numpad7', 'numpad8', 'numpad9',
+    ].map((key) => [key, false]),
+  );
+
+  const ungated = ['enter', 'escape', 'shiftleft', 'shiftright'];
+
+  let local = { ...available };
+
+  const id = component({ held: [] });
+
+  const root = () => document.querySelector(\`keystrokes-root[data-vibe-internal-component-id="\${id}"]\`);
+
+  // Browser autofill fires keydown as a plain Event, with no code to read.
+  // The map leaves through a change event on the root, whose handler vibe
+  // rewrites to the consumer's own bound keys.
+  const toggle = (event) => {
+    if (!(event instanceof KeyboardEvent)) return;
+
+    const { type, code, metaKey, ctrlKey } = event;
+    const key = code.toLowerCase();
+
+    if (local[key] && type === 'keydown') return;
+
+    if (metaKey || ctrlKey) local = { ...available };
+    else if (key in local && (!root().getAttribute('disabled') || ungated.includes(key)))
+      local = { ...local, [key]: type === 'keydown' };
+    else return;
+
+    $[id].held = Object.keys(local).filter((k) => local[k]);
+    root().dispatchEvent(new CustomEvent('change', { detail: { ...local } }));
+  };
+
+  addEventListener('keydown', toggle);
+  addEventListener('keyup', toggle);
+
+  $.on('unmount', () => {
+    removeEventListener('keydown', toggle);
+    removeEventListener('keyup', toggle);
+  });
+</script>
+
+<keystrokes-root disabled="@[disabled ? 'disabled' : '']" onchange="$.keys = event.detail">
+  <!-- if debug -->
+  <keystrokes-debug>
+    <card>
+      <crow vertical left g-2>
+        <b>Keys held</b>
+        <crow left g-1>
+          <!-- each this.held as key -->
+          <badge secondary>@[key]</badge>
+          <!-- /each -->
+          <!-- if !this.held.length -->
+          <badge outline>none</badge>
+          <!-- /if -->
+        </crow>
+      </crow>
+    </card>
+  </keystrokes-debug>
+  <!-- /if -->
+</keystrokes-root>
+
+<style>
+  keystrokes-debug {
+    position: fixed;
+    right: calc(var(--unit, 4px) * 4);
+    bottom: calc(var(--unit, 4px) * 4);
+    z-index: 1;
+    max-width: 320px;
+    pointer-events: none;
+  }
+</style>
+`,
+    },
+  ],
+};
+
 const trimmed = (component) => ({
   ...component,
   versions: component.versions.map((version) => ({ ...version, html: version.html.trim() })),
 });
 
-export default [].map(trimmed);
+export default [keystrokes].map(trimmed);
