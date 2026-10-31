@@ -34,26 +34,20 @@ const js = (html) =>
 // Anything assigned to or stepped on `this` is state that changes at runtime.
 const state = (html) => /this\.\w+\s*(?:[-+*/]?=(?!=)|\+\+|--)|(?:\+\+|--)this\.\w+/.test(html);
 
-// The state's own level, with whatever sits inside a nested bracket emptied,
-// so a key's value reads `() => …` or `() {}` whatever it holds.
-const surface = (state) => {
-  let depth = 0;
-  return [...state]
-    .filter((char) => {
-      const opens = '{[('.includes(char);
-      const closes = '}])'.includes(char);
-      depth += opens - closes;
-      return depth < 2 || (opens && depth === 2);
-    })
-    .join('');
-};
-
-// Functions handed to component() land on the component's state at `$[id]`,
-// where the page it is used in can call them.
-export const functions = (html) =>
-  scripts(html).flatMap((code) =>
-    [...surface(stateOf(code)).matchAll(/[{,]\s*(?:async\s+)?(\w+)\s*(?:\(\)\s*\{|:\s*(?:async\s*)?(?:function\b|\(\)\s*=>|\w+\s*=>))/g)].map(([, name]) => name),
+// Listeners a component attaches to the window or the document, the two
+// targets the page it lands in can reach and dispatch to. A bare
+// addEventListener is the window's.
+export const listeners = (html) => {
+  const found = scripts(html).flatMap((code) =>
+    [...code.matchAll(/(?:\b(window|document|globalThis|self)\s*\.\s*|(?<![\w$.]))addEventListener\(\s*(['"`])([\w:.-]+)\2/g)].map(
+      ([, target, , event]) => `${target === 'document' ? 'document' : 'window'} ${event}`,
+    ),
   );
+  return [...new Set(found)].map((listener) => {
+    const [target, event] = listener.split(' ');
+    return { target, event };
+  });
+};
 
 const styled = (html) => /<style[\s>]|\sstyle=/.test(html);
 
@@ -67,7 +61,7 @@ export const autoTags = ({ html, props }) =>
     props?.length && 'Props',
     state(html) && 'State',
     js(html) && 'JS',
-    functions(html).length && 'Functions',
+    listeners(html).length && 'Functions',
     !styled(html) && 'CSS',
   ].filter(Boolean);
 

@@ -195,14 +195,16 @@
                 <!-- /if -->
               </props>
 
-              <!-- if functions.length -->
+              <!-- if listeners.length -->
               <functions inert="@[coding]">
                 <h6>Functions</h6>
-                <crow left g-2 wrap>
-                  <!-- each functions as name -->
-                  <button tertiary onclick="$.invoke('@[name]')"><code>@[name]()</code></button>
-                  <!-- /each -->
+                <!-- each listeners as listener -->
+                <crow justify-between g-4 w-full>
+                  <button tertiary onclick="$.dispatch('@[listener.target]', '@[listener.event]', this.nextElementSibling.value)"><code>@[listener.event]</code></button>
+                  <input type="text" w-full placeholder="Detail, as JSON" />
+                  <badge bg-hollow>@[listener.target]</badge>
                 </crow>
+                <!-- /each -->
               </functions>
               <!-- /if -->
             </section>

@@ -1,22 +1,26 @@
 import { describe, expect, test } from 'bun:test';
 
-import { autoTags, functions } from '../app/js/tags.js';
+import { autoTags, listeners } from '../app/js/tags.js';
 
-const script = (state) => `<script type="module">component(${state});</script>`;
+const script = (code) => `<script type="module">${code}</script>`;
 
-describe('functions', () => {
-  test('lists every function handed to component(), however it is written', () => {
+describe('listeners', () => {
+  test('lists every event listened for on the window or the document, once each', () => {
     expect(
-      functions(script(`{ count: 0, increment() { this.count++; }, async load(a) { go(); }, open: () => {}, pick: (n) => n, f: function () {} }`)),
-    ).toEqual(['increment', 'load', 'open', 'pick', 'f']);
+      listeners(script(`addEventListener('notify', notify); window.addEventListener("keydown", a); addEventListener('keydown', b); document.addEventListener('visibilitychange', c);`)),
+    ).toEqual([
+      { target: 'window', event: 'notify' },
+      { target: 'window', event: 'keydown' },
+      { target: 'document', event: 'visibilitychange' },
+    ]);
   });
 
-  test('a function nested in a value is not the component\'s own', () => {
-    expect(functions(script(`{ user: { greet() {} }, items: [() => 1] }`))).toEqual([]);
+  test('a listener on an element of its own is out of the page\'s reach', () => {
+    expect(listeners(script(`root().addEventListener('click', go); el.addEventListener('input', go);`))).toEqual([]);
   });
 
-  test('tags a component that exposes one', () => {
-    expect(autoTags({ html: script(`{ close: () => {} }`), props: [] })).toContain('Functions');
-    expect(autoTags({ html: script(`{ count: 0 }`), props: [] })).not.toContain('Functions');
+  test('tags a component that attaches one', () => {
+    expect(autoTags({ html: script(`addEventListener('notify', notify);`), props: [] })).toContain('Functions');
+    expect(autoTags({ html: script(`component({ close: () => {} });`), props: [] })).not.toContain('Functions');
   });
 });
