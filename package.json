@@ -5,25 +5,26 @@
   "scripts": {
     "dev": "\"$(git rev-parse --path-format=absolute --git-common-dir)/../../dev.sh\" 'bun compile:watch & bunx wrangler dev --port=$PORT --ip=localhost'",
     "build": "bun compile",
-    "compile": "mkdir -p compiled && find compiled -mindepth 1 -delete && bunx vibe compile --no-clean && mv compiled/node_modules/@ape-egg compiled/modules && rm -r compiled/node_modules",
-    "compile:watch": "bun compile && bunx vibe compile --watch --no-clean",
+    "compile": "bunx vibe compile",
+    "compile:watch": "bunx vibe compile --watch",
     "test": "bun test",
     "fade": "bun scripts/fade.js"
   },
   "dependencies": {
     "@ape-egg/async-await-websockets": "^3.9.0",
     "@ape-egg/codie": "^0.2.1",
-    "@ape-egg/vibe": "^4.3.23",
-    "hono": "^4.12.3"
+    "@ape-egg/vibe": "^4.3.23"
   },
   "devDependencies": {
-    "@ape-egg/vibe-compiler": "^4.3.23",
+    "@ape-egg/vibe-compiler": "^4.3.26",
+    "hono": "^4.12.3",
     "wrangler": "^4.155.0"
   },
   "vibe-compiler": {
     "source": "./app",
     "output": "./compiled",
     "components": "components",
+    "modules": "modules",
     "elementsAsIs": true,
     "nodeModulesAsIs": false,
     "minify": false

@@ -226,22 +226,25 @@ arrived — empty catalogue, no sign-in button — while `window.$` holds all of
 
 ### Packages are served at `/modules/<name>/`, never under `@ape-egg`
 
-`bun run compile` moves the compiled `node_modules/@ape-egg` to `compiled/modules`,
-so the browser imports `/modules/vibe/index.js`. Cloudflare's asset server
+`"modules": "modules"` in the `vibe-compiler` config makes the compiler copy
+every package under `dependencies`, and theirs, into `compiled/modules` by its
+bare name, so the browser imports `/modules/vibe/index.js`. `dependencies` is
+therefore what the browser loads; `hono`, which only the Worker bundle needs, is
+a devDependency. Cloudflare's asset server
 answers any path holding `@` with a 307 to its `%40` form, and a module's
 relative imports resolve against the redirected URL while the module map keys
 on the requested one. vibe's `index.js` ↔ `boot.js` cycle then loads `index.js`
 twice: `$.on('afterUpdate')` registered before boot lands in one copy and boot
 reads the other, so the theme toggle never saves or touches `body.dark`.
 
-### `compiled/` is emptied, never deleted
+### Nothing may vanish from `compiled/` while `wrangler dev` reads it
 
-`wrangler dev` watches `compiled/` itself. Deleting that folder ends the watch:
-wrangler keeps the asset list from the moment of the delete — mid-build, so
-pages and `js/` but no `modules/` — and serves it until restarted. vibe never
-loads and the page shows its raw markup ("Nothing matches “@[query]”").
-So `bun run compile` empties the folder and compiles with `--no-clean`, and a
-build run beside a live `bun dev` keeps the dev server current.
+`wrangler dev` watches `compiled/` and on every change lists the folder, then
+stats each file it listed. A file gone in between ends `wrangler dev` with
+ENOENT, and nothing answers on the port until it is restarted. So the compiler
+overwrites `compiled/` in place and removes only what the build did not write,
+once it is done; nothing here may empty, move or delete inside it, and a build
+run beside a live `bun dev` leaves the dev server up.
 
 ### A state method called from a binding is called unbound
 
