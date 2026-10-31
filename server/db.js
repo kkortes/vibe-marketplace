@@ -16,6 +16,6 @@ export const tagged = (row) => {
 
 export const revision = (row) => row && { ...row, props: JSON.parse(row.props) };
 
-export const namespace = (row) => ({ ...row, official: !!row.official });
+export const namespace = (row) => ({ ...row, official: !!row.official, unlisted: !!row.unlisted });
 
 export const now = () => new Date().toISOString();

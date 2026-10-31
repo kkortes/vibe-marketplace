@@ -50,8 +50,8 @@
             <input type="text" w-full placeholder="acme" value="@[slug]" oninput="$.slug = this.value" />
           </crow>
           <label>
-            <input type="checkbox" role="switch" disabled />
-            Private <span text-muted>Coming soon</span>
+            <input type="checkbox" role="switch" checked="@[unlisted]" onchange="$.unlisted = event.currentTarget.checked" />
+            Unlisted <span text-muted>Its components stay off the frontpage</span>
           </label>
           <!-- if failure -->
           <p text-red>@[failure]</p>
