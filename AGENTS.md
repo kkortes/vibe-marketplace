@@ -64,6 +64,11 @@ SQLite has no booleans or nested values: `components.defaults` and
 `revisions.props` are JSON text and `namespaces.official` is `0`/`1`. The
 decoders in `server/db.js` turn rows back into the shapes the client receives.
 
+`users.namespaceCount` caps how many namespaces a user may own; it starts at 1
+and is raised by hand in the database. `auth/namespaces/create` checks it in the
+insert itself, and `auth/namespaces/delete` deletes only a namespace of the
+caller's own with no component in it.
+
 `components.defaults` is a derived copy of the latest revision's prop defaults,
 kept so the catalogue can be listed in one call without fetching a revision per
 card. The frozen truth about props is `revisions.props`.
@@ -103,6 +108,12 @@ in the page into the version path above. The marketplace serves that resolver at
 - The only path to a session is this app's own `server/events/login/google.js`,
   which verifies a Google ID token and calls aaw's `authenticate`.
   `js/auth.js` holds the browser half and the client id.
+- Previews are the one exception, and a deliberate one: on a
+  `<alias>-viberary.viberary.workers.dev` host, Sign in skips Google and calls
+  `login/preview`, which signs anyone in as the user `PREVIEW_SIGNIN` names.
+  That var exists only in the `previews` block of `wrangler.jsonc`, so
+  production refuses the event, and its user row must already be in
+  `viberary-preview`.
 - `server/store.js` is the session store. aaw registers its built-in
   `aaw/login`, `aaw/register` and `aaw/password/*` events whatever `providers`
   says, so the store answers for them by name with "no password login here"
