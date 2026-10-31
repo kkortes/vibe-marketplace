@@ -69,9 +69,10 @@ kept so the catalogue can be listed in one call without fetching a revision per
 card. The frozen truth about props is `revisions.props`.
 
 The only files under `server/seed/` that look like components are inputs to the
-seed script: `server/seed/remote/*.html` are byte-for-byte copies of the
-webdev-game-stack remote components, read at seed time and written into
-`revisions.html` like any other publish. They are not served from disk.
+seed script: `server/seed/remote/*.html` hold the code of every seeded
+component, the webdev-game-stack components ported to Vibe, read at seed time
+by `server/seed/game-stack.js` and written into `revisions.html` like any other
+publish. They are not served from disk.
 `server/seed.js` turns the catalogue into SQL and runs it through
 `wrangler d1 execute`.
 
