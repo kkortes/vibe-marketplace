@@ -19,7 +19,7 @@
 
     let map;
     if (metaKey || ctrlKey) map = Object.fromEntries(Object.keys(keys).map((name) => [name, false]));
-    else if (key in keys && (!root().getAttribute('disabled') || ungated.includes(key)))
+    else if (key in keys && (!root().hasAttribute('disabled') || ungated.includes(key)))
       map = { ...keys, [key]: type === 'keydown' };
     else return;
 
@@ -35,7 +35,7 @@
   });
 </script>
 
-<keystrokes-root data-instance="@[this.instance]" data-keys="@[JSON.stringify(keys)]" disabled="@[disabled ? 'disabled' : '']" onchange="$.keys = event.detail">
+<keystrokes-root data-instance="@[this.instance]" data-keys="@[JSON.stringify(keys)]" disabled="@[disabled]" onchange="$.keys = event.detail">
   <!-- if debug -->
   <keystrokes-debug>@[JSON.stringify(keys, null, 2)]</keystrokes-debug>
   <!-- /if -->
