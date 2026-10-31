@@ -24,10 +24,13 @@
   </script>
 
   <script type="module">
+    import vibe from '/modules/vibe/index.js';
+
     import boot from '/js/boot.js';
+    import globalState from '/js/globalState.js';
     import { load, state, edit, intro } from '/js/browse.js';
 
-    boot(state, load).on('ready', () => {
+    boot(() => vibe({ ...globalState, ...state }), load).on('ready', () => {
       // Without the hero there is no tag to edit and nothing to collapse.
       if (!window.$.hero) return;
       edit();
