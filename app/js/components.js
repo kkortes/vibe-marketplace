@@ -14,7 +14,29 @@ export const state = {
   },
 
   dismiss() {
-    document.querySelector('dialog[namespace]').close();
+    document.querySelectorAll('dialog').forEach((dialog) => dialog.close());
+  },
+
+  deletable() {
+    return this.mine.some(({ slug, components }) => slug === this.namespace && !components);
+  },
+
+  confirm() {
+    this.failure = '';
+    document.querySelector('dialog[removal]').showModal();
+  },
+
+  async remove() {
+    try {
+      const { slug } = await call('auth/namespaces/delete', { slug: this.namespace });
+
+      this.mine = this.mine.filter((ns) => ns.slug !== slug);
+      this.namespace = '';
+      this.dismiss();
+      this.notice = `${slug} is deleted.`;
+    } catch ({ message }) {
+      this.failure = message;
+    }
   },
 
   async create() {
