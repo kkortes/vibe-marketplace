@@ -51,10 +51,7 @@ tables hold the catalogue; `users` and `sessions` hold Google sign-ins for
 An unlisted namespace keeps its components off the frontpage: `components/list`
 without a namespace, and `tags/top`, leave it out. Its components still render
 at their addresses and list on `/<namespace>`, which asks `components/list` for
-that namespace alone. `users.namespaceCount`, 1 unless raised by hand, is how
-many namespaces an account may own; `auth/namespaces/create` refuses past it and
-`/components` hides New namespace once it is reached. A namespace with nothing
-published can be deleted by its owner from its own page.
+that namespace alone. The New namespace modal on `/components` sets it.
 
 **The source bytes of a component live in `revisions.html`** — a text column on
 the revision row, holding the component's markup exactly as published.
@@ -74,19 +71,23 @@ SQLite has no booleans or nested values: `components.defaults` and
 `revisions.props` are JSON text and `namespaces.official` and `namespaces.unlisted` are `0`/`1`. The
 decoders in `server/db.js` turn rows back into the shapes the client receives.
 
+`users.namespaceCount` caps how many namespaces a user may own; it starts at 1
+and is raised by hand in the database. `auth/namespaces/create` checks it in the
+insert itself, and `auth/namespaces/delete` deletes only a namespace of the
+caller's own with no component in it.
+
 `components.defaults` is a derived copy of the latest revision's prop defaults,
 kept so the catalogue can be listed in one call without fetching a revision per
 card. The frozen truth about props is `revisions.props`.
 
 The only files under `server/seed/` that look like components are inputs to the
-seed script: `server/seed/remote/*.html` are byte-for-byte copies of the
-webdev-game-stack remote components, and `server/seed/webdev/*.html` hold the
-markup of the webdev namespace's components, read in by `server/seed/webdev.js`.
-`server/seed.js` replaces each seeded namespace whole — `vibe` and `webdev`, both
-owned by the developer's account — so a component left out of the seed is gone
-from it after the next run.
-Both are read at seed time and written into `revisions.html` like any other
-publish. They are not served from disk. What a seeded component fetches by
+seed script: `server/seed/remote/*.html` hold the code of every seeded
+component, the webdev-game-stack components ported to Vibe, read at seed time
+— `vibe`'s by `server/seed/game-stack.js`, `webdev`'s by `server/seed/webdev.js`
+— and written into `revisions.html` like any other publish. They are not served
+from disk. `server/seed.js` replaces each seeded namespace whole, `vibe` and
+`webdev`, both owned by the developer's account, so a component left out of the
+seed is gone from it after the next run. What a seeded component fetches by
 prop, such as the card's art, lives in `app/images/` and is served as an asset.
 `server/seed.js` turns the catalogue into SQL and runs it through
 `wrangler d1 execute`.
@@ -119,6 +120,12 @@ in the page into the version path above. The marketplace serves that resolver at
 - The only path to a session is this app's own `server/events/login/google.js`,
   which verifies a Google ID token and calls aaw's `authenticate`.
   `js/auth.js` holds the browser half and the client id.
+- Previews are the one exception, and a deliberate one: on a
+  `<alias>-viberary.viberary.workers.dev` host, Sign in skips Google and calls
+  `login/preview`, which signs anyone in as the user `PREVIEW_SIGNIN` names.
+  That var exists only in the `previews` block of `wrangler.jsonc`, so
+  production refuses the event, and its user row must already be in
+  `viberary-preview`.
 - `server/store.js` is the session store. aaw registers its built-in
   `aaw/login`, `aaw/register` and `aaw/password/*` events whatever `providers`
   says, so the store answers for them by name with "no password login here"

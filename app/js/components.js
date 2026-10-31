@@ -1,19 +1,5 @@
-import { send } from '/js/publishing.js';
+import { lettered, slugify } from '/js/naming.js';
 import { call } from '/js/ws.js';
-
-// A slug is the name lowercased, accents dropped, with every run of anything
-// else turned into one dash.
-const slugify = (name) =>
-  name
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-
-const escaped = (text) => text.replaceAll('&', '&amp;').replaceAll('<', '&lt;');
-
-const dialog = (name) => document.querySelector(`dialog[${name}]`);
 
 export const state = {
   mine: [],
@@ -21,28 +7,42 @@ export const state = {
   namespace: '',
   slug: '',
   unlisted: false,
-  draft: { title: '', description: '' },
   failure: '',
+  // The component the "Add component" dialog is creating in the selected namespace.
+  draft: { title: '', description: '' },
+  slugify,
 
   compose() {
     this.slug = '';
     this.unlisted = false;
     this.failure = '';
-    dialog('namespace').showModal();
+    document.querySelector('dialog[namespace]').showModal();
   },
 
-  outline() {
-    this.draft = { title: '', description: '' };
+  dismiss() {
+    document.querySelectorAll('dialog').forEach((dialog) => dialog.close());
+  },
+
+  deletable() {
+    return this.mine.some(({ slug, components }) => slug === this.namespace && !components);
+  },
+
+  confirm() {
     this.failure = '';
-    dialog('draft').showModal();
+    document.querySelector('dialog[removal]').showModal();
   },
 
-  dismiss(name) {
-    dialog(name).close();
-  },
+  async remove() {
+    try {
+      const { slug } = await call('auth/namespaces/delete', { slug: this.namespace });
 
-  slugged() {
-    return slugify(this.draft.title);
+      this.mine = this.mine.filter((ns) => ns.slug !== slug);
+      this.namespace = '';
+      this.dismiss();
+      this.notice = `${slug} is deleted.`;
+    } catch ({ message }) {
+      this.failure = message;
+    }
   },
 
   async create() {
@@ -50,37 +50,31 @@ export const state = {
       const created = await call('auth/namespaces/create', { slug: this.slug, unlisted: this.unlisted });
 
       this.mine = [...this.mine, created];
-      this.dismiss('namespace');
+      this.dismiss();
       this.notice = `${created.slug} is yours and has its own tab now.`;
     } catch ({ message }) {
       this.failure = message;
     }
   },
 
-  // The component is not written anywhere yet: it is carried to its own page,
-  // which opens on Latest with Publish ready, and only publishing creates it.
+  draw() {
+    this.draft = { title: '', description: '' };
+    this.failure = '';
+    document.querySelector('dialog[component]').showModal();
+  },
+
+  // Created with nothing published, the component page opens it as an
+  // unpublished edit, so v1 is one press of Publish away.
   async add() {
-    const { namespace } = this;
-    const title = this.draft.title.trim();
-    const slug = this.slugged();
+    if (!lettered(this.draft.title)) return (this.failure = 'A name needs at least 3 letters');
 
-    if ((title.match(/\p{L}/gu) ?? []).length < 3) return (this.failure = 'A name needs at least 3 letters');
-    if (slug === 'tag') return (this.failure = 'tag is reserved for /<namespace>/tag/<name>');
+    try {
+      const { namespace, slug } = await call('auth/components/create', { namespace: this.namespace, ...this.draft });
 
-    const taken = (await call('components/list', { namespace })).some((component) => component.slug === slug);
-    if (taken) return (this.failure = `${namespace}/${slug} already exists`);
-
-    send({
-      namespace,
-      slug,
-      title,
-      description: this.draft.description.trim() || null,
-      category: 'Layout',
-      icon: null,
-      html: `<h2>${escaped(title)}</h2>`,
-      props: [],
-    });
-    location.assign(`/${namespace}/${slug}`);
+      location.assign(`/${namespace}/${slug}`);
+    } catch ({ message }) {
+      this.failure = message;
+    }
   },
 };
 

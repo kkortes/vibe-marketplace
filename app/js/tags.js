@@ -38,6 +38,9 @@ const styled = (html) => /<style[\s>]|\sstyle=/.test(html);
 
 export const TAGS = ['Props', 'State', 'JS', 'CSS'];
 
+// User tags: the category an author files a component under.
+export const CATEGORIES = ['Interactive', 'Forms', 'Layout', 'Navigation', 'Feedback', 'Game'];
+
 export const autoTags = ({ html, props }) =>
   [
     props?.length && 'Props',

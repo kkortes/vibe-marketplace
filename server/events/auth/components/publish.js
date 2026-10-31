@@ -1,9 +1,7 @@
 import { now } from '../../../db.js';
 import { defaults, validate } from '../../../props.js';
 import { slug as slugPattern } from '../../../user.js';
-import { autoTags } from '../../../../app/js/tags.js';
-
-const CATEGORIES = ['Interactive', 'Forms', 'Layout', 'Navigation', 'Feedback', 'Game'];
+import { CATEGORIES, autoTags } from '../../../../app/js/tags.js';
 
 // Publishing only ever inserts. A revision that exists is frozen — the way to
 // change a component is to publish the next version of it.

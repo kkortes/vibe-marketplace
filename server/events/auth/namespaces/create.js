@@ -10,18 +10,19 @@ export default async ({ slug, title, unlisted = false }, { db, identity }) => {
   const taken = await db.prepare('SELECT 1 FROM namespaces WHERE slug = ?').bind(slug).first();
   if (taken) throw Error(`${slug} is taken`);
 
-  // The limit is read from the row rather than the session, so raising it takes
-  // effect without signing in again.
-  const { owned, allowed } = await db
-    .prepare('SELECT (SELECT COUNT(*) FROM namespaces WHERE ownerId = ?1) AS owned, namespaceCount AS allowed FROM users WHERE id = ?1')
-    .bind(identity.id)
+  // The cap is read in the same statement as the insert, so two creates at once
+  // cannot both slip under it.
+  const created = await db
+    .prepare(
+      `INSERT INTO namespaces (slug, title, official, unlisted, ownerId, createdAt)
+       SELECT ?1, ?2, 0, ?5, ?3, ?4 FROM users
+       WHERE id = ?3 AND namespaceCount > (SELECT count(*) FROM namespaces WHERE ownerId = ?3)
+       RETURNING *`,
+    )
+    .bind(slug, title?.trim() || slug, identity.id, now(), unlisted ? 1 : 0)
     .first();
-  if (owned >= allowed) throw Error(`Your account may own ${allowed} ${allowed === 1 ? 'namespace' : 'namespaces'}`);
 
-  return decode(
-    await db
-      .prepare('INSERT INTO namespaces (slug, title, official, unlisted, ownerId, createdAt) VALUES (?, ?, 0, ?, ?, ?) RETURNING *')
-      .bind(slug, title?.trim() || slug, unlisted ? 1 : 0, identity.id, now())
-      .first(),
-  );
+  if (!created) throw Error('You own as many namespaces as your account allows');
+
+  return { ...decode(created), components: 0 };
 };

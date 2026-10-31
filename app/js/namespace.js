@@ -1,5 +1,4 @@
 import { call } from '/js/ws.js';
-import { guard, state as publishing } from '/js/publishing.js';
 
 // The four most common names, counted over the namespace's own components so
 // the bar offers no tag that would empty the list.
@@ -11,10 +10,7 @@ const top = (names) =>
 
 const [, namespace, , linked = ''] = location.pathname.split('/').map(decodeURIComponent);
 
-const removal = () => document.querySelector('dialog[removal]');
-
 export const state = {
-  ...publishing,
   // The Worker serves this page at /<namespace> and /<namespace>/tag/<name>.
   namespace,
   components: [],
@@ -43,31 +39,10 @@ export const state = {
         (!needle || `${c.namespace}/${c.slug} ${c.title} ${c.description}`.toLowerCase().includes(needle)),
     );
   },
-
-  // Only a namespace that never published can be deleted; the server checks
-  // that again rather than trusting the empty list.
-  doubt() {
-    this.failure = '';
-    removal().showModal();
-  },
-
-  keep() {
-    removal().close();
-  },
-
-  async remove() {
-    try {
-      await call('auth/namespaces/delete', { slug: namespace });
-      location.assign('/components');
-    } catch ({ message }) {
-      this.failure = message;
-    }
-  },
 };
 
 export const load = async () => {
-  await guard();
-
+  // Asked for by name, so an unlisted namespace lists its own components too.
   const components = await call('components/list', { namespace });
 
   window.$.components = components;

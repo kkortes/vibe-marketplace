@@ -12,6 +12,12 @@ const [namespace, slug] = location.pathname.slice(1).split('/');
 
 const readable = (value) => JSON.stringify(value, null, 2);
 
+// What a created component holds before its first publish: no markup, which
+// the starter in the editor already differs from.
+const UNPUBLISHED = { version: 0, html: '', props: [] };
+
+const STARTER = '<p>Hello from Viberary</p>\n';
+
 // Stylecheat is a promise about the page a component lands in, not something
 // read off its markup, so its tag rides on the visitor's pick.
 const tagged = (revision, styling) => [...autoTags(revision), ...(styling === 'stylecheat' ? ['Stylecheat'] : [])];
@@ -90,9 +96,8 @@ export const state = {
   tags: [],
   styling: 'inline',
 
-  // Never published, the page shows the version a publish would create.
   showing() {
-    return this.version || this.component?.latest || this.next;
+    return this.version || this.component?.latest || 0;
   },
 
   outdated() {
@@ -146,8 +151,7 @@ export const state = {
 
   // The markup, title and description are edited in place; whatever is not
   // edited is published as the revision in view carries it. Editing back to
-  // what was there leaves nothing to publish — unless nothing was ever
-  // published, when the whole component is still waiting for its first.
+  // what was there leaves nothing to publish, unless nothing is published here yet.
   edit(key, value) {
     const { component: { title, description, category, icon, latest }, revision: { html, props } } = this;
     const original = { namespace, slug, title, description, category, icon, html, props };
@@ -184,6 +188,10 @@ export const state = {
     }
   },
 
+  structured() {
+    return this.props.some(({ type }) => type === 'json');
+  },
+
   reset() {
     this.values = Object.fromEntries(this.props.map(({ name, default: value }) => [name, value]));
 
@@ -196,31 +204,7 @@ export const state = {
     this.invalid = {};
   },
 
-  // An edit carried to this page lands on top of what is published here. With
-  // nothing published yet it is the whole component: Latest, with no version
-  // under it.
-  async show(version, carried) {
-    let found;
-
-    try {
-      found = await call('components/get', { namespace, slug, version: version || undefined });
-    } catch ({ message }) {
-      if (!carried) return (this.missing = message);
-    }
-
-    const { title, description, category, icon, html, props } = carried ?? {};
-
-    const { revision, ...component } = found ?? {
-      namespace,
-      slug,
-      title,
-      description,
-      category,
-      icon,
-      latest: 0,
-      revision: { version: 0, html, props },
-    };
-
+  render(component, revision, version) {
     this.component = component;
     this.tabs = Array.from({ length: component.latest }, (_, i) => component.latest - i);
     this.revision = revision;
@@ -234,18 +218,55 @@ export const state = {
     this.missing = '';
     // Replaced rather than pushed, so going back still leaves the page.
     history.replaceState(null, '', version ? `#v${revision.version}` : location.pathname + location.search);
+  },
+
+  async show(version) {
+    try {
+      const { revision = UNPUBLISHED, ...component } = await call('components/get', {
+        namespace,
+        slug,
+        version: version || undefined,
+      });
+
+      this.render(component, revision, version);
+    } catch ({ message }) {
+      this.missing = message;
+      return;
+    }
 
     await window.$.ready;
-    attach(carried?.html ?? window.$.revision.html);
-    if (!carried) return mount();
 
+    const { html } = window.$.revision;
+
+    attach(html || STARTER);
+    if (html) return mount();
+
+    // Nothing is published yet, so the starter is the unpublished edit and v1
+    // is one press of Publish away.
+    preview(STARTER);
+    window.$.edit('html', STARTER);
+  },
+
+  // An edit carried here from another namespace's component lands as the next
+  // version of the visitor's own component by its slug, or as v1 of a new one,
+  // open in the editor it was made in.
+  async clone(carried) {
+    await this.show(0);
+    this.missing && this.render({ ...carried, latest: 0 }, { version: 1, html: carried.html, props: carried.props }, 0);
+
+    await window.$.ready;
     preview(carried.html);
+    attach(carried.html);
     this.unpublished = carried;
+    this.coding = true;
   },
 };
 
 export const load = async () => {
   await guard();
-  await window.$.show(hashed() || Number(params.get('v')) || 0, take(namespace, slug));
+
+  const carried = take(namespace, slug);
+
+  await (carried ? window.$.clone(carried) : window.$.show(hashed() || Number(params.get('v')) || 0));
   addEventListener('hashchange', () => window.$.show(hashed()));
 };

@@ -1,16 +1,14 @@
-// A namespace is part of every address published under it, so only one that
-// never published can go.
+// Only an empty namespace goes: once a component is published in it, its
+// revisions are frozen addresses under its slug.
 export default async ({ slug }, { db, identity }) => {
-  const found = await db
-    .prepare('SELECT ownerId, (SELECT COUNT(*) FROM components WHERE namespace = ?1) AS published FROM namespaces WHERE slug = ?1')
-    .bind(slug)
+  const deleted = await db
+    .prepare(
+      'DELETE FROM namespaces WHERE slug = ?1 AND ownerId = ?2 AND NOT EXISTS (SELECT 1 FROM components WHERE namespace = ?1) RETURNING slug',
+    )
+    .bind(slug, identity.id)
     .first();
 
-  if (!found) throw Error(`No namespace ${slug}`);
-  if (found.ownerId !== identity.id) throw Error(`${slug} is not yours to delete`);
-  if (found.published) throw Error(`${slug} has published components and can no longer be deleted`);
+  if (!deleted) throw Error(`${slug} is not an empty namespace of yours`);
 
-  await db.prepare('DELETE FROM namespaces WHERE slug = ?').bind(slug).run();
-
-  return { slug };
+  return deleted;
 };

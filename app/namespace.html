@@ -29,9 +29,6 @@
     <box main>
       <h1>@[namespace]</h1>
       <p lead max-w-160>Every component published under <code>@[namespace]/</code>.</p>
-      <!-- if $.owns() && !loading && !components.length -->
-      <button tertiary onclick="$.doubt()"><icon trash></icon>Delete namespace</button>
-      <!-- /if -->
     </box>
 
     <sticky grid locked auto-shadow>
@@ -68,20 +65,6 @@
       <!-- /if -->
       <!-- /if -->
     </box>
-
-    <dialog removal>
-      <card w="120" g-4 p-6>
-        <h6>Delete @[namespace]</h6>
-        <p>Nothing is published under @[namespace], so it can still be deleted. Are you sure?</p>
-        <!-- if failure -->
-        <p text-red>@[failure]</p>
-        <!-- /if -->
-        <crow right g-2 w-full>
-          <button tertiary onclick="$.keep()">Cancel</button>
-          <button primary onclick="$.remove()">Delete namespace</button>
-        </crow>
-      </card>
-    </dialog>
   </component>
 </body>
 

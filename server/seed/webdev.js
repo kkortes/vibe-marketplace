@@ -1,7 +1,7 @@
 // The webdev namespace: components carried over from the webdev-game-stack
-// project. Their markup is long, so each lives in ./webdev and is read here.
+// project. Like every seeded component, their code lives in ./remote.
 
-const read = (name) => Bun.file(`${import.meta.dir}/webdev/${name}`).text();
+const read = (name) => Bun.file(`${import.meta.dir}/remote/${name}`).text();
 
 const trimmed = (component) => ({
   ...component,
@@ -71,7 +71,7 @@ const card = {
         { name: 'serial', type: 'text', default: '[CS] 1/137', description: 'Set and number, bottom left.' },
         { name: 'artist', type: 'text', default: 'Wyndagger', description: 'Artist credit, bottom right.' },
       ],
-      html: await read('card.html'),
+      html: await read('Card.html'),
     },
   ],
 };
