@@ -121,7 +121,7 @@ export default await Promise.all(
           name: 'disabled',
           type: 'boolean',
           default: false,
-          description: 'Only Enter, Escape and both Shift keys get through while set, for when the game keyboard is off.',
+          description: 'No key registers while set, for when the game keyboard is off.',
         },
         {
           name: 'debug',

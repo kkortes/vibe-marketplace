@@ -1,8 +1,6 @@
 <script type="module">
   import component from '@ape-egg/vibe/component';
 
-  const ungated = ['enter', 'escape', 'shiftleft', 'shiftright'];
-
   const instance = Math.random().toString(36).slice(2);
   component({ instance });
 
@@ -19,7 +17,7 @@
 
     let map;
     if (metaKey || ctrlKey) map = Object.fromEntries(Object.keys(keys).map((name) => [name, false]));
-    else if (key in keys && (!root().hasAttribute('disabled') || ungated.includes(key)))
+    else if (key in keys && !root().hasAttribute('disabled'))
       map = { ...keys, [key]: type === 'keydown' };
     else return;
 
