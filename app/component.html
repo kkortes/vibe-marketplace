@@ -136,12 +136,6 @@
                 before it is sent. This line resolves it in your page, before vibe reads the document.
               </p>
               <card p-4 overflow-auto><code>@[$.include()]</code></card>
-              <!-- else -->
-              <p text-muted>
-                Latest: this tag carries no version, so it renders whatever was published last —
-                v@[component.latest] today, and the next version the moment it lands. Pick a numbered tab
-                above to pin the tag to that version for good.
-              </p>
               <!-- /if -->
             </section>
             <section preview>
@@ -196,12 +190,6 @@
               </table>
 
               <button tertiary w-full onclick="$.reset()"><icon reset></icon>Reset to defaults</button>
-              <!-- if $.structured() -->
-              <p text-muted>
-                An array or an object has no literal form an attribute can hold, so a json prop is passed
-                bound to state of your own. The snippet below writes it that way.
-              </p>
-              <!-- /if -->
               <!-- else -->
               <p text-muted>This component takes no props. Point a tag at it and you are done.</p>
               <!-- /if -->

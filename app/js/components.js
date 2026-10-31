@@ -6,6 +6,7 @@ export const state = {
   // The selected tab: a namespace slug, or '' for All.
   namespace: '',
   slug: '',
+  unlisted: false,
   failure: '',
   // The component the "Add component" dialog is creating in the selected namespace.
   draft: { title: '', description: '' },
@@ -13,6 +14,7 @@ export const state = {
 
   compose() {
     this.slug = '';
+    this.unlisted = false;
     this.failure = '';
     document.querySelector('dialog[namespace]').showModal();
   },
@@ -45,7 +47,7 @@ export const state = {
 
   async create() {
     try {
-      const created = await call('auth/namespaces/create', { slug: this.slug });
+      const created = await call('auth/namespaces/create', { slug: this.slug, unlisted: this.unlisted });
 
       this.mine = [...this.mine, created];
       this.dismiss();
