@@ -58,8 +58,11 @@ the revision row, holding the component's markup exactly as published.
 There is no file per component, no object store, no CDN bucket. `server/source.js` reads
 that field and answers with it as `text/html`; that response *is* the component.
 
-A revision row is `{ namespace, slug, version, html, props, notes, authorId,
-authorName, createdAt }`. Revisions are insert-only. `revisions` has its primary
+A revision row is `{ namespace, slug, version, html, props, events, notes,
+authorId, authorName, createdAt }`. `events` maps each event the component
+listens for on the window or document to an example: the detail of a custom
+event, or the init of a keyboard event. The Functions section of the component
+page sends it from a button per listener. Revisions are insert-only. `revisions` has its primary
 key on `(namespace, slug, version)`, so a second write to a version that exists
 is an error rather than an edit — that key is what makes "frozen" a fact rather
 than a convention. Publishing bumps `components.latest` and inserts the new
@@ -68,7 +71,7 @@ revision in one D1 batch, which is one transaction; it never updates an old one.
 D1 binds parameters by position only (`?` or `?NNN`), never by name.
 
 SQLite has no booleans or nested values: `components.defaults` and
-`revisions.props` are JSON text and `namespaces.official` and `namespaces.unlisted` are `0`/`1`. The
+`revisions.props` and `revisions.events` are JSON text and `namespaces.official` and `namespaces.unlisted` are `0`/`1`. The
 decoders in `server/db.js` turn rows back into the shapes the client receives.
 
 `users.namespaceCount` caps how many namespaces a user may own; it starts at 1

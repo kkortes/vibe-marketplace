@@ -14,7 +14,9 @@ const readable = (value) => JSON.stringify(value, null, 2);
 
 // What a created component holds before its first publish: no markup, which
 // the starter in the editor already differs from.
-const UNPUBLISHED = { version: 0, html: '', props: [] };
+const UNPUBLISHED = { version: 0, html: '', props: [], events: {} };
+
+const KEYBOARD = ['keydown', 'keyup', 'keypress'];
 
 const STARTER = '<p>Hello from Viberary</p>\n';
 
@@ -171,8 +173,8 @@ export const state = {
   // edited is published as the revision in view carries it. Editing back to
   // what was there leaves nothing to publish, unless nothing is published here yet.
   edit(key, value) {
-    const { component: { title, description, category, icon, latest }, revision: { html, props } } = this;
-    const original = { namespace, slug, title, description, category, icon, html, props };
+    const { component: { title, description, category, icon, latest }, revision: { html, props, events } } = this;
+    const original = { namespace, slug, title, description, category, icon, html, props, events };
     const edited = { ...original, ...this.unpublished, [key]: value };
 
     this.unpublished = !latest || ['html', 'title', 'description'].some((k) => edited[k] !== original[k]) ? edited : null;
@@ -211,9 +213,13 @@ export const state = {
   },
 
   // The preview shares this page's window and document, so an event sent there
-  // reaches its listener. Whatever is typed beside the button rides as detail.
-  dispatch(target, event, detail) {
-    ({ window, document })[target].dispatchEvent(new CustomEvent(event, { detail: detail && JSON.parse(detail) }));
+  // reaches its listener. A key listener gets a real KeyboardEvent built from
+  // the JSON beside the button; any other carries it as detail.
+  dispatch(target, event, json) {
+    const example = json && JSON.parse(json);
+    ({ window, document })[target].dispatchEvent(
+      KEYBOARD.includes(event) ? new KeyboardEvent(event, example) : new CustomEvent(event, { detail: example }),
+    );
   },
 
   structured() {
@@ -240,7 +246,7 @@ export const state = {
     this.tab = version;
     this.next = component.latest + 1;
     this.props = revision.props || [];
-    this.listeners = listeners(revision.html);
+    this.listeners = listeners(revision.html).map((listener) => ({ ...listener, example: JSON.stringify(revision.events[listener.event]) ?? '' }));
     this.styling = component.styling;
     this.tags = tagged(revision, this.styling);
     this.previewSource = source(SOURCE_URL, namespace, slug, revision.version);
@@ -282,7 +288,7 @@ export const state = {
   // open in the editor it was made in.
   async clone(carried) {
     await this.show(0);
-    this.missing && this.render({ ...carried, latest: 0, styling: 'inline' }, { version: 1, html: carried.html, props: carried.props }, 0);
+    this.missing && this.render({ ...carried, latest: 0, styling: 'inline' }, { version: 1, html: carried.html, props: carried.props, events: carried.events }, 0);
 
     await window.$.ready;
     preview(carried.html);

@@ -6,7 +6,7 @@ import { CATEGORIES, autoTags } from '../../../../app/js/tags.js';
 // Publishing only ever inserts. A revision that exists is frozen — the way to
 // change a component is to publish the next version of it.
 export default async (
-  { namespace, slug, title, description = null, category, icon = null, html, props = [], notes = '' },
+  { namespace, slug, title, description = null, category, icon = null, html, props = [], events = {}, notes = '' },
   { db, identity },
 ) => {
   if (!slugPattern.test(String(slug))) throw Error('A slug is lowercase words joined by dashes');
@@ -16,6 +16,8 @@ export default async (
   if (!CATEGORIES.includes(category)) throw Error(`Category must be one of ${CATEGORIES.join(', ')}`);
 
   const schema = validate(props);
+
+  if (typeof events !== 'object' || Array.isArray(events)) throw Error('Events must map an event name to its example');
 
   const owner = await db.prepare('SELECT ownerId FROM namespaces WHERE slug = ?').bind(namespace).first();
 
@@ -44,10 +46,10 @@ export default async (
       .bind(namespace, slug, title, description, category, icon, JSON.stringify(defaults(schema)), identity.id, now()),
     db
       .prepare(
-        `INSERT INTO revisions (namespace, slug, version, html, props, notes, authorId, authorName, createdAt)
-         SELECT namespace, slug, latest, ?3, ?4, ?5, ?6, ?7, ?8 FROM components WHERE namespace = ?1 AND slug = ?2`,
+        `INSERT INTO revisions (namespace, slug, version, html, props, events, notes, authorId, authorName, createdAt)
+         SELECT namespace, slug, latest, ?3, ?4, ?5, ?6, ?7, ?8, ?9 FROM components WHERE namespace = ?1 AND slug = ?2`,
       )
-      .bind(namespace, slug, html, JSON.stringify(schema), notes, identity.id, identity.name, now()),
+      .bind(namespace, slug, html, JSON.stringify(schema), JSON.stringify(events), notes, identity.id, identity.name, now()),
     // The catalogue counts and filters by the latest revision's tags, so they
     // are replaced with every publish.
     db.prepare('DELETE FROM tags WHERE namespace = ? AND slug = ?').bind(namespace, slug),

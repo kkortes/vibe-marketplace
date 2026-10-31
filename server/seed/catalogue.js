@@ -4,10 +4,10 @@
 
 const read = (name) => Bun.file(`${import.meta.dir}/remote/${name}`).text();
 
-const one = async ({ file, namespace = 'vibe', notes, props = [], ...rest }) => ({
+const one = async ({ file, namespace = 'vibe', notes, props = [], events = {}, ...rest }) => ({
   ...rest,
   namespace,
-  versions: [{ html: await read(file), props, notes }],
+  versions: [{ html: await read(file), props, events, notes }],
 });
 
 export default await Promise.all(
@@ -21,6 +21,7 @@ export default await Promise.all(
       category: 'Feedback',
       icon: 'bell',
       styling: 'stylecheat',
+      events: { notify: { type: 'success', message: 'Hello from Viberary' } },
     },
     {
       file: 'Overlay.html',
@@ -31,6 +32,7 @@ export default await Promise.all(
       category: 'Layout',
       icon: 'layout',
       styling: 'stylecheat',
+      events: { keydown: { code: 'Escape' } },
       props: [
         {
           name: 'open',
@@ -67,6 +69,7 @@ export default await Promise.all(
       category: 'Layout',
       icon: 'images',
       styling: 'stylecheat',
+      events: { keydown: { code: 'Escape' } },
       props: [
         {
           name: 'open',
@@ -106,6 +109,7 @@ export default await Promise.all(
       description: 'Tracks which game keys are held and hands the map to state of your own.',
       category: 'Interactive',
       icon: 'desktop',
+      events: { keydown: { code: 'Digit1' }, keyup: { code: 'Digit1' } },
       props: [
         {
           name: 'keys',

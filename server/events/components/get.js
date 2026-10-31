@@ -20,7 +20,7 @@ export default async ({ namespace, slug, version }, { db }) => {
   const revision = decodeRevision(
     await db
       .prepare(
-        'SELECT version, html, props, notes, authorId, authorName, createdAt FROM revisions WHERE namespace = ? AND slug = ? AND version = ?',
+        'SELECT version, html, props, events, notes, authorId, authorName, createdAt FROM revisions WHERE namespace = ? AND slug = ? AND version = ?',
       )
       .bind(namespace, slug, version || component.latest)
       .first(),

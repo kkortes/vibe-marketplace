@@ -15,7 +15,7 @@ export const tagged = (row) => {
   return { ...component(row), tags: TAGS.filter((tag) => tags.includes(tag)) };
 };
 
-export const revision = (row) => row && { ...row, props: JSON.parse(row.props) };
+export const revision = (row) => row && { ...row, props: JSON.parse(row.props), events: JSON.parse(row.events) };
 
 export const namespace = (row) => ({ ...row, official: !!row.official, unlisted: !!row.unlisted });
 

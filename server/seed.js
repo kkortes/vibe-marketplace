@@ -53,9 +53,9 @@ const sql = [
       `INSERT INTO components (namespace, slug, title, description, category, icon, styling, latest, defaults, createdAt, updatedAt, ownerId)
        VALUES (${row(namespace, slug, title, description, category, icon, styling, versions.length, JSON.stringify(defaults(versions.at(-1).props)), now(), now())}, ${owner});`,
       ...versions.map(
-        ({ html, props, notes }, i) =>
-          `INSERT INTO revisions (namespace, slug, version, html, props, notes, authorId, authorName, createdAt)
-           VALUES ${values(namespace, slug, i + 1, html, JSON.stringify(props), notes, null, author, now())};`,
+        ({ html, props, events, notes }, i) =>
+          `INSERT INTO revisions (namespace, slug, version, html, props, events, notes, authorId, authorName, createdAt)
+           VALUES ${values(namespace, slug, i + 1, html, JSON.stringify(props), JSON.stringify(events), notes, null, author, now())};`,
       ),
       ...autoTags(versions.at(-1)).map((tag) => `INSERT INTO tags (namespace, slug, tag) VALUES ${values(namespace, slug, tag)};`),
     ]),
