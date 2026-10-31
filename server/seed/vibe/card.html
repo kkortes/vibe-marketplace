@@ -52,7 +52,7 @@
                     </card-caption>
                   </card-shade>
                   <!-- /if -->
-                  <!-- if damage || health -->
+                  <!-- if type !== 'god' && (damage || health) -->
                   <card-stats>
                     <stats-plate>
                       <span>@[[damage, health].filter(Boolean).join('/')]</span>
@@ -149,18 +149,23 @@
         <card-icon style="--icon: var(--icon-plant)"></card-icon>
       </card-emblem>
 
-      <card-rarity style="--level: @[rarity]">
-        <rarity-backdrop>
-          <rarity-silhouette>
-            <rarity-shape data-shape="hexagon"></rarity-shape>
-            <rarity-shape data-shape="pentagon"></rarity-shape>
-            <rarity-shape data-shape="square"></rarity-shape>
-            <rarity-shape data-shape="triangle"></rarity-shape>
-          </rarity-silhouette>
-        </rarity-backdrop>
-        <!-- each [0, 1, 2, 3] as i -->
-        <rarity-shape data-shape="@[['triangle', 'square', 'pentagon', 'hexagon'][(i + 5 - rarity) % 4]]" style="--darkness: @[0.4 + i * 0.2]"></rarity-shape>
-        <!-- /each -->
+      <card-rarity>
+        <!-- if type !== 'god' -->
+        <rarity-wrap>
+          <rarity-wrap>
+            <rarity-silhouette>
+              <hexagon></hexagon>
+              <pentagon></pentagon>
+              <square></square>
+              <triangle></triangle>
+            </rarity-silhouette>
+          </rarity-wrap>
+          <triangle style="--shape: 0"></triangle>
+          <square style="--shape: 1"></square>
+          <pentagon style="--shape: 2"></pentagon>
+          <hexagon style="--shape: 3"></hexagon>
+        </rarity-wrap>
+        <!-- /if -->
       </card-rarity>
 
       <!-- if icon !== 'none' -->
@@ -314,10 +319,10 @@
       --c-900: oklch(0.24 0.02 67);
     }
 
-    &[data-rarity='1'] { --rarity: oklch(0.74 0.04 41); }
-    &[data-rarity='2'] { --rarity: oklch(86.9% 0.022 252.894); }
-    &[data-rarity='3'] { --rarity: oklch(87.9% 0.169 91.605); }
-    &[data-rarity='4'] { --rarity: oklch(86.5% 0.127 207.078); }
+    &[data-rarity='1'] { --level: 1; --rarity: oklch(0.74 0.04 41); }
+    &[data-rarity='2'] { --level: 2; --rarity: oklch(86.9% 0.022 252.894); }
+    &[data-rarity='3'] { --level: 3; --rarity: oklch(87.9% 0.169 91.605); }
+    &[data-rarity='4'] { --level: 4; --rarity: oklch(86.5% 0.127 207.078); }
 
     *,
     ::before,
@@ -720,23 +725,27 @@
       border-bottom-width: 0;
       border-radius: 9999px;
       background-color: var(--c-400);
-
-      > * {
-        width: 14px;
-        height: 14px;
-      }
     }
 
     card-rarity,
-    rarity-backdrop {
+    rarity-wrap {
       display: grid;
       place-items: center;
     }
 
-    rarity-backdrop,
-    rarity-silhouette,
-    card-rarity > rarity-shape {
-      grid-area: 1 / 1;
+    rarity-wrap {
+      aspect-ratio: 1;
+      width: 14px;
+      height: 14px;
+
+      > * {
+        grid-area: 1 / 1;
+      }
+
+      rarity-wrap {
+        width: 100%;
+        height: 100%;
+      }
     }
 
     rarity-silhouette {
@@ -746,27 +755,46 @@
       opacity: 0.5;
       transform: scale(calc(0.75 + 0.1 * var(--level)));
 
-      rarity-shape {
-        grid-area: 1 / 1;
+      > * {
         background-color: #000;
       }
     }
 
-    rarity-shape {
+    triangle,
+    square,
+    pentagon,
+    hexagon {
       display: inline-block;
+      grid-area: 1 / 1;
       width: 100%;
       height: 100%;
-      transform: scale(calc(0.7 + 0.1 * var(--level)));
-      background-color: oklch(from var(--rarity) calc(l * var(--darkness)) c h);
-
-      &[data-shape='triangle'] { clip-path: polygon(0% 13.398%, 100% 13.398%, 50% 100%); }
-      &[data-shape='square'] { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
-      &[data-shape='pentagon'] { clip-path: polygon(50% 100%, 0% 63.681%, 19.099% 4.894%, 80.901% 4.894%, 100% 63.681%); }
-      &[data-shape='hexagon'] { clip-path: polygon(50% 100%, 6.699% 75%, 6.699% 25%, 50% 0%, 93.301% 25%, 93.301% 75%); }
+      transform: rotate(0deg) translateY(0px);
+      transform-origin: 50%;
+      mix-blend-mode: normal;
     }
 
-    rarity-silhouette rarity-shape {
-      transform: none;
+    triangle {
+      place-items: center;
+      clip-path: polygon(0% 13.398%, 100% 13.398%, 50% 100%);
+    }
+
+    square {
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    }
+
+    pentagon {
+      clip-path: polygon(50% 100%, 0% 63.681%, 19.099% 4.894%, 80.901% 4.894%, 100% 63.681%);
+    }
+
+    hexagon {
+      clip-path: polygon(50% 100%, 6.699% 75%, 6.699% 25%, 50% 0%, 93.301% 25%, 93.301% 75%);
+    }
+
+    rarity-wrap > :is(triangle, square, pentagon, hexagon) {
+      --step: mod(var(--shape) + var(--level) - 1, 4);
+      order: calc(var(--step));
+      transform: scale(calc(0.7 + 0.1 * var(--level)));
+      background-color: oklch(from var(--rarity) calc(l * (0.4 + 0.2 * var(--step))) c h);
     }
 
     circle-mana {
