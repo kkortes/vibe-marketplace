@@ -39,6 +39,29 @@ export default () =>
           },
         ],
       },
+      {
+        file: 'Dialog.html',
+        notes: 'Ported from the webdev-game-stack Dialog.',
+        slug: 'dialog',
+        title: 'Dialog',
+        description: 'Renders any component full-screen over a blurred backdrop, and hands it a close.',
+        category: 'Layout',
+        icon: 'layout',
+        props: [
+          {
+            name: 'component',
+            type: 'text',
+            default: '',
+            description: 'Address of the component to show. Bind it to state of your own: the dialog shows while it is set and unsets it on close.',
+          },
+          {
+            name: 'props',
+            type: 'json',
+            default: {},
+            description: 'Handed to the shown component as its props prop. Next to it, that component gets close, called as $.close().',
+          },
+        ],
+      },
       // The game card from webdev-game-stack (game/ws-card-game, src/components/Card.svelte),
       // rewritten from Tailwind into plain CSS. Its fonts load from Google Fonts and its
       // icons and paper grain are inlined; the art is the one thing it fetches by prop.
