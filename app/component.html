@@ -194,6 +194,17 @@
                 <p text-muted>This component takes no props.</p>
                 <!-- /if -->
               </props>
+
+              <!-- if functions.length -->
+              <functions inert="@[coding]">
+                <h6>Functions</h6>
+                <crow left g-2 wrap>
+                  <!-- each functions as name -->
+                  <button tertiary onclick="$.invoke('@[name]')"><code>@[name]()</code></button>
+                  <!-- /each -->
+                </crow>
+              </functions>
+              <!-- /if -->
             </section>
             <section preview>
               <h6>Preview</h6>

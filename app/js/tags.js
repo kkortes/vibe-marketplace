@@ -34,9 +34,30 @@ const js = (html) =>
 // Anything assigned to or stepped on `this` is state that changes at runtime.
 const state = (html) => /this\.\w+\s*(?:[-+*/]?=(?!=)|\+\+|--)|(?:\+\+|--)this\.\w+/.test(html);
 
+// The state's own level, with whatever sits inside a nested bracket emptied,
+// so a key's value reads `() => …` or `() {}` whatever it holds.
+const surface = (state) => {
+  let depth = 0;
+  return [...state]
+    .filter((char) => {
+      const opens = '{[('.includes(char);
+      const closes = '}])'.includes(char);
+      depth += opens - closes;
+      return depth < 2 || (opens && depth === 2);
+    })
+    .join('');
+};
+
+// Functions handed to component() land on the component's state at `$[id]`,
+// where the page it is used in can call them.
+export const functions = (html) =>
+  scripts(html).flatMap((code) =>
+    [...surface(stateOf(code)).matchAll(/[{,]\s*(?:async\s+)?(\w+)\s*(?:\(\)\s*\{|:\s*(?:async\s*)?(?:function\b|\(\)\s*=>|\w+\s*=>))/g)].map(([, name]) => name),
+  );
+
 const styled = (html) => /<style[\s>]|\sstyle=/.test(html);
 
-export const TAGS = ['Props', 'State', 'JS', 'CSS', 'Stylecheat'];
+export const TAGS = ['Props', 'State', 'JS', 'Functions', 'CSS', 'Stylecheat'];
 
 // User tags: the category an author files a component under.
 export const CATEGORIES = ['Interactive', 'Forms', 'Layout', 'Navigation', 'Feedback', 'Game'];
@@ -46,6 +67,7 @@ export const autoTags = ({ html, props }) =>
     props?.length && 'Props',
     state(html) && 'State',
     js(html) && 'JS',
+    functions(html).length && 'Functions',
     !styled(html) && 'CSS',
   ].filter(Boolean);
 

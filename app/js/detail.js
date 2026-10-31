@@ -3,7 +3,7 @@ import codie from '/modules/codie/codie.js';
 import { SOURCE_URL } from '/js/env.js';
 import { address, source } from '/js/pin.js';
 import { guard, take, state as publishing } from '/js/publishing.js';
-import { autoTags, stylingTags } from '/js/tags.js';
+import { autoTags, functions, stylingTags } from '/js/tags.js';
 import { call } from '/js/ws.js';
 
 // The Worker serves this page at the component's own address, /<namespace>/<slug>.
@@ -93,6 +93,7 @@ export const state = {
   component: null,
   revision: null,
   props: [],
+  functions: [],
   values: {},
   drafts: {},
   invalid: {},
@@ -209,6 +210,12 @@ export const state = {
     }
   },
 
+  // The preview's state sits at `$[id]` under the id vibe stamps on its root.
+  invoke(name) {
+    const id = document.querySelector('preview-host [data-vibe-internal-component-id]').dataset.vibeInternalComponentId;
+    this[id][name]();
+  },
+
   structured() {
     return this.props.some(({ type }) => type === 'json');
   },
@@ -233,6 +240,7 @@ export const state = {
     this.tab = version;
     this.next = component.latest + 1;
     this.props = revision.props || [];
+    this.functions = functions(revision.html);
     this.styling = component.styling;
     this.tags = tagged(revision, this.styling);
     this.previewSource = source(SOURCE_URL, namespace, slug, revision.version);
