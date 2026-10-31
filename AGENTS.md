@@ -18,10 +18,12 @@ Vibe and Stylecheat and nothing else.
   request no asset answers: the websocket at `/ws`, the component source at
   `/<namespace>/<slug>.html`, and `/js/pin.js`, which goes through the Worker
   first (`run_worker_first`) only so it carries CORS headers.
-- One origin serves all of it, so `ORIGIN` in `app/js/env.js` is the site, the
-  socket (`wss://…/ws`) and the component source alike. A namespace named like a
+- One origin serves all of it, so `ORIGIN` in `app/js/env.js` is the page's own
+  origin, and that is the site, the socket (`wss://…/ws`) and the component
+  source alike. Production, a pull request preview and `bun dev` each read the
+  D1 their own Worker binds. A namespace named like a
   top-level asset folder or page would be shadowed by it, which is why `modules`,
-  `js`, `css`, `component`, `components`, `namespace` and `tag` are reserved —
+  `js`, `css`, `images`, `component`, `components`, `namespace` and `tag` are reserved —
   `tag` because `/tag/<name>` is the frontpage filtered by that tag.
 - It is deployed with `bunx wrangler deploy` from the root, after
   `bun run build`, to the developer's own Cloudflare account. There is no
@@ -41,10 +43,15 @@ tables hold the catalogue; `users` and `sessions` hold Google sign-ins for
 
 | Table        | Holds | Mutable |
 |---|---|---|
-| `namespaces` | `slug`, `title`, `official`, `ownerId` | yes |
+| `namespaces` | `slug`, `title`, `official`, `unlisted`, `ownerId` | yes |
 | `components` | catalogue metadata per `namespace` + `slug`: `title`, `description`, `category`, `icon`, `latest`, `defaults`, `ownerId` | yes |
 | `revisions`  | one row per published version | **never** |
 | `tags`       | the auto tags (`app/js/tags.js`) of each component's latest revision, one row per tag, replaced on every publish so the frontpage can count them with `GROUP BY` | yes |
+
+An unlisted namespace keeps its components off the frontpage: `components/list`
+without a namespace, and `tags/top`, leave it out. Its components still render
+at their addresses and list on `/<namespace>`, which asks `components/list` for
+that namespace alone. The New namespace modal on `/components` sets it.
 
 **The source bytes of a component live in `revisions.html`** — a text column on
 the revision row, holding the component's markup exactly as published.
@@ -61,7 +68,7 @@ revision in one D1 batch, which is one transaction; it never updates an old one.
 D1 binds parameters by position only (`?` or `?NNN`), never by name.
 
 SQLite has no booleans or nested values: `components.defaults` and
-`revisions.props` are JSON text and `namespaces.official` is `0`/`1`. The
+`revisions.props` are JSON text and `namespaces.official` and `namespaces.unlisted` are `0`/`1`. The
 decoders in `server/db.js` turn rows back into the shapes the client receives.
 
 `users.namespaceCount` caps how many namespaces a user may own; it starts at 1
@@ -77,7 +84,12 @@ The only files under `server/seed/` that look like components are inputs to the
 seed script: `server/seed/remote/*.html` hold the code of every seeded
 component, ported to Vibe from webdev-game-stack and other projects, read at
 seed time by `server/seed/game-stack.js` and written into `revisions.html` like
-any other publish. They are not served from disk.
+any other publish. They are not served from disk. An entry there names the
+namespace it is seeded under when that is not `vibe`; `server/seed.js` replaces
+each seeded namespace whole, `vibe` and `webdev`, both owned by the developer's
+account, so a component left out of the seed is gone from it after the next run.
+What a seeded component fetches by prop, such as the card's art, lives in
+`app/images/` and is served as an asset.
 `server/seed.js` turns the catalogue into SQL and runs it through
 `wrangler d1 execute`.
 
@@ -136,7 +148,7 @@ top-level `.html` file becomes a page.
 - `app/` — pages flat at its root (`index.html`, `component.html`,
   `components.html`, `namespace.html`), plus `components/` (the site's own
   Layout, Topbar and Catalogue), `js/`,
-  `css/`, `fonts/` and `index.css`.
+  `css/`, `fonts/`, `images/` and `index.css`.
 - `server/` — the Worker: its websocket events, the component-source routes,
   the D1 migrations and the seed.
 - `tests/` — runs under `bun test`.
@@ -157,7 +169,7 @@ devDependency; the local D1 it simulates lives in `.wrangler/` (gitignored).
 
 ```
 cd server && bun run migrate          # schema into the local D1
-cd server && bun run seed             # writes the vibe namespace, no components yet
+cd server && bun run seed             # writes the vibe and webdev namespaces and webdev/card
 bun dev                               # compiler watch + the Worker on $PORT
 ```
 
@@ -165,15 +177,21 @@ One process: `bun dev` at the root compiles `app/` into `compiled/` and runs
 the Worker with `wrangler dev` on `$PORT`, the same Worker production runs. It
 serves the pages as assets, answers every marketplace read and write at `/ws`,
 serves the component source that `<component src>` fetches, and routes
-`/<namespace>/<slug>` to the component page. In dev the site, the socket and the
-source share the page's own origin (`app/js/env.js`), so `localhost:$PORT` and
-the HTTPS dev host behave alike. `bun dev` in `server/` still runs the Worker
+`/<namespace>/<slug>` to the component page. In dev, as everywhere, the site, the
+socket and the source share the page's own origin (`app/js/env.js`), so
+`localhost:$PORT` and the HTTPS dev host behave alike. `bun dev` in `server/` still runs the Worker
 alone on `1337`; the site does not need it. `wrangler dev` needs `compiled/` to
 exist, so compile once before starting it.
 
 For the deployed database, the same two steps take `--remote`:
 `bunx wrangler d1 migrations apply viberary --remote` and
 `bun run seed --remote`, both in `server/`.
+
+Pull request previews bind `viberary-preview` instead (`previews` in
+`wrangler.jsonc`), one D1 shared by every preview. `bun run seed --preview` seeds
+it. `wrangler d1 migrations` only finds databases listed at the top level of the
+config, so its migrations go through a config that names it there with the same
+`database_id` and `migrations_dir`, passed with `-c`.
 
 ### Never pass `--fouc-as-is` to a stamped build
 

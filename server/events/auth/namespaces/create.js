@@ -1,9 +1,9 @@
 import { namespace as decode, now } from '../../../db.js';
 import { slug as slugPattern } from '../../../user.js';
 
-const RESERVED = ['vibe', 'stylecheat', 'codie', 'api', 'docs', 'admin', 'modules', 'js', 'css', 'component', 'components', 'namespace', 'tag'];
+const RESERVED = ['vibe', 'stylecheat', 'codie', 'api', 'docs', 'admin', 'modules', 'js', 'css', 'images', 'component', 'components', 'namespace', 'tag'];
 
-export default async ({ slug, title }, { db, identity }) => {
+export default async ({ slug, title, unlisted = false }, { db, identity }) => {
   if (!slugPattern.test(String(slug))) throw Error('A namespace is lowercase words joined by dashes');
   if (RESERVED.includes(slug)) throw Error(`${slug} is reserved`);
 
@@ -14,12 +14,12 @@ export default async ({ slug, title }, { db, identity }) => {
   // cannot both slip under it.
   const created = await db
     .prepare(
-      `INSERT INTO namespaces (slug, title, official, ownerId, createdAt)
-       SELECT ?1, ?2, 0, ?3, ?4 FROM users
+      `INSERT INTO namespaces (slug, title, official, unlisted, ownerId, createdAt)
+       SELECT ?1, ?2, 0, ?5, ?3, ?4 FROM users
        WHERE id = ?3 AND namespaceCount > (SELECT count(*) FROM namespaces WHERE ownerId = ?3)
        RETURNING *`,
     )
-    .bind(slug, title?.trim() || slug, identity.id, now())
+    .bind(slug, title?.trim() || slug, identity.id, now(), unlisted ? 1 : 0)
     .first();
 
   if (!created) throw Error('You own as many namespaces as your account allows');
