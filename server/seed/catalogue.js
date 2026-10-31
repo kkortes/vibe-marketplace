@@ -91,7 +91,7 @@ export default await Promise.all(
         {
           name: 'debug',
           type: 'boolean',
-          default: false,
+          default: true,
           description: 'Shows the held keys in a fixed corner at the bottom right.',
         },
       ],
