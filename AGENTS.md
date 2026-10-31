@@ -64,14 +64,20 @@ SQLite has no booleans or nested values: `components.defaults` and
 `revisions.props` are JSON text and `namespaces.official` is `0`/`1`. The
 decoders in `server/db.js` turn rows back into the shapes the client receives.
 
+`users.namespaceCount` caps how many namespaces a user may own; it starts at 1
+and is raised by hand in the database. `auth/namespaces/create` checks it in the
+insert itself, and `auth/namespaces/delete` deletes only a namespace of the
+caller's own with no component in it.
+
 `components.defaults` is a derived copy of the latest revision's prop defaults,
 kept so the catalogue can be listed in one call without fetching a revision per
 card. The frozen truth about props is `revisions.props`.
 
-Every seeded component is a file in `server/seed/remote/`, and those files are
-only inputs to the seed script: `server/seed/remote.js` lists the catalogue
-entry around each one, and the file is read at seed time and written into
-`revisions.html` like any other publish. They are not served from disk.
+The only files under `server/seed/` that look like components are inputs to the
+seed script: `server/seed/remote/*.html` hold the code of every seeded
+component, ported to Vibe from webdev-game-stack and other projects, read at
+seed time by `server/seed/game-stack.js` and written into `revisions.html` like
+any other publish. They are not served from disk.
 `server/seed.js` turns the catalogue into SQL and runs it through
 `wrangler d1 execute`.
 

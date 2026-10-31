@@ -28,8 +28,13 @@
           <!-- each mine as ns (ns.slug) -->
           <tab active="@[ns.slug === namespace]" onclick="$.namespace = '@[ns.slug]'">@[ns.slug]</tab>
           <!-- /each -->
+          <!-- if mine.length < user.namespaceCount -->
           <tab new onclick="$.compose()">New namespace</tab>
+          <!-- /if -->
         </tabs>
+        <!-- if namespace -->
+        <button tertiary onclick="$.draw()"><icon components></icon>Add component</button>
+        <!-- /if -->
       </versions>
 
       <dialog namespace>
@@ -57,6 +62,45 @@
           </crow>
         </card>
       </dialog>
+
+      <dialog removal>
+        <card w="120" g-4 p-6>
+          <h6>Delete @[namespace]</h6>
+          <p>Are you sure? <code>@[namespace]/</code> is freed for anyone to take.</p>
+          <!-- if failure -->
+          <p text-red>@[failure]</p>
+          <!-- /if -->
+          <crow right g-2 w-full>
+            <button tertiary onclick="$.dismiss()">Cancel</button>
+            <button primary onclick="$.remove()">Delete</button>
+          </crow>
+        </card>
+      </dialog>
+
+      <dialog component>
+        <card w="120" g-4 p-6>
+          <h6>Add component to @[namespace]</h6>
+          <crow vertical left g="1.5" w-full>
+            <span sm text-muted>Name</span>
+            <p lead w-full><textarea rows="1" placeholder="At least 3 letters" value="@[draft.title]" oninput="$.draft.title = this.value"></textarea></p>
+          </crow>
+          <crow vertical left g="1.5" w-full>
+            <span sm text-muted>Description <span text-muted>Optional</span></span>
+            <p lead w-full><textarea rows="1" placeholder="What it does" value="@[draft.description]" oninput="$.draft.description = this.value"></textarea></p>
+          </crow>
+          <crow vertical left g="1.5" w-full>
+            <span sm text-muted>Slug</span>
+            <input type="text" w-full disabled value="@[$.slugify(draft.title)]" />
+          </crow>
+          <!-- if failure -->
+          <p text-red>@[failure]</p>
+          <!-- /if -->
+          <crow right g-2 w-full>
+            <button tertiary onclick="$.dismiss()">Cancel</button>
+            <button primary onclick="$.add()">Create</button>
+          </crow>
+        </card>
+      </dialog>
       <!-- /if -->
       <scroll>
         <container>
@@ -67,6 +111,14 @@
               The namespaces your account owns and the components in them. A namespace is the first part of every address,
               <code>your-namespace/your-component.html</code>.
             </p>
+            <!-- if $.deletable() -->
+            <card w-full g-4 p-6>
+              <p text-muted>No component is published in <code>@[namespace]/</code> yet, so it can still be deleted.</p>
+              <crow right w-full>
+                <button tertiary onclick="$.confirm()">Delete namespace</button>
+              </crow>
+            </card>
+            <!-- /if -->
             <!-- else -->
             <p lead max-w-160>
               Viberary is a marketplace of Vibe components. Every component is plain HTML at its own address — point a
