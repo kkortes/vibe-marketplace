@@ -1,12 +1,13 @@
 import { call } from '/js/ws.js';
+import { PREVIEW } from '/js/env.js';
 import { set } from '/js/localStorage.js';
 
 const GOOGLE_CLIENT_ID =
   '818843980176-15qn16b9k8b0gfv2q518bf4dbb159vg7.apps.googleusercontent.com';
 
-const handleCredential = async ({ credential }) => {
+const startSession = async (event, payload) => {
   try {
-    const { token, user } = await call('login/google', { token: credential });
+    const { token, user } = await call(event, payload);
 
     set('mkp-session', token);
     window.$.user = user;
@@ -19,6 +20,8 @@ const handleCredential = async ({ credential }) => {
   }
 };
 
+const handleCredential = ({ credential }) => startSession('login/google', { token: credential });
+
 const configure = () =>
   google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
@@ -26,7 +29,11 @@ const configure = () =>
     auto_select: true,
   });
 
+// On a preview, Sign in skips Google and the Worker signs in its PREVIEW_SIGNIN
+// user, so previews can be signed into without a real Google account.
 export const signIn = () => {
+  if (PREVIEW) return startSession('login/preview');
+
   configure();
   google.accounts.id.prompt();
 };

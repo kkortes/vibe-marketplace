@@ -103,6 +103,12 @@ in the page into the version path above. The marketplace serves that resolver at
 - The only path to a session is this app's own `server/events/login/google.js`,
   which verifies a Google ID token and calls aaw's `authenticate`.
   `js/auth.js` holds the browser half and the client id.
+- Previews are the one exception, and a deliberate one: on a
+  `<alias>-viberary.viberary.workers.dev` host, Sign in skips Google and calls
+  `login/preview`, which signs anyone in as the user `PREVIEW_SIGNIN` names.
+  That var exists only in the `previews` block of `wrangler.jsonc`, so
+  production refuses the event, and its user row must already be in
+  `viberary-preview`.
 - `server/store.js` is the session store. aaw registers its built-in
   `aaw/login`, `aaw/register` and `aaw/password/*` events whatever `providers`
   says, so the store answers for them by name with "no password login here"
