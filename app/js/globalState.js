@@ -1,3 +1,4 @@
+import { signIn, signOut } from '/js/auth.js';
 import { get } from '/js/localStorage.js';
 
 export default {
@@ -21,4 +22,6 @@ export default {
   pick(name) {
     location.assign(this.tagged(name));
   },
+  signIn,
+  signOut,
 };

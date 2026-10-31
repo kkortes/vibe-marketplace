@@ -23,12 +23,15 @@
   </script>
 
   <script type="module">
+    import vibe from '/modules/vibe/index.js';
+
     import boot from '/js/boot.js';
+    import globalState from '/js/globalState.js';
     import { load, state } from '/js/detail.js';
 
     // The code view mounts a fresh blob on every keystroke, so the component
     // cache would only ever collect corpses.
-    boot(state, load, { noCache: true });
+    boot(() => vibe({ ...globalState, ...state }, { noCache: true }), load);
   </script>
 </head>
 
