@@ -5,8 +5,11 @@ import { defaults, validate } from './props.js';
 import { autoTags } from '../app/js/tags.js';
 
 // `bun run seed` seeds the local D1 that `wrangler dev` reads; `bun run seed
-// --remote` seeds the deployed one.
-const target = process.argv.includes('--remote') ? '--remote' : '--local';
+// --remote` seeds the deployed one; `bun run seed --preview` seeds
+// viberary-preview, the D1 every pull request's preview binds.
+const preview = process.argv.includes('--preview');
+const database = preview ? 'viberary-preview' : 'viberary';
+const target = preview || process.argv.includes('--remote') ? '--remote' : '--local';
 
 // Seeded props go through the same validation a published revision does, so the
 // catalogue can never hold a schema the publish event would have refused.
@@ -52,7 +55,7 @@ const file = `${import.meta.dir}/../.wrangler/seed.sql`;
 
 await Bun.write(file, sql);
 
-const exitCode = await Bun.spawn(['wrangler', 'd1', 'execute', 'viberary', target, `--file=${file}`], {
+const exitCode = await Bun.spawn(['wrangler', 'd1', 'execute', database, target, `--file=${file}`], {
   stdio: ['inherit', 'inherit', 'inherit'],
 }).exited;
 

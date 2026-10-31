@@ -166,6 +166,12 @@ For the deployed database, the same two steps take `--remote`:
 `bunx wrangler d1 migrations apply viberary --remote` and
 `bun run seed --remote`, both in `server/`.
 
+Pull request previews bind `viberary-preview` instead (`previews` in
+`wrangler.jsonc`), one D1 shared by every preview. `bun run seed --preview` seeds
+it. `wrangler d1 migrations` only finds databases listed at the top level of the
+config, so its migrations go through a config that names it there with the same
+`database_id` and `migrations_dir`, passed with `-c`.
+
 ### Never pass `--fouc-as-is` to a stamped build
 
 The compiler stamps values into the HTML and moves conditional branches and
