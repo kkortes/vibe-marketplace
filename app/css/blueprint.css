@@ -689,11 +689,6 @@ publishing:hover:not(:has(card)) > tooltip {
   translate: 0;
 }
 
-card[phantom] {
-  outline: 1px dashed var(--border);
-  outline-offset: calc(var(--unit) * -2);
-}
-
 card[warning] {
   --border: var(--yellow);
   border-radius: var(--unit);
