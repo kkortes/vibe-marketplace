@@ -64,6 +64,11 @@ SQLite has no booleans or nested values: `components.defaults` and
 `revisions.props` are JSON text and `namespaces.official` is `0`/`1`. The
 decoders in `server/db.js` turn rows back into the shapes the client receives.
 
+`users.namespaceCount` caps how many namespaces a user may own; it starts at 1
+and is raised by hand in the database. `auth/namespaces/create` checks it in the
+insert itself, and `auth/namespaces/delete` deletes only a namespace of the
+caller's own with no component in it.
+
 `components.defaults` is a derived copy of the latest revision's prop defaults,
 kept so the catalogue can be listed in one call without fetching a revision per
 card. The frozen truth about props is `revisions.props`.
