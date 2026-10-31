@@ -17,7 +17,7 @@
   data-instance="@[this.instance]"
   open="@[open]"
   onclose="$.open = false"
-  onclick="(event.target === event.currentTarget || event.currentTarget.contains(event.target.closest('[close]'))) && this.close()"
+  onclick="(event.target.matches('overlay-slider, carousel, slides, slide') || event.currentTarget.contains(event.target.closest('[close]'))) && this.close()"
 >
   <carousel>
     <slot></slot>
@@ -48,13 +48,24 @@
   }
 
   overlay-slider > carousel {
+    --slide: min(320px, 90cqi);
     grid-row: 2;
-    width: 320px;
-    max-width: calc(100% - 96px);
+  }
+
+  overlay-slider slides {
+    gap: 40px;
+    padding: 0 calc(50cqi - var(--slide) / 2);
+  }
+
+  overlay-slider slides > slide {
+    min-width: var(--slide);
+    align-items: center;
+    justify-content: center;
+    scroll-snap-align: center;
   }
 
   @media (max-width: 768px) {
     overlay-slider { grid-template-rows: calc(var(--unit) * 8) 1fr calc(var(--unit) * 8); }
-    overlay-slider > carousel { min-width: calc(100% - 80px); max-width: calc(100% - var(--unit) * 8); }
+    overlay-slider > carousel { --slide: 70cqi; }
   }
 </style>
