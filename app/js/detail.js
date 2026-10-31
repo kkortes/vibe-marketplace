@@ -24,11 +24,16 @@ const tagged = (revision, styling) => [...autoTags(revision), ...stylingTags(sty
 // carries; a bare #<n> is read too. No hash means the latest.
 const hashed = () => Number(location.hash.match(/^#v?(\d+)$/)?.[1]) || 0;
 
-// An html prop is no attribute: it is the markup between the tags.
-const between = (props) => props.find(({ type }) => type === 'html');
+// An html prop is no attribute: it is the markup between the tags. A component
+// that renders a <slot> takes that markup whether its author declared the prop
+// or not, so an undeclared one is read as an empty html prop.
+const slotted = ({ html, props = [] }) =>
+  props.some(({ type }) => type === 'html') || !/<slot[\s/>]/.test(html)
+    ? props
+    : [{ name: 'html', type: 'html', default: '', description: '' }, ...props];
 
 // What sits between the tags, as the values in the docs have it.
-const children = () => window.$.values[between(window.$.props)?.name] ?? '';
+const children = () => window.$.values[window.$.slot?.name] ?? '';
 
 // Which props a component takes is the thing being documented, so the attribute
 // *names* on the tag are data. That is the one place the page writes markup
@@ -39,8 +44,7 @@ const children = () => window.$.values[between(window.$.props)?.name] ?? '';
 let mounted;
 
 const mount = () => {
-  const attrs = window.$.props
-    .filter(({ type }) => type !== 'html')
+  const attrs = window.$.attributes
     .map(({ name }) => `${name}="@[values.${name}]"`)
     .join(' ');
 
@@ -62,10 +66,28 @@ const preview = (html) => {
 };
 
 let usage;
+let markup;
 
 // The tag under "Use it" is read-only and redrawn on every update, so it
 // follows the selected tab and every prop value as it is typed.
 const showUsage = () => (usage.code = window.$.snippet());
+
+// The markup between the tags is edited in a codie of its own. Its row is only
+// there while the component in view has a slot, so a row drawn anew gets a new
+// editor, and a reset or another version hands the editor its value.
+const showMarkup = () => {
+  const el = document.querySelector('codie[markup]');
+  if (!el) return;
+
+  if (markup?.el !== el) {
+    markup = codie(el);
+    markup.code = children();
+    markup.editable = true;
+    markup.onEdit = ({ raw }) => (window.$.values[window.$.slot.name] = raw);
+  }
+
+  markup.code !== children() && (markup.code = children());
+};
 
 const attach = (html) => {
   editor ??= codie('codie');
@@ -82,8 +104,10 @@ const attach = (html) => {
     usage = codie('codie[usage]');
     window.$.on('afterUpdate', showUsage);
     window.$.on('afterUpdate', () => children() !== mounted && mount());
+    window.$.on('afterUpdate', showMarkup);
   }
   showUsage();
+  showMarkup();
 };
 
 export const state = {
@@ -93,6 +117,10 @@ export const state = {
   component: null,
   revision: null,
   props: [],
+  // The html prop, edited above every other prop, and the props that are
+  // attributes on the tag.
+  slot: null,
+  attributes: [],
   listeners: [],
   values: {},
   drafts: {},
@@ -130,8 +158,7 @@ export const state = {
   // One attribute per row, the way the tag reads best once it is pasted, and
   // an html prop indented between the tags.
   snippet() {
-    const attrs = this.props
-      .filter(({ type }) => type !== 'html')
+    const attrs = this.attributes
       .map(({ name, type }) =>
         type === 'boolean'
           ? this.values[name] && name
@@ -243,7 +270,9 @@ export const state = {
     this.version = revision.version;
     this.tab = version;
     this.next = component.latest + 1;
-    this.props = revision.props || [];
+    this.props = slotted(revision);
+    this.slot = this.props.find(({ type }) => type === 'html') ?? null;
+    this.attributes = this.props.filter((prop) => prop !== this.slot);
     this.listeners = listeners(revision.html).map((listener) => ({ ...listener, example: JSON.stringify(revision.events[listener.event] ?? listener.example) ?? '' }));
     this.styling = component.styling;
     this.tags = tagged(revision, this.styling);

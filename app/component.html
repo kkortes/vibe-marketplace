@@ -146,7 +146,22 @@
                 <!-- if props.length -->
                 <table>
                   <tbody>
-                    <!-- each props as prop (prop.name) -->
+                    <!-- if slot -->
+                    <tr>
+                      <td py-4>
+                        <crow justify-between g-4 w-full>
+                          <field>
+                            <codie markup highlight-html w-full></codie>
+                          </field>
+                          <crow right g-2>
+                            <code>@[slot.name]</code>
+                            <badge bg-hollow>@[slot.type]</badge>
+                          </crow>
+                        </crow>
+                      </td>
+                    </tr>
+                    <!-- /if -->
+                    <!-- each attributes as prop (prop.name) -->
                     <tr>
                       <td py-4>
                         <crow justify-between g-4 w-full>
@@ -168,9 +183,6 @@
                             <!-- else if prop.type === 'json' -->
                             <textarea rows="7" spellcheck="false" w-full value="@[drafts[prop.name]]"
                               oninput="$.setJson('@[prop.name]', this.value)"></textarea>
-                            <!-- else if prop.type === 'html' -->
-                            <textarea rows="7" spellcheck="false" w-full value="@[values[prop.name]]"
-                              oninput="$.values['@[prop.name]'] = this.value"></textarea>
                             <!-- else -->
                             <input type="text" w-full placeholder='Defaults to "@[prop.default]"' value="@[values[prop.name]]" oninput="$.values['@[prop.name]'] = this.value" />
                             <!-- /if -->

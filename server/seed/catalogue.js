@@ -24,31 +24,25 @@ export default await Promise.all(
     },
     {
       file: 'Overlay.html',
-      notes: 'Ported to Vibe.',
+      notes: 'Ported to Vibe. What it shows is whatever sits between the component tags, any HTML or another <component src>.',
       slug: 'overlay',
       title: 'Overlay',
-      description: 'Shows any component over a dimmed, blurred backdrop that fades and scales in, and closes on Escape or a click outside it.',
+      description: 'Shows whatever sits between its tags over a dimmed, blurred backdrop that fades and scales in, and closes on Escape or a click outside it.',
       category: 'Layout',
       icon: 'layout',
       styling: 'stylecheat',
       props: [
         {
+          name: 'html',
+          type: 'html',
+          default: '<card p-6>\n  <p>Escape, a click outside or the button closes me.</p>\n  <button close>Close</button>\n</card>',
+          description: 'The markup between the tags: any HTML or another <component src>, shown while open.',
+        },
+        {
           name: 'open',
           type: 'boolean',
           default: true,
           description: 'Shows the overlay while set. Bind it to state of your own: Escape, a click on the backdrop or a click on any element inside with a close attribute sets it back to false.',
-        },
-        {
-          name: 'component',
-          type: 'text',
-          default: 'data:text/html,<card p-6><p>Escape, a click outside or the button closes me.</p><button close>Close</button></card>',
-          description: 'Address of the component to show while open. The default is an inline one, so a page elsewhere passes its own.',
-        },
-        {
-          name: 'props',
-          type: 'json',
-          default: {},
-          description: 'Handed to the shown component as its props prop. Next to it, that component gets close, called as $.close().',
         },
         {
           name: 'noescape',
@@ -69,13 +63,7 @@ export default await Promise.all(
       styling: 'stylecheat',
       props: [
         {
-          name: 'open',
-          type: 'boolean',
-          default: true,
-          description: 'Shows the slider while set. Bind it to state of your own: Escape, a click outside the slides or a click on any element inside with a close attribute sets it back to false.',
-        },
-        {
-          name: 'slides',
+          name: 'html',
           type: 'html',
           default: [
             '<slides x>',
@@ -101,6 +89,12 @@ export default await Promise.all(
             '</slides>',
           ].join('\n'),
           description: 'The markup between the tags: a <slides x> holding one <slide> per slide.',
+        },
+        {
+          name: 'open',
+          type: 'boolean',
+          default: true,
+          description: 'Shows the slider while set. Bind it to state of your own: Escape, a click outside the slides or a click on any element inside with a close attribute sets it back to false.',
         },
         {
           name: 'noescape',

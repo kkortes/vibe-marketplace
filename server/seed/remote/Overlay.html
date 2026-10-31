@@ -22,10 +22,10 @@
 >
   <!-- if open -->
   <overlay-backdrop
-    onclick="(event.target === event.currentTarget || event.target.closest('[close]:not(component)')) && this.close()"
+    onclick="(event.target === event.currentTarget || event.currentTarget.contains(event.target.closest('[close]'))) && this.close()"
   >
     <overlay-box>
-      <component src="@[component]" props="@[props]" close="@[this.close]"></component>
+      <slot></slot>
     </overlay-box>
   </overlay-backdrop>
   <!-- /if -->
