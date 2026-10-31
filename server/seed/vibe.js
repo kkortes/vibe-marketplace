@@ -15,7 +15,7 @@ const trimmed = (component) => ({
 const card = {
   slug: 'card',
   title: 'Card',
-  description: 'A trading card for gods, units, spells and relics, framed in the colour of its element.',
+  description: 'A trading card, full art or framed, in the colour of its element.',
   category: 'Game',
   icon: 'image',
   versions: [
@@ -32,10 +32,11 @@ const card = {
         {
           name: 'type',
           type: 'select',
-          options: ['god', 'unit', 'spell', 'relic'],
-          default: 'god',
-          description: 'A god fills the whole frame with its art and has no stat box or rarity symbol; a relic fits its art instead of covering.',
+          options: ['fullart', 'framed-full', 'framed-centered'],
+          default: 'fullart',
+          description: 'Layout. fullart fills the whole frame with its art and has no stat box or rarity symbol; framed-full covers a framed window with its art; framed-centered fits its art in that window instead.',
         },
+        { name: 'kind', type: 'text', default: 'god', description: 'The black tag before the subtypes, such as god, unit or relic.' },
         {
           name: 'color',
           type: 'select',
@@ -52,7 +53,7 @@ const card = {
         },
         { name: 'cost', type: 'number', default: 0, description: 'Mana cost. 0 shows the element icon instead.' },
         { name: 'rarity', type: 'number', default: 3, description: 'From 1 to 4; picks the colour and order of the rarity shapes.' },
-        { name: 'damage', type: 'number', default: 0, description: 'Damage. With health at 0 too, or on a god, there is no stat box.' },
+        { name: 'damage', type: 'number', default: 0, description: 'Damage. With health at 0 too, or on fullart, there is no stat box.' },
         { name: 'health', type: 'number', default: 0, description: 'Health.' },
         { name: 'subtypes', type: 'json', default: ['lightning'], description: 'Tags after the type, as strings.' },
         {

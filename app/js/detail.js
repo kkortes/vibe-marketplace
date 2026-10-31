@@ -182,10 +182,6 @@ export const state = {
     }
   },
 
-  structured() {
-    return this.props.some(({ type }) => type === 'json');
-  },
-
   reset() {
     this.values = Object.fromEntries(this.props.map(({ name, default: value }) => [name, value]));
 

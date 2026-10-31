@@ -14,16 +14,16 @@
 
             <card-content>
               <card-art>
-                <!-- if icon !== 'none' && type !== 'god' -->
+                <!-- if icon !== 'none' && type !== 'fullart' -->
                 <big-circle-mask></big-circle-mask>
                 <!-- /if -->
                 <card-image style="background-image: url('@[image]')">
-                  <!-- if type === 'god' -->
+                  <!-- if type === 'fullart' -->
                   <card-shade>
                     <card-caption>
                       <card-text-box>
                         <card-pills>
-                          <card-pill type><pill-text>@[type]</pill-text></card-pill>
+                          <card-pill type><pill-text>@[kind]</pill-text></card-pill>
                           <!-- each subtypes as subtype -->
                           <card-pill subtype><pill-text>@[subtype]</pill-text></card-pill>
                           <!-- /each -->
@@ -52,7 +52,7 @@
                     </card-caption>
                   </card-shade>
                   <!-- /if -->
-                  <!-- if type !== 'god' && (damage || health) -->
+                  <!-- if type !== 'fullart' && (damage || health) -->
                   <card-stats>
                     <stats-plate>
                       <span>@[[damage, health].filter(Boolean).join('/')]</span>
@@ -60,17 +60,17 @@
                   </card-stats>
                   <!-- /if -->
                 </card-image>
-                <!-- if type !== 'god' -->
+                <!-- if type !== 'fullart' -->
                 <stripe top></stripe>
                 <stripe left></stripe>
                 <stripe right></stripe>
                 <!-- /if -->
               </card-art>
 
-              <!-- if type !== 'god' -->
+              <!-- if type !== 'fullart' -->
               <card-text-box>
                 <card-pills>
-                  <card-pill type><pill-text>@[type]</pill-text></card-pill>
+                  <card-pill type><pill-text>@[kind]</pill-text></card-pill>
                   <!-- each subtypes as subtype -->
                   <card-pill subtype><pill-text>@[subtype]</pill-text></card-pill>
                   <!-- /each -->
@@ -101,7 +101,7 @@
 
             <inner-plate>
               <inner-frame clear>
-                <!-- if type !== 'god' -->
+                <!-- if type !== 'fullart' -->
                 <circle-border top right></circle-border>
                 <circle-border top left></circle-border>
                 <circle-border bottom left></circle-border>
@@ -113,7 +113,7 @@
               </inner-frame>
             </inner-plate>
 
-            <!-- if type !== 'god' -->
+            <!-- if type !== 'fullart' -->
             <circle-mask top right></circle-mask>
             <circle-mask top left></circle-mask>
             <circle-mask bottom left></circle-mask>
@@ -121,11 +121,11 @@
             <!-- /if -->
           </interior>
 
-          <!-- if icon !== 'none' && type !== 'god' -->
+          <!-- if icon !== 'none' && type !== 'fullart' -->
           <big-circle-border></big-circle-border>
           <!-- /if -->
 
-          <!-- if type !== 'god' -->
+          <!-- if type !== 'fullart' -->
           <corner-circle top right></corner-circle>
           <corner-circle top left></corner-circle>
           <corner-circle bottom left></corner-circle>
@@ -134,11 +134,11 @@
         </interior-frame>
       </card-frame>
 
-      <!-- if icon !== 'none' && type !== 'god' -->
+      <!-- if icon !== 'none' && type !== 'fullart' -->
       <big-circle-mask></big-circle-mask>
       <!-- /if -->
 
-      <!-- if type !== 'god' -->
+      <!-- if type !== 'fullart' -->
       <circle-mask top right></circle-mask>
       <circle-mask top left></circle-mask>
       <circle-mask bottom left></circle-mask>
@@ -150,7 +150,7 @@
       </card-emblem>
 
       <card-rarity>
-        <!-- if type !== 'god' -->
+        <!-- if type !== 'fullart' -->
         <rarity-wrap>
           <rarity-wrap>
             <rarity-silhouette>
@@ -596,7 +596,7 @@
       background-color: var(--c-600);
     }
 
-    &[data-type='relic'] card-pill[subtype] pill-text {
+    &[data-type='framed-centered'] card-pill[subtype] pill-text {
       background-color: var(--c-700);
     }
 
@@ -848,7 +848,7 @@
       }
     }
 
-    &[data-type='god'] {
+    &[data-type='fullart'] {
       card-content {
         top: -1px;
         height: calc(100% + 2px);
@@ -917,7 +917,7 @@
       }
     }
 
-    &[data-type='relic'] card-image {
+    &[data-type='framed-centered'] card-image {
       background-size: auto 80%;
       background-position: center calc(50% - 10px);
     }
