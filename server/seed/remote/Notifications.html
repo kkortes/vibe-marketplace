@@ -11,12 +11,14 @@
   let count = 0;
   let animations = [];
 
+  const instance = Math.random().toString(36).slice(2);
   const id = component({
+    instance,
     queue: [],
     hover: (enter) => animations.forEach((animation) => animation[enter ? 'pause' : 'play']()),
   });
 
-  const stack = () => document.querySelector(`notifications-stack[data-vibe-internal-component-id="${id}"]`);
+  const stack = () => document.querySelector(`notifications-stack[data-instance="${instance}"]`);
 
   // The 3 seconds a notification stays are the delay of its own fade, so a
   // hover pauses the wait and the fade alike. The stack slides up by the first
@@ -51,7 +53,7 @@
 </script>
 
 <notifications-root role="status">
-  <notifications-stack onmouseenter="this.hover(true)" onmouseleave="this.hover(false)">
+  <notifications-stack data-instance="@[this.instance]" onmouseenter="this.hover(true)" onmouseleave="this.hover(false)">
     <!-- each this.queue as notification -->
     <notification-item pb-2>
       <card p-3 pr-5>

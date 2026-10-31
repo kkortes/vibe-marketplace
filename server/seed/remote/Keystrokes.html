@@ -15,9 +15,10 @@
 
   let local = { ...available };
 
-  const id = component({ held: [] });
+  const instance = Math.random().toString(36).slice(2);
+  const id = component({ held: [], instance });
 
-  const root = () => document.querySelector(`keystrokes-root[data-vibe-internal-component-id="${id}"]`);
+  const root = () => document.querySelector(`keystrokes-root[data-instance="${instance}"]`);
 
   // Browser autofill fires keydown as a plain Event, with no code to read.
   // The map leaves through a change event on the root, whose handler vibe
@@ -48,7 +49,7 @@
   });
 </script>
 
-<keystrokes-root disabled="@[disabled ? 'disabled' : '']" onchange="$.keys = event.detail">
+<keystrokes-root data-instance="@[this.instance]" disabled="@[disabled ? 'disabled' : '']" onchange="$.keys = event.detail">
   <!-- if debug -->
   <keystrokes-debug>
     <card>

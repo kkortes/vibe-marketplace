@@ -1,9 +1,10 @@
 <script type="module">
   import component from '@ape-egg/vibe/component';
 
-  const id = component({ close: () => root().dispatchEvent(new Event('close')) });
+  const instance = Math.random().toString(36).slice(2);
+  const id = component({ instance, close: () => root().dispatchEvent(new Event('close')) });
 
-  const root = () => document.querySelector(`overlay-slider[data-vibe-internal-component-id="${id}"]`);
+  const root = () => document.querySelector(`overlay-slider[data-instance="${instance}"]`);
 
   const escape = ({ code }) => code === 'Escape' && root().hasAttribute('open') && $[id].close();
 
@@ -13,6 +14,7 @@
 </script>
 
 <overlay-slider
+  data-instance="@[this.instance]"
   open="@[open]"
   onclose="$.open = false"
   onclick="(event.target === event.currentTarget || event.currentTarget.contains(event.target.closest('[close]'))) && this.close()"

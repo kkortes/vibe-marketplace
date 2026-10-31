@@ -1,9 +1,10 @@
 <script type="module">
   import component from '@ape-egg/vibe/component';
 
-  const id = component({ close: () => root().dispatchEvent(new Event('close')) });
+  const instance = Math.random().toString(36).slice(2);
+  const id = component({ instance, close: () => root().dispatchEvent(new Event('close')) });
 
-  const root = () => document.querySelector(`overlay-root[data-vibe-internal-component-id="${id}"]`);
+  const root = () => document.querySelector(`overlay-root[data-instance="${instance}"]`);
 
   const escape = ({ code }) =>
     code === 'Escape' && root().getAttribute('open') && !root().getAttribute('noescape') && $[id].close();
@@ -14,6 +15,7 @@
 </script>
 
 <overlay-root
+  data-instance="@[this.instance]"
   open="@[component ? 'open' : '']"
   noescape="@[noescape ? 'noescape' : '']"
   onclose="$.component = undefined"

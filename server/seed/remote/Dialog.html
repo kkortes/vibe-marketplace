@@ -3,15 +3,17 @@
 
   // A frame passes before the dialog goes, so whatever sits under the pointer
   // does not catch a mouseenter from the click that closed it.
-  const id = component({
+  const instance = Math.random().toString(36).slice(2);
+  component({
+    instance,
     close: () =>
       requestAnimationFrame(() =>
-        document.querySelector(`dialog-root[data-vibe-internal-component-id="${id}"]`).dispatchEvent(new Event('close')),
+        document.querySelector(`dialog-root[data-instance="${instance}"]`).dispatchEvent(new Event('close')),
       ),
   });
 </script>
 
-<dialog-root onclose="$.component = undefined">
+<dialog-root data-instance="@[this.instance]" onclose="$.component = undefined">
   <!-- if component -->
   <dialog-overlay flex overflow-auto>
     <dialog-box max-w-full m-auto>
