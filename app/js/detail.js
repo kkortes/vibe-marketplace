@@ -3,7 +3,7 @@ import codie from '/modules/codie/codie.js';
 import { SOURCE_URL } from '/js/env.js';
 import { address, source } from '/js/pin.js';
 import { guard, take, state as publishing } from '/js/publishing.js';
-import { autoTags, listeners, stylingTags } from '/js/tags.js';
+import { KEYBOARD, autoTags, listeners, stylingTags } from '/js/tags.js';
 import { call } from '/js/ws.js';
 
 // The Worker serves this page at the component's own address, /<namespace>/<slug>.
@@ -15,8 +15,6 @@ const readable = (value) => JSON.stringify(value, null, 2);
 // What a created component holds before its first publish: no markup, which
 // the starter in the editor already differs from.
 const UNPUBLISHED = { version: 0, html: '', props: [], events: {} };
-
-const KEYBOARD = ['keydown', 'keyup', 'keypress'];
 
 const STARTER = '<p>Hello from Viberary</p>\n';
 
@@ -246,7 +244,7 @@ export const state = {
     this.tab = version;
     this.next = component.latest + 1;
     this.props = revision.props || [];
-    this.listeners = listeners(revision.html).map((listener) => ({ ...listener, example: JSON.stringify(revision.events[listener.event]) ?? '' }));
+    this.listeners = listeners(revision.html).map((listener) => ({ ...listener, example: JSON.stringify(revision.events[listener.event] ?? listener.example) ?? '' }));
     this.styling = component.styling;
     this.tags = tagged(revision, this.styling);
     this.previewSource = source(SOURCE_URL, namespace, slug, revision.version);

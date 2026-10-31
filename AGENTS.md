@@ -59,10 +59,13 @@ There is no file per component, no object store, no CDN bucket. `server/source.j
 that field and answers with it as `text/html`; that response *is* the component.
 
 A revision row is `{ namespace, slug, version, html, props, events, notes,
-authorId, authorName, createdAt }`. `events` maps each event the component
-listens for on the window or document to an example: the detail of a custom
-event, or the init of a keyboard event. The Functions section of the component
-page sends it from a button per listener. Revisions are insert-only. `revisions` has its primary
+authorId, authorName, createdAt }`. The Functions section of the component page
+has a button per event the component listens for on the window or document,
+sending an example: the detail of a custom event, or the key and code of a
+keyboard event. `listeners` in `app/js/tags.js` derives it from what the handler
+reads off its event, each field valued by a literal the markup compares it
+with. `events` holds an author's own example by event name, and wins where
+the code alone cannot know a working value. Revisions are insert-only. `revisions` has its primary
 key on `(namespace, slug, version)`, so a second write to a version that exists
 is an error rather than an edit — that key is what makes "frozen" a fact rather
 than a convention. Publishing bumps `components.latest` and inserts the new
