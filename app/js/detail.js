@@ -19,7 +19,7 @@ const UNPUBLISHED = { version: 0, html: '', props: [] };
 const STARTER = '<p>Hello from Viberary</p>\n';
 
 // Stylecheat is a promise about the page a component lands in, not something
-// read off its markup, so its tag rides on the visitor's pick.
+// read off its markup, so its tag rides on the component's styling.
 const tagged = (revision, styling) => [...autoTags(revision), ...(styling === 'stylecheat' ? ['Stylecheat'] : [])];
 
 // The version in view lives in the hash as #v<n>, the form a pinned address
@@ -160,9 +160,11 @@ export const state = {
     this.unpublished = !latest || ['html', 'title', 'description'].some((k) => edited[k] !== original[k]) ? edited : null;
   },
 
-  style(styling) {
+  // Its owner saves the pick on the component; anyone else only tries it out.
+  async style(styling) {
     this.styling = styling;
     this.tags = tagged(this.revision, styling);
+    this.owns() && (await call('auth/components/style', { namespace, slug, styling }));
   },
 
   // Another tab replaces the code in the editor.
@@ -212,6 +214,7 @@ export const state = {
     this.tab = version;
     this.next = component.latest + 1;
     this.props = revision.props || [];
+    this.styling = component.styling;
     this.tags = tagged(revision, this.styling);
     this.previewSource = source(SOURCE_URL, namespace, slug, revision.version);
     this.reset();
@@ -252,7 +255,7 @@ export const state = {
   // open in the editor it was made in.
   async clone(carried) {
     await this.show(0);
-    this.missing && this.render({ ...carried, latest: 0 }, { version: 1, html: carried.html, props: carried.props }, 0);
+    this.missing && this.render({ ...carried, latest: 0, styling: 'inline' }, { version: 1, html: carried.html, props: carried.props }, 0);
 
     await window.$.ready;
     preview(carried.html);
