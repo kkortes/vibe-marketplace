@@ -20,9 +20,6 @@
 
   const stack = () => document.querySelector(`notifications-stack[data-instance="${instance}"]`);
 
-  // The 3 seconds a notification stays are the delay of its own fade, so a
-  // hover pauses the wait and the fade alike. The stack slides up by the first
-  // one's height while it fades, and it leaves the queue once both are done.
   const dismiss = () => {
     const first = stack().firstElementChild;
     if (!first || animations.length) return;
@@ -38,8 +35,6 @@
     };
   };
 
-  // Anything on the page posts one with
-  // dispatchEvent(new CustomEvent('notify', { detail: { type, message } })).
   const notify = ({ detail: { type, message } }) => {
     const text = message.replace('Error: ', '');
     const capitalised = text[0].toUpperCase() + text.slice(1);

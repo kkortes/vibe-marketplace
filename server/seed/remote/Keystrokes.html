@@ -8,10 +8,6 @@
 
   const root = () => document.querySelector(`keystrokes-root[data-instance="${instance}"]`);
 
-  // The keys bound in are the ones tracked, named by their lowercased code.
-  // Browser autofill fires keydown as a plain Event, with no code to read.
-  // The map leaves through a change event on the root, whose handler vibe
-  // rewrites to the consumer's own bound keys.
   const toggle = (event) => {
     if (!(event instanceof KeyboardEvent)) return;
 
