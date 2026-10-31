@@ -145,7 +145,7 @@ devDependency; the local D1 it simulates lives in `.wrangler/` (gitignored).
 
 ```
 cd server && bun run migrate          # schema into the local D1
-cd server && bun run seed             # writes the vibe namespace + 18 components
+cd server && bun run seed             # writes the vibe namespace, no components yet
 bun dev                               # compiler watch + the Worker on $PORT
 ```
 
