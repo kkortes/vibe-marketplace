@@ -16,11 +16,11 @@
 
 <overlay-root
   data-instance="@[this.instance]"
-  open="@[component ? 'open' : '']"
+  open="@[open ? 'open' : '']"
   noescape="@[noescape ? 'noescape' : '']"
-  onclose="$.component = undefined"
+  onclose="$.open = false"
 >
-  <!-- if component -->
+  <!-- if open -->
   <overlay-backdrop
     onclick="(event.target === event.currentTarget || event.target.closest('[close]:not(component)')) && this.close()"
   >

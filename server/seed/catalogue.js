@@ -33,10 +33,16 @@ export default await Promise.all(
       styling: 'stylecheat',
       props: [
         {
+          name: 'open',
+          type: 'boolean',
+          default: false,
+          description: 'Shows the overlay while set. Bind it to state of your own: Escape, a click on the backdrop or a click on any element inside with a close attribute sets it back to false.',
+        },
+        {
           name: 'component',
           type: 'text',
-          default: '',
-          description: 'Address of the component to show. Bind it to state of your own: the overlay shows while it is set and unsets it on close.',
+          default: 'data:text/html,<card p-6><p>Escape, a click outside or the button closes me.</p><button close>Close</button></card>',
+          description: 'Address of the component to show while open. The default is an inline one, so a page elsewhere passes its own.',
         },
         {
           name: 'props',
