@@ -16,7 +16,7 @@
   let local = { ...available };
 
   const instance = Math.random().toString(36).slice(2);
-  const id = component({ held: [], instance });
+  const id = component({ map: JSON.stringify(local, null, 2), instance });
 
   const root = () => document.querySelector(`keystrokes-root[data-instance="${instance}"]`);
 
@@ -36,7 +36,7 @@
       local = { ...local, [key]: type === 'keydown' };
     else return;
 
-    $[id].held = Object.keys(local).filter((k) => local[k]);
+    $[id].map = JSON.stringify(local, null, 2);
     root().dispatchEvent(new CustomEvent('change', { detail: { ...local } }));
   };
 
@@ -52,19 +52,7 @@
 <keystrokes-root data-instance="@[this.instance]" disabled="@[disabled ? 'disabled' : '']" onchange="$.keys = event.detail">
   <!-- if debug -->
   <keystrokes-debug>
-    <card>
-      <crow vertical left g-2>
-        <b>Keys held</b>
-        <crow left g-1>
-          <!-- each this.held as key -->
-          <badge secondary>@[key]</badge>
-          <!-- /each -->
-          <!-- if !this.held.length -->
-          <badge outline>none</badge>
-          <!-- /if -->
-        </crow>
-      </crow>
-    </card>
+    <pre>@[this.map]</pre>
   </keystrokes-debug>
   <!-- /if -->
 </keystrokes-root>
@@ -72,10 +60,17 @@
 <style>
   keystrokes-debug {
     position: fixed;
-    right: calc(var(--unit, 4px) * 4);
-    bottom: calc(var(--unit, 4px) * 4);
+    right: 0;
+    bottom: 0;
     z-index: 1;
-    max-width: 320px;
+    padding: 32px;
+    background: #fff;
+    color: #1f2937;
+    font-size: 12px;
     pointer-events: none;
+  }
+
+  keystrokes-debug pre {
+    margin: 0;
   }
 </style>

@@ -123,7 +123,7 @@ export default await Promise.all(
           name: 'debug',
           type: 'boolean',
           default: true,
-          description: 'Shows the held keys in a fixed corner at the bottom right.',
+          description: 'Shows the whole key map, every tracked key true or false, in a fixed corner at the bottom right.',
         },
       ],
     },
