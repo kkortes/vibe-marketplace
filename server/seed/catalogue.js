@@ -79,7 +79,7 @@ export default await Promise.all(
         {
           name: 'keys',
           type: 'json',
-          default: {},
+          default: { digit1: false, digit2: false, digit3: false, digit4: false, digit5: false },
           description: 'Bind it to state of your own. Every press and release writes the full map there: each tracked key, true while held. Meta or Ctrl lets go of all of them.',
         },
         {
