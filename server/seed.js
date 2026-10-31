@@ -1,5 +1,4 @@
-import gameStack from './seed/game-stack.js';
-import written from './seed/vibe.js';
+import catalogue from './seed/catalogue.js';
 import { now } from './db.js';
 import { defaults, validate } from './props.js';
 import { autoTags } from '../app/js/tags.js';
@@ -19,7 +18,7 @@ const checked = (components) =>
     versions: component.versions.map((version) => ({ ...version, props: validate(version.props) })),
   }));
 
-const seeded = checked([...written, ...(await gameStack())]);
+const seeded = checked(catalogue);
 
 // Each seeded namespace is replaced whole: its components are written as listed
 // and nothing else is left under it. A component names its namespace, or is vibe's.

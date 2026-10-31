@@ -82,8 +82,8 @@ card. The frozen truth about props is `revisions.props`.
 
 The only files under `server/seed/` that look like components are inputs to the
 seed script: `server/seed/remote/*.html` hold the code of every seeded
-component, ported to Vibe from webdev-game-stack and other projects, read at
-seed time by `server/seed/game-stack.js` and written into `revisions.html` like
+component, ported to Vibe from other projects, read at seed time by
+`server/seed/catalogue.js`, the one catalogue of the whole seed, and written into `revisions.html` like
 any other publish. They are not served from disk. An entry there names the
 namespace it is seeded under when that is not `vibe`; `server/seed.js` replaces
 each seeded namespace whole, `vibe` and `webdev`, both owned by the developer's
