@@ -18,8 +18,10 @@ Vibe and Stylecheat and nothing else.
   request no asset answers: the websocket at `/ws`, the component source at
   `/<namespace>/<slug>.html`, and `/js/pin.js`, which goes through the Worker
   first (`run_worker_first`) only so it carries CORS headers.
-- One origin serves all of it, so `ORIGIN` in `app/js/env.js` is the site, the
-  socket (`wss://…/ws`) and the component source alike. A namespace named like a
+- One origin serves all of it, so `ORIGIN` in `app/js/env.js` is the page's own
+  origin, and that is the site, the socket (`wss://…/ws`) and the component
+  source alike. Production, a pull request preview and `bun dev` each read the
+  D1 their own Worker binds. A namespace named like a
   top-level asset folder or page would be shadowed by it, which is why `modules`,
   `js`, `css`, `images`, `component`, `components`, `namespace` and `tag` are reserved —
   `tag` because `/tag/<name>` is the frontpage filtered by that tag.
@@ -156,9 +158,9 @@ One process: `bun dev` at the root compiles `app/` into `compiled/` and runs
 the Worker with `wrangler dev` on `$PORT`, the same Worker production runs. It
 serves the pages as assets, answers every marketplace read and write at `/ws`,
 serves the component source that `<component src>` fetches, and routes
-`/<namespace>/<slug>` to the component page. In dev the site, the socket and the
-source share the page's own origin (`app/js/env.js`), so `localhost:$PORT` and
-the HTTPS dev host behave alike. `bun dev` in `server/` still runs the Worker
+`/<namespace>/<slug>` to the component page. In dev, as everywhere, the site, the
+socket and the source share the page's own origin (`app/js/env.js`), so
+`localhost:$PORT` and the HTTPS dev host behave alike. `bun dev` in `server/` still runs the Worker
 alone on `1337`; the site does not need it. `wrangler dev` needs `compiled/` to
 exist, so compile once before starting it.
 

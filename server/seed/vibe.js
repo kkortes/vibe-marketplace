@@ -26,8 +26,8 @@ const card = {
         {
           name: 'image',
           type: 'text',
-          default: 'https://viberary.korte.kim/images/card/mons-igneus.jpg',
-          description: 'URL of the card art.',
+          default: '/images/card/mons-igneus.jpg',
+          description: 'URL of the card art. The default is served by viberary, so a page elsewhere passes its own.',
         },
         {
           name: 'type',
