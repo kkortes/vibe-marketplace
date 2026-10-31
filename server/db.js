@@ -15,6 +15,16 @@ export const tagged = (row) => {
   return { ...component(row), tags: TAGS.filter((tag) => tags.includes(tag)) };
 };
 
+// The query behind every list of components: published ones only, in the
+// shape `tagged` decodes, narrowed by the condition each list adds.
+export const catalogue = (where) =>
+  `SELECT components.namespace, components.slug, components.title, components.description, components.category,
+     components.icon, components.styling, components.latest, components.defaults, components.updatedAt,
+     (SELECT json_group_array(tag) FROM tags WHERE tags.namespace = components.namespace AND tags.slug = components.slug) AS tags
+   FROM components JOIN namespaces ON namespaces.slug = components.namespace
+   WHERE components.latest > 0 AND (${where})
+   ORDER BY components.namespace, components.slug`;
+
 export const revision = (row) => row && { ...row, props: JSON.parse(row.props), events: JSON.parse(row.events) };
 
 export const namespace = (row) => ({ ...row, official: !!row.official, unlisted: !!row.unlisted });

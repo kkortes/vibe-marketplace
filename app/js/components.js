@@ -3,6 +3,8 @@ import { call } from '/js/ws.js';
 
 export const state = {
   mine: [],
+  // The published components in those namespaces, listed under the tabs.
+  owned: [],
   // The selected tab: a namespace slug, or '' for All.
   namespace: '',
   slug: '',
@@ -21,6 +23,10 @@ export const state = {
 
   dismiss() {
     document.querySelectorAll('dialog').forEach((dialog) => dialog.close());
+  },
+
+  listed() {
+    return this.owned.filter(({ namespace }) => !this.namespace || namespace === this.namespace);
   },
 
   deletable() {
@@ -81,11 +87,12 @@ export const state = {
 const refresh = async () => {
   if (!window.$.user) {
     window.$.mine = [];
+    window.$.owned = [];
     window.$.namespace = '';
     return;
   }
 
-  window.$.mine = await call('auth/namespaces/mine');
+  [window.$.mine, window.$.owned] = await Promise.all([call('auth/namespaces/mine'), call('auth/components/mine')]);
 };
 
 export const load = async () => {

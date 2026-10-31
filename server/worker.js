@@ -8,6 +8,7 @@ import google from './events/login/google.js';
 import preview from './events/login/preview.js';
 import namespaces from './events/namespaces/list.js';
 import createComponent from './events/auth/components/create.js';
+import owned from './events/auth/components/mine.js';
 import publish from './events/auth/components/publish.js';
 import style from './events/auth/components/style.js';
 import versions from './events/auth/components/versions.js';
@@ -31,6 +32,7 @@ const socket = aaw(
     'namespaces/list': namespaces,
     'tags/top': top,
     'auth/components/create': createComponent,
+    'auth/components/mine': owned,
     'auth/components/publish': publish,
     'auth/components/style': style,
     'auth/components/versions': versions,
