@@ -7,7 +7,7 @@
   const root = () => document.querySelector(`overlay-root[data-instance="${instance}"]`);
 
   const escape = ({ code }) =>
-    code === 'Escape' && root().getAttribute('open') && !root().getAttribute('noescape') && $[id].close();
+    code === 'Escape' && root().hasAttribute('open') && !root().hasAttribute('noescape') && $[id].close();
 
   addEventListener('keydown', escape);
 
@@ -16,8 +16,8 @@
 
 <overlay-root
   data-instance="@[this.instance]"
-  open="@[open ? 'open' : '']"
-  noescape="@[noescape ? 'noescape' : '']"
+  open="@[open]"
+  noescape="@[noescape]"
   onclose="$.open = false"
 >
   <!-- if open -->
