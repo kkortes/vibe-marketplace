@@ -109,7 +109,7 @@ export default await Promise.all(
       notes: 'Ported to Vibe.',
       slug: 'keystrokes',
       title: 'Keystrokes',
-      description: 'Tracks which game keys are held and hands the map to state of your own.',
+      description: 'Tracks which keyboard keys are pressed in realtime.',
       category: 'Interactive',
       icon: 'desktop',
       // The keys it tracks come from its keys prop, which no example read off its
