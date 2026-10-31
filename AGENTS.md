@@ -68,9 +68,9 @@ decoders in `server/db.js` turn rows back into the shapes the client receives.
 kept so the catalogue can be listed in one call without fetching a revision per
 card. The frozen truth about props is `revisions.props`.
 
-The only files under `server/seed/` that look like components are inputs to the
-seed script: `server/seed/remote/*.html` are byte-for-byte copies of the
-webdev-game-stack remote components, read at seed time and written into
+Every seeded component is a file in `server/seed/remote/`, and those files are
+only inputs to the seed script: `server/seed/remote.js` lists the catalogue
+entry around each one, and the file is read at seed time and written into
 `revisions.html` like any other publish. They are not served from disk.
 `server/seed.js` turns the catalogue into SQL and runs it through
 `wrangler d1 execute`.
