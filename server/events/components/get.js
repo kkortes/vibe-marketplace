@@ -14,6 +14,9 @@ export default async ({ namespace, slug, version }, { db }) => {
 
   if (!component) throw Error(`No component ${namespace}/${slug}`);
 
+  // Created and not yet published: there is no revision to hand over.
+  if (!component.latest) return component;
+
   const revision = decodeRevision(
     await db
       .prepare(

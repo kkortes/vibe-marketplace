@@ -1,3 +1,4 @@
+import { lettered, slugify } from '/js/naming.js';
 import { call } from '/js/ws.js';
 
 export const state = {
@@ -6,6 +7,9 @@ export const state = {
   namespace: '',
   slug: '',
   failure: '',
+  // The component the "Add component" dialog is creating in the selected namespace.
+  draft: { title: '', description: '' },
+  slugify,
 
   compose() {
     this.slug = '';
@@ -14,7 +18,7 @@ export const state = {
   },
 
   dismiss() {
-    document.querySelector('dialog[namespace]').close();
+    document.querySelector('dialog[open]').close();
   },
 
   async create() {
@@ -24,6 +28,26 @@ export const state = {
       this.mine = [...this.mine, created];
       this.dismiss();
       this.notice = `${created.slug} is yours and has its own tab now.`;
+    } catch ({ message }) {
+      this.failure = message;
+    }
+  },
+
+  draw() {
+    this.draft = { title: '', description: '' };
+    this.failure = '';
+    document.querySelector('dialog[component]').showModal();
+  },
+
+  // Created with nothing published, the component page opens it as an
+  // unpublished edit, so v1 is one press of Publish away.
+  async add() {
+    if (!lettered(this.draft.title)) return (this.failure = 'A name needs at least 3 letters');
+
+    try {
+      const { namespace, slug } = await call('auth/components/create', { namespace: this.namespace, ...this.draft });
+
+      location.assign(`/${namespace}/${slug}`);
     } catch ({ message }) {
       this.failure = message;
     }

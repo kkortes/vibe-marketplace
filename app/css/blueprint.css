@@ -631,6 +631,10 @@ tabs[namespaces] {
   flex-direction: row;
 }
 
+tabs[namespaces]::after {
+  order: 0;
+}
+
 tabs[namespaces] > tab {
   width: auto;
   padding-inline: calc(var(--unit) * 6);
@@ -699,7 +703,7 @@ card[warning] {
   border-radius: var(--unit);
 }
 
-section[about] textarea {
+:is(section[about], dialog[component]) textarea {
   display: block;
   width: 100%;
   min-width: 0;

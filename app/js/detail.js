@@ -12,6 +12,12 @@ const [namespace, slug] = location.pathname.slice(1).split('/');
 
 const readable = (value) => JSON.stringify(value, null, 2);
 
+// What a created component holds before its first publish: no markup, which
+// the starter in the editor already differs from.
+const UNPUBLISHED = { version: 0, html: '', props: [] };
+
+const STARTER = '<p>Hello from Viberary</p>\n';
+
 // Stylecheat is a promise about the page a component lands in, not something
 // read off its markup, so its tag rides on the visitor's pick.
 const tagged = (revision, styling) => [...autoTags(revision), ...(styling === 'stylecheat' ? ['Stylecheat'] : [])];
@@ -200,7 +206,7 @@ export const state = {
 
   async show(version) {
     try {
-      const { revision, ...component } = await call('components/get', {
+      const { revision = UNPUBLISHED, ...component } = await call('components/get', {
         namespace,
         slug,
         version: version || undefined,
@@ -225,8 +231,16 @@ export const state = {
     }
 
     await window.$.ready;
-    mount();
-    attach(window.$.revision.html);
+
+    const { html } = window.$.revision;
+
+    attach(html || STARTER);
+    if (html) return mount();
+
+    // Nothing is published yet, so the starter is the unpublished edit and v1
+    // is one press of Publish away.
+    preview(STARTER);
+    window.$.edit('html', STARTER);
   },
 };
 
