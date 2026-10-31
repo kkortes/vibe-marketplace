@@ -21,7 +21,7 @@ Vibe and Stylecheat and nothing else.
 - One origin serves all of it, so `ORIGIN` in `app/js/env.js` is the site, the
   socket (`wss://…/ws`) and the component source alike. A namespace named like a
   top-level asset folder or page would be shadowed by it, which is why `modules`,
-  `js`, `css`, `component`, `components`, `namespace` and `tag` are reserved —
+  `js`, `css`, `images`, `component`, `components`, `namespace` and `tag` are reserved —
   `tag` because `/tag/<name>` is the frontpage filtered by that tag.
 - It is deployed with `bunx wrangler deploy` from the root, after
   `bun run build`, to the developer's own Cloudflare account. There is no
@@ -70,8 +70,11 @@ card. The frozen truth about props is `revisions.props`.
 
 The only files under `server/seed/` that look like components are inputs to the
 seed script: `server/seed/remote/*.html` are byte-for-byte copies of the
-webdev-game-stack remote components, read at seed time and written into
-`revisions.html` like any other publish. They are not served from disk.
+webdev-game-stack remote components, and `server/seed/vibe/*.html` hold the
+markup of the vibe-owned ones too long to sit inline in `server/seed/vibe.js`.
+Both are read at seed time and written into `revisions.html` like any other
+publish. They are not served from disk. What a seeded component fetches by
+prop, such as the card's art, lives in `app/images/` and is served as an asset.
 `server/seed.js` turns the catalogue into SQL and runs it through
 `wrangler d1 execute`.
 
@@ -124,7 +127,7 @@ top-level `.html` file becomes a page.
 - `app/` — pages flat at its root (`index.html`, `component.html`,
   `components.html`, `namespace.html`), plus `components/` (the site's own
   Layout, Topbar and Catalogue), `js/`,
-  `css/`, `fonts/` and `index.css`.
+  `css/`, `fonts/`, `images/` and `index.css`.
 - `server/` — the Worker: its websocket events, the component-source routes,
   the D1 migrations and the seed.
 - `tests/` — runs under `bun test`.
@@ -145,7 +148,7 @@ devDependency; the local D1 it simulates lives in `.wrangler/` (gitignored).
 
 ```
 cd server && bun run migrate          # schema into the local D1
-cd server && bun run seed             # writes the vibe namespace, no components yet
+cd server && bun run seed             # writes the vibe namespace and its card
 bun dev                               # compiler watch + the Worker on $PORT
 ```
 

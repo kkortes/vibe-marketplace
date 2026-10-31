@@ -1,7 +1,7 @@
 import { namespace as decode, now } from '../../../db.js';
 import { slug as slugPattern } from '../../../user.js';
 
-const RESERVED = ['vibe', 'stylecheat', 'codie', 'api', 'docs', 'admin', 'modules', 'js', 'css', 'component', 'components', 'namespace', 'tag'];
+const RESERVED = ['vibe', 'stylecheat', 'codie', 'api', 'docs', 'admin', 'modules', 'js', 'css', 'images', 'component', 'components', 'namespace', 'tag'];
 
 export default async ({ slug, title }, { db, identity }) => {
   if (!slugPattern.test(String(slug))) throw Error('A namespace is lowercase words joined by dashes');
