@@ -1,6 +1,8 @@
 // The vibe-owned catalogue. Components carry their own styles and fall back to
 // plain values for every theme variable, so they render on a page that has
-// never heard of stylecheat.
+// never heard of stylecheat. Their markup lives in ./remote, read at seed time.
+
+const read = (name) => Bun.file(`${import.meta.dir}/remote/${name}`).text();
 
 const keystrokes = {
   slug: 'keystrokes',
@@ -31,95 +33,16 @@ const keystrokes = {
           description: 'Shows the held keys in a fixed corner at the bottom right.',
         },
       ],
-      html: `
-<script type="module">
-  import component from '@ape-egg/vibe/component';
-
-  const available = Object.fromEntries(
-    [
-      'keyw', 'keya', 'keys', 'keyd', 'keyi', 'keyq', 'keye', 'keyz', 'keyx', 'keyc',
-      'arrowright', 'arrowleft', 'arrowdown', 'arrowup',
-      'escape', 'enter', 'shiftleft', 'shiftright',
-      'digit1', 'digit2', 'digit3', 'digit4', 'digit5',
-      'numpad1', 'numpad2', 'numpad3', 'numpad4', 'numpad5', 'numpad6', 'numpad7', 'numpad8', 'numpad9',
-    ].map((key) => [key, false]),
-  );
-
-  const ungated = ['enter', 'escape', 'shiftleft', 'shiftright'];
-
-  let local = { ...available };
-
-  const id = component({ held: [] });
-
-  const root = () => document.querySelector(\`keystrokes-root[data-vibe-internal-component-id="\${id}"]\`);
-
-  // Browser autofill fires keydown as a plain Event, with no code to read.
-  // The map leaves through a change event on the root, whose handler vibe
-  // rewrites to the consumer's own bound keys.
-  const toggle = (event) => {
-    if (!(event instanceof KeyboardEvent)) return;
-
-    const { type, code, metaKey, ctrlKey } = event;
-    const key = code.toLowerCase();
-
-    if (local[key] && type === 'keydown') return;
-
-    if (metaKey || ctrlKey) local = { ...available };
-    else if (key in local && (!root().getAttribute('disabled') || ungated.includes(key)))
-      local = { ...local, [key]: type === 'keydown' };
-    else return;
-
-    $[id].held = Object.keys(local).filter((k) => local[k]);
-    root().dispatchEvent(new CustomEvent('change', { detail: { ...local } }));
-  };
-
-  addEventListener('keydown', toggle);
-  addEventListener('keyup', toggle);
-
-  $.on('unmount', () => {
-    removeEventListener('keydown', toggle);
-    removeEventListener('keyup', toggle);
-  });
-</script>
-
-<keystrokes-root disabled="@[disabled ? 'disabled' : '']" onchange="$.keys = event.detail">
-  <!-- if debug -->
-  <keystrokes-debug>
-    <card>
-      <crow vertical left g-2>
-        <b>Keys held</b>
-        <crow left g-1>
-          <!-- each this.held as key -->
-          <badge secondary>@[key]</badge>
-          <!-- /each -->
-          <!-- if !this.held.length -->
-          <badge outline>none</badge>
-          <!-- /if -->
-        </crow>
-      </crow>
-    </card>
-  </keystrokes-debug>
-  <!-- /if -->
-</keystrokes-root>
-
-<style>
-  keystrokes-debug {
-    position: fixed;
-    right: calc(var(--unit, 4px) * 4);
-    bottom: calc(var(--unit, 4px) * 4);
-    z-index: 1;
-    max-width: 320px;
-    pointer-events: none;
-  }
-</style>
-`,
+      file: 'keystrokes.html',
     },
   ],
 };
 
-const trimmed = (component) => ({
+const loaded = async (component) => ({
   ...component,
-  versions: component.versions.map((version) => ({ ...version, html: version.html.trim() })),
+  versions: await Promise.all(
+    component.versions.map(async ({ file, ...version }) => ({ ...version, html: (await read(file)).trim() })),
+  ),
 });
 
-export default [keystrokes].map(trimmed);
+export default () => Promise.all([keystrokes].map(loaded));
