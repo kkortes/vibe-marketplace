@@ -10,7 +10,7 @@ const target = process.argv.includes('--remote') ? '--remote' : '--local';
 
 // Seeded props go through the same validation a published revision does, so the
 // catalogue can never hold a schema the publish event would have refused.
-const catalogue = [...(await written()), ...(await gameStack())].map((component) => ({
+const catalogue = [...written, ...(await gameStack())].map((component) => ({
   ...component,
   versions: component.versions.map((version) => ({ ...version, props: validate(version.props) })),
 }));
