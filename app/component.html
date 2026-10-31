@@ -174,6 +174,9 @@
                           <!-- else if prop.type === 'json' -->
                           <textarea rows="7" spellcheck="false" w-full value="@[drafts[prop.name]]"
                             oninput="$.setJson('@[prop.name]', this.value)"></textarea>
+                          <!-- else if prop.type === 'html' -->
+                          <textarea rows="7" spellcheck="false" w-full value="@[values[prop.name]]"
+                            oninput="$.values['@[prop.name]'] = this.value"></textarea>
                           <!-- else -->
                           <input type="text" w-full placeholder='Defaults to "@[prop.default]"' value="@[values[prop.name]]" oninput="$.values['@[prop.name]'] = this.value" />
                           <!-- /if -->

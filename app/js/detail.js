@@ -24,15 +24,29 @@ const tagged = (revision, styling) => [...autoTags(revision), ...stylingTags(sty
 // carries; a bare #<n> is read too. No hash means the latest.
 const hashed = () => Number(location.hash.match(/^#v?(\d+)$/)?.[1]) || 0;
 
+// An html prop is no attribute: it is the markup between the tags.
+const between = (props) => props.find(({ type }) => type === 'html');
+
+// What sits between the tags, as the values in the docs have it.
+const children = () => window.$.values[between(window.$.props)?.name] ?? '';
+
 // Which props a component takes is the thing being documented, so the attribute
 // *names* on the tag are data. That is the one place the page writes markup
 // instead of templating it — every value on it stays bound to `values`, so
-// editing a prop in the docs re-renders the component and nothing else.
-const mount = () => {
-  const attrs = window.$.props.map(({ name }) => `${name}="@[values.${name}]"`).join(' ');
+// editing a prop in the docs re-renders the component and nothing else. The
+// markup between the tags is read once when the component mounts, so a change
+// to it mounts the component again.
+let mounted;
 
+const mount = () => {
+  const attrs = window.$.props
+    .filter(({ type }) => type !== 'html')
+    .map(({ name }) => `${name}="@[values.${name}]"`)
+    .join(' ');
+
+  mounted = children();
   document.querySelector('preview-host').innerHTML =
-    `<component src="${window.$.previewSource}" ${attrs}></component>`;
+    `<component src="${window.$.previewSource}" ${attrs}>${mounted}</component>`;
 };
 
 let editor;
@@ -67,6 +81,7 @@ const attach = (html) => {
   if (!usage) {
     usage = codie('codie[usage]');
     window.$.on('afterUpdate', showUsage);
+    window.$.on('afterUpdate', () => children() !== mounted && mount());
   }
   showUsage();
 };
@@ -111,9 +126,11 @@ export const state = {
   // A boolean prop is carried the way HTML carries one — the attribute is there
   // or it is not; dismissable="false" would read as true. An array or an object
   // has no literal form an attribute can hold, so it is shown bound instead.
-  // One attribute per row, the way the tag reads best once it is pasted.
+  // One attribute per row, the way the tag reads best once it is pasted, and
+  // an html prop indented between the tags.
   snippet() {
     const attrs = this.props
+      .filter(({ type }) => type !== 'html')
       .map(({ name, type }) =>
         type === 'boolean'
           ? this.values[name] && name
@@ -123,11 +140,13 @@ export const state = {
       )
       .filter(Boolean);
 
+    const inner = children().trim();
+
     return [
       '<component',
       `  src="${address(SOURCE_URL, this.namespace, this.slug, this.tab)}"`,
       ...attrs.map((attr) => `  ${attr}`),
-      '></component>',
+      ...(inner ? ['>', ...inner.split('\n').map((line) => `  ${line}`), '</component>'] : ['></component>']),
     ].join('\n');
   },
 
