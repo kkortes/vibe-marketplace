@@ -111,7 +111,7 @@ export default await Promise.all(
           name: 'keys',
           type: 'json',
           default: { digit1: false, digit2: false, digit3: false, digit4: false, digit5: false },
-          description: 'Bind it to state of your own. Every press and release writes the full map there: each tracked key, true while held. Meta or Ctrl lets go of all of them.',
+          description: 'The keys it tracks, each named by its lowercased event code (keyw, arrowup, digit1) and false to start. Bind it to state of your own: every press and release writes the full map back there, each key true while held. Meta or Ctrl lets go of all of them.',
         },
         {
           name: 'disabled',

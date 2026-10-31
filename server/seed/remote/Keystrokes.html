@@ -1,25 +1,14 @@
 <script type="module">
   import component from '@ape-egg/vibe/component';
 
-  const available = Object.fromEntries(
-    [
-      'keyw', 'keya', 'keys', 'keyd', 'keyi', 'keyq', 'keye', 'keyz', 'keyx', 'keyc',
-      'arrowright', 'arrowleft', 'arrowdown', 'arrowup',
-      'escape', 'enter', 'shiftleft', 'shiftright',
-      'digit1', 'digit2', 'digit3', 'digit4', 'digit5',
-      'numpad1', 'numpad2', 'numpad3', 'numpad4', 'numpad5', 'numpad6', 'numpad7', 'numpad8', 'numpad9',
-    ].map((key) => [key, false]),
-  );
-
   const ungated = ['enter', 'escape', 'shiftleft', 'shiftright'];
 
-  let local = { ...available };
-
   const instance = Math.random().toString(36).slice(2);
-  const id = component({ map: JSON.stringify(local, null, 2), instance });
+  component({ instance });
 
   const root = () => document.querySelector(`keystrokes-root[data-instance="${instance}"]`);
 
+  // The keys bound in are the ones tracked, named by their lowercased code.
   // Browser autofill fires keydown as a plain Event, with no code to read.
   // The map leaves through a change event on the root, whose handler vibe
   // rewrites to the consumer's own bound keys.
@@ -28,16 +17,17 @@
 
     const { type, code, metaKey, ctrlKey } = event;
     const key = code.toLowerCase();
+    const keys = JSON.parse(root().dataset.keys);
 
-    if (local[key] && type === 'keydown') return;
+    if (keys[key] && type === 'keydown') return;
 
-    if (metaKey || ctrlKey) local = { ...available };
-    else if (key in local && (!root().getAttribute('disabled') || ungated.includes(key)))
-      local = { ...local, [key]: type === 'keydown' };
+    let map;
+    if (metaKey || ctrlKey) map = Object.fromEntries(Object.keys(keys).map((name) => [name, false]));
+    else if (key in keys && (!root().getAttribute('disabled') || ungated.includes(key)))
+      map = { ...keys, [key]: type === 'keydown' };
     else return;
 
-    $[id].map = JSON.stringify(local, null, 2);
-    root().dispatchEvent(new CustomEvent('change', { detail: { ...local } }));
+    root().dispatchEvent(new CustomEvent('change', { detail: map }));
   };
 
   addEventListener('keydown', toggle);
@@ -49,9 +39,9 @@
   });
 </script>
 
-<keystrokes-root data-instance="@[this.instance]" disabled="@[disabled ? 'disabled' : '']" onchange="$.keys = event.detail">
+<keystrokes-root data-instance="@[this.instance]" data-keys="@[JSON.stringify(keys)]" disabled="@[disabled ? 'disabled' : '']" onchange="$.keys = event.detail">
   <!-- if debug -->
-  <keystrokes-debug>@[this.map]</keystrokes-debug>
+  <keystrokes-debug>@[JSON.stringify(keys, null, 2)]</keystrokes-debug>
   <!-- /if -->
 </keystrokes-root>
 
