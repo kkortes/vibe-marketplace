@@ -1,8 +1,9 @@
 import { call } from '/js/ws.js';
 
-// An edit carried from a component page into a namespace of the visitor's own
-// lives here between the two page loads, and only until the namespace page
-// takes it, so leaving that page discards it like any other unpublished edit.
+// An unpublished component on its way to its own page — a clone carried into a
+// namespace of the visitor's own, or one just added on /components — lives here
+// between the two page loads, and only until that page takes it, so leaving
+// the page discards it like any other unpublished edit.
 const CARRIED = 'mkp-unpublished';
 
 const dialog = () => document.querySelector('dialog[publishing]');
@@ -63,17 +64,21 @@ export const state = {
   },
 
   carry(namespace) {
-    sessionStorage.setItem(CARRIED, JSON.stringify({ ...this.unpublished, namespace }));
+    const { slug } = this.unpublished;
+
+    send({ ...this.unpublished, namespace });
     this.unpublished = null;
-    location.assign(`/${namespace}`);
+    location.assign(`/${namespace}/${slug}`);
   },
 };
 
-export const take = (namespace) => {
+export const send = (unpublished) => sessionStorage.setItem(CARRIED, JSON.stringify(unpublished));
+
+export const take = (namespace, slug) => {
   const carried = JSON.parse(sessionStorage.getItem(CARRIED));
 
   sessionStorage.removeItem(CARRIED);
-  return carried?.namespace === namespace ? carried : null;
+  return carried?.namespace === namespace && carried.slug === slug ? carried : null;
 };
 
 const refresh = async () => (window.$.mine = window.$.user ? await call('auth/namespaces/mine') : []);

@@ -1,5 +1,5 @@
 import { call } from '/js/ws.js';
-import { guard, take, state as publishing } from '/js/publishing.js';
+import { guard, state as publishing } from '/js/publishing.js';
 
 // The four most common names, counted over the namespace's own components so
 // the bar offers no tag that would empty the list.
@@ -10,6 +10,8 @@ const top = (names) =>
     .map(([name]) => name);
 
 const [, namespace, , linked = ''] = location.pathname.split('/').map(decodeURIComponent);
+
+const removal = () => document.querySelector('dialog[removal]');
 
 export const state = {
   ...publishing,
@@ -41,23 +43,36 @@ export const state = {
         (!needle || `${c.namespace}/${c.slug} ${c.title} ${c.description}`.toLowerCase().includes(needle)),
     );
   },
+
+  // Only a namespace that never published can be deleted; the server checks
+  // that again rather than trusting the empty list.
+  doubt() {
+    this.failure = '';
+    removal().showModal();
+  },
+
+  keep() {
+    removal().close();
+  },
+
+  async remove() {
+    try {
+      await call('auth/namespaces/delete', { slug: namespace });
+      location.assign('/components');
+    } catch ({ message }) {
+      this.failure = message;
+    }
+  },
 };
 
 export const load = async () => {
   await guard();
 
-  const components = (await call('components/list')).filter(({ namespace }) => namespace === window.$.namespace);
+  const components = await call('components/list', { namespace });
 
   window.$.components = components;
   window.$.filters = { auto: top(components.flatMap(({ tags }) => tags)), user: top(components.map(({ category }) => category)) };
   window.$.tag = components.flatMap(({ tags, category }) => [...tags, category]).find((name) => name.toLowerCase() === linked) || 'All';
   window.$.loading = false;
   window.$.filter();
-
-  // An edit carried here from another namespace's component publishes as the
-  // next version of the one by its slug, or as v1 of a new one.
-  const carried = take(window.$.namespace);
-
-  window.$.next = (components.find(({ slug }) => slug === carried?.slug)?.latest ?? 0) + 1;
-  window.$.unpublished = carried;
 };

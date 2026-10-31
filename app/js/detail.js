@@ -2,7 +2,7 @@ import codie from '/modules/codie/codie.js';
 
 import { SOURCE_URL } from '/js/env.js';
 import { address, source } from '/js/pin.js';
-import { guard, state as publishing } from '/js/publishing.js';
+import { guard, take, state as publishing } from '/js/publishing.js';
 import { autoTags } from '/js/tags.js';
 import { call } from '/js/ws.js';
 
@@ -90,8 +90,9 @@ export const state = {
   tags: [],
   styling: 'inline',
 
+  // Never published, the page shows the version a publish would create.
   showing() {
-    return this.version || this.component?.latest || 0;
+    return this.version || this.component?.latest || this.next;
   },
 
   outdated() {
@@ -145,13 +146,14 @@ export const state = {
 
   // The markup, title and description are edited in place; whatever is not
   // edited is published as the revision in view carries it. Editing back to
-  // what was there leaves nothing to publish.
+  // what was there leaves nothing to publish — unless nothing was ever
+  // published, when the whole component is still waiting for its first.
   edit(key, value) {
-    const { component: { title, description, category, icon }, revision: { html, props } } = this;
+    const { component: { title, description, category, icon, latest }, revision: { html, props } } = this;
     const original = { namespace, slug, title, description, category, icon, html, props };
     const edited = { ...original, ...this.unpublished, [key]: value };
 
-    this.unpublished = ['html', 'title', 'description'].some((k) => edited[k] !== original[k]) ? edited : null;
+    this.unpublished = !latest || ['html', 'title', 'description'].some((k) => edited[k] !== original[k]) ? edited : null;
   },
 
   style(styling) {
@@ -194,40 +196,56 @@ export const state = {
     this.invalid = {};
   },
 
-  async show(version) {
-    try {
-      const { revision, ...component } = await call('components/get', {
-        namespace,
-        slug,
-        version: version || undefined,
-      });
+  // An edit carried to this page lands on top of what is published here. With
+  // nothing published yet it is the whole component: Latest, with no version
+  // under it.
+  async show(version, carried) {
+    let found;
 
-      this.component = component;
-      this.tabs = Array.from({ length: component.latest }, (_, i) => component.latest - i);
-      this.revision = revision;
-      this.version = revision.version;
-      this.tab = version;
-      this.next = component.latest + 1;
-      this.props = revision.props || [];
-      this.tags = tagged(revision, this.styling);
-      this.previewSource = source(SOURCE_URL, namespace, slug, revision.version);
-      this.reset();
-      this.missing = '';
-      // Replaced rather than pushed, so going back still leaves the page.
-      history.replaceState(null, '', version ? `#v${revision.version}` : location.pathname + location.search);
+    try {
+      found = await call('components/get', { namespace, slug, version: version || undefined });
     } catch ({ message }) {
-      this.missing = message;
-      return;
+      if (!carried) return (this.missing = message);
     }
 
+    const { title, description, category, icon, html, props } = carried ?? {};
+
+    const { revision, ...component } = found ?? {
+      namespace,
+      slug,
+      title,
+      description,
+      category,
+      icon,
+      latest: 0,
+      revision: { version: 0, html, props },
+    };
+
+    this.component = component;
+    this.tabs = Array.from({ length: component.latest }, (_, i) => component.latest - i);
+    this.revision = revision;
+    this.version = revision.version;
+    this.tab = version;
+    this.next = component.latest + 1;
+    this.props = revision.props || [];
+    this.tags = tagged(revision, this.styling);
+    this.previewSource = source(SOURCE_URL, namespace, slug, revision.version);
+    this.reset();
+    this.missing = '';
+    // Replaced rather than pushed, so going back still leaves the page.
+    history.replaceState(null, '', version ? `#v${revision.version}` : location.pathname + location.search);
+
     await window.$.ready;
-    mount();
-    attach(window.$.revision.html);
+    attach(carried?.html ?? window.$.revision.html);
+    if (!carried) return mount();
+
+    preview(carried.html);
+    this.unpublished = carried;
   },
 };
 
 export const load = async () => {
   await guard();
-  await window.$.show(hashed() || Number(params.get('v')) || 0);
+  await window.$.show(hashed() || Number(params.get('v')) || 0, take(namespace, slug));
   addEventListener('hashchange', () => window.$.show(hashed()));
 };

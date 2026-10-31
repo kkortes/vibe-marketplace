@@ -28,8 +28,13 @@
           <!-- each mine as ns (ns.slug) -->
           <tab active="@[ns.slug === namespace]" onclick="$.namespace = '@[ns.slug]'">@[ns.slug]</tab>
           <!-- /each -->
+          <!-- if mine.length < user.namespaceCount -->
           <tab new onclick="$.compose()">New namespace</tab>
+          <!-- /if -->
         </tabs>
+        <!-- if namespace -->
+        <button tertiary onclick="$.outline()"><icon plus></icon>Add component</button>
+        <!-- /if -->
       </versions>
 
       <dialog namespace>
@@ -45,15 +50,34 @@
             <input type="text" w-full placeholder="acme" value="@[slug]" oninput="$.slug = this.value" />
           </crow>
           <label>
-            <input type="checkbox" role="switch" disabled />
-            Private <span text-muted>Coming soon</span>
+            <input type="checkbox" role="switch" checked="@[unlisted]" onchange="$.unlisted = event.currentTarget.checked" />
+            Unlisted <span text-muted>Its components stay off the frontpage</span>
           </label>
           <!-- if failure -->
           <p text-red>@[failure]</p>
           <!-- /if -->
           <crow right g-2 w-full>
-            <button tertiary onclick="$.dismiss()">Cancel</button>
+            <button tertiary onclick="$.dismiss('namespace')">Cancel</button>
             <button primary onclick="$.create()">Create</button>
+          </crow>
+        </card>
+      </dialog>
+
+      <dialog draft>
+        <card w="120" g-4 p-6>
+          <h6>New component in @[namespace]</h6>
+          <h1><textarea rows="1" spellcheck="false" placeholder="Name" value="@[draft.title]" oninput="$.draft.title = this.value"></textarea></h1>
+          <p lead><textarea rows="1" placeholder="Description (optional)" value="@[draft.description]" oninput="$.draft.description = this.value"></textarea></p>
+          <crow vertical left g="1.5" w-full>
+            <span sm text-muted>Slug</span>
+            <input type="text" w-full disabled value="@[$.slugged()]" />
+          </crow>
+          <!-- if failure -->
+          <p text-red>@[failure]</p>
+          <!-- /if -->
+          <crow right g-2 w-full>
+            <button tertiary onclick="$.dismiss('draft')">Cancel</button>
+            <button primary onclick="$.add()">Add component</button>
           </crow>
         </card>
       </dialog>

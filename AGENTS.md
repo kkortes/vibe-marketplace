@@ -43,10 +43,18 @@ tables hold the catalogue; `users` and `sessions` hold Google sign-ins for
 
 | Table        | Holds | Mutable |
 |---|---|---|
-| `namespaces` | `slug`, `title`, `official`, `ownerId` | yes |
+| `namespaces` | `slug`, `title`, `official`, `unlisted`, `ownerId` | yes |
 | `components` | catalogue metadata per `namespace` + `slug`: `title`, `description`, `category`, `icon`, `latest`, `defaults`, `ownerId` | yes |
 | `revisions`  | one row per published version | **never** |
 | `tags`       | the auto tags (`app/js/tags.js`) of each component's latest revision, one row per tag, replaced on every publish so the frontpage can count them with `GROUP BY` | yes |
+
+An unlisted namespace keeps its components off the frontpage: `components/list`
+without a namespace, and `tags/top`, leave it out. Its components still render
+at their addresses and list on `/<namespace>`, which asks `components/list` for
+that namespace alone. `users.namespaceCount`, 1 unless raised by hand, is how
+many namespaces an account may own; `auth/namespaces/create` refuses past it and
+`/components` hides New namespace once it is reached. A namespace with nothing
+published can be deleted by its owner from its own page.
 
 **The source bytes of a component live in `revisions.html`** — a text column on
 the revision row, holding the component's markup exactly as published.
@@ -63,7 +71,7 @@ revision in one D1 batch, which is one transaction; it never updates an old one.
 D1 binds parameters by position only (`?` or `?NNN`), never by name.
 
 SQLite has no booleans or nested values: `components.defaults` and
-`revisions.props` are JSON text and `namespaces.official` is `0`/`1`. The
+`revisions.props` are JSON text and `namespaces.official` and `namespaces.unlisted` are `0`/`1`. The
 decoders in `server/db.js` turn rows back into the shapes the client receives.
 
 `components.defaults` is a derived copy of the latest revision's prop defaults,
@@ -72,8 +80,11 @@ card. The frozen truth about props is `revisions.props`.
 
 The only files under `server/seed/` that look like components are inputs to the
 seed script: `server/seed/remote/*.html` are byte-for-byte copies of the
-webdev-game-stack remote components, and `server/seed/vibe/*.html` hold the
-markup of the vibe-owned ones too long to sit inline in `server/seed/vibe.js`.
+webdev-game-stack remote components, and `server/seed/webdev/*.html` hold the
+markup of the webdev namespace's components, read in by `server/seed/webdev.js`.
+`server/seed.js` replaces each seeded namespace whole — `vibe` and `webdev`, both
+owned by the developer's account — so a component left out of the seed is gone
+from it after the next run.
 Both are read at seed time and written into `revisions.html` like any other
 publish. They are not served from disk. What a seeded component fetches by
 prop, such as the card's art, lives in `app/images/` and is served as an asset.
@@ -150,7 +161,7 @@ devDependency; the local D1 it simulates lives in `.wrangler/` (gitignored).
 
 ```
 cd server && bun run migrate          # schema into the local D1
-cd server && bun run seed             # writes the vibe namespace and its card
+cd server && bun run seed             # writes the vibe and webdev namespaces and webdev/card
 bun dev                               # compiler watch + the Worker on $PORT
 ```
 
