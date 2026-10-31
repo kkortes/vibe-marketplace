@@ -1,6 +1,5 @@
 import gameStack from './seed/game-stack.js';
 import written from './seed/vibe.js';
-import webdev from './seed/webdev.js';
 import { now } from './db.js';
 import { defaults, validate } from './props.js';
 import { autoTags } from '../app/js/tags.js';
@@ -20,12 +19,14 @@ const checked = (components) =>
     versions: component.versions.map((version) => ({ ...version, props: validate(version.props) })),
   }));
 
+const seeded = checked([...written, ...(await gameStack())]);
+
 // Each seeded namespace is replaced whole: its components are written as listed
-// here and nothing else is left under it.
+// and nothing else is left under it. A component names its namespace, or is vibe's.
 const NAMESPACES = [
-  { slug: 'vibe', title: 'Vibe', official: 1, components: checked([...written, ...(await gameStack())]) },
-  { slug: 'webdev', title: 'Webdev', official: 0, components: checked(webdev) },
-];
+  { slug: 'vibe', title: 'Vibe', official: 1 },
+  { slug: 'webdev', title: 'Webdev', official: 0 },
+].map((ns) => ({ ...ns, components: seeded.filter(({ namespace = 'vibe' }) => namespace === ns.slug) }));
 
 const literal = (value) => (value == null ? 'NULL' : `'${String(value).replaceAll("'", "''")}'`);
 

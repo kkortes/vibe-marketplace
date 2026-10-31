@@ -82,13 +82,14 @@ card. The frozen truth about props is `revisions.props`.
 
 The only files under `server/seed/` that look like components are inputs to the
 seed script: `server/seed/remote/*.html` hold the code of every seeded
-component, the webdev-game-stack components ported to Vibe, read at seed time
-— `vibe`'s by `server/seed/game-stack.js`, `webdev`'s by `server/seed/webdev.js`
-— and written into `revisions.html` like any other publish. They are not served
-from disk. `server/seed.js` replaces each seeded namespace whole, `vibe` and
-`webdev`, both owned by the developer's account, so a component left out of the
-seed is gone from it after the next run. What a seeded component fetches by
-prop, such as the card's art, lives in `app/images/` and is served as an asset.
+component, ported to Vibe from webdev-game-stack and other projects, read at
+seed time by `server/seed/game-stack.js` and written into `revisions.html` like
+any other publish. They are not served from disk. An entry there names the
+namespace it is seeded under when that is not `vibe`; `server/seed.js` replaces
+each seeded namespace whole, `vibe` and `webdev`, both owned by the developer's
+account, so a component left out of the seed is gone from it after the next run.
+What a seeded component fetches by prop, such as the card's art, lives in
+`app/images/` and is served as an asset.
 `server/seed.js` turns the catalogue into SQL and runs it through
 `wrangler d1 execute`.
 
