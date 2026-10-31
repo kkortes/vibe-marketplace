@@ -35,7 +35,7 @@ export default await Promise.all(
         {
           name: 'open',
           type: 'boolean',
-          default: false,
+          default: true,
           description: 'Shows the overlay while set. Bind it to state of your own: Escape, a click on the backdrop or a click on any element inside with a close attribute sets it back to false.',
         },
         {
@@ -71,7 +71,7 @@ export default await Promise.all(
         {
           name: 'open',
           type: 'boolean',
-          default: false,
+          default: true,
           description: 'Shows the slider while set. Bind it to state of your own: Escape, a click outside the slides or a click on any element inside with a close attribute sets it back to false.',
         },
         {
@@ -101,6 +101,12 @@ export default await Promise.all(
             '</slides>',
           ].join('\n'),
           description: 'The markup between the tags: a <slides x> holding one <slide> per slide.',
+        },
+        {
+          name: 'noescape',
+          type: 'boolean',
+          default: false,
+          description: 'Escape leaves the slider open while set. A click outside the slides, or on any element inside with a close attribute, still closes it.',
         },
       ],
     },
@@ -141,22 +147,34 @@ export default await Promise.all(
       notes: 'Ported to Vibe.',
       slug: 'dialog',
       title: 'Dialog',
-      description: 'Renders any component full-screen over a blurred backdrop, and hands it a close.',
+      description: 'Renders any component full-screen over a blurred backdrop, hands it a close, and closes on Escape.',
       category: 'Layout',
       icon: 'layout',
       styling: 'stylecheat',
       props: [
         {
+          name: 'open',
+          type: 'boolean',
+          default: true,
+          description: 'Shows the dialog while set. Bind it to state of your own: Escape or the close handed to the shown component sets it back to false.',
+        },
+        {
           name: 'component',
           type: 'text',
-          default: '',
-          description: 'Address of the component to show. Bind it to state of your own: the dialog shows while it is set and unsets it on close.',
+          default: 'data:text/html,<card p-6><p>Escape or the button closes me.</p><button onclick="this.close()">Close</button></card>',
+          description: 'Address of the component to show while open. The default is an inline one, so a page elsewhere passes its own.',
         },
         {
           name: 'props',
           type: 'json',
           default: {},
           description: 'Handed to the shown component as its props prop. Next to it, that component gets close, called as $.close().',
+        },
+        {
+          name: 'noescape',
+          type: 'boolean',
+          default: false,
+          description: 'Escape leaves the dialog open while set. The close handed to the shown component still closes it.',
         },
       ],
     },

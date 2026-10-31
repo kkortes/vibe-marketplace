@@ -2,17 +2,28 @@
   import component from '@ape-egg/vibe/component';
 
   const instance = Math.random().toString(36).slice(2);
-  component({
+  const id = component({
     instance,
-    close: () =>
-      requestAnimationFrame(() =>
-        document.querySelector(`dialog-root[data-instance="${instance}"]`).dispatchEvent(new Event('close')),
-      ),
+    close: () => requestAnimationFrame(() => root().dispatchEvent(new Event('close'))),
   });
+
+  const root = () => document.querySelector(`dialog-root[data-instance="${instance}"]`);
+
+  const escape = ({ code }) =>
+    code === 'Escape' && root().hasAttribute('open') && !root().hasAttribute('noescape') && $[id].close();
+
+  addEventListener('keydown', escape);
+
+  $.on('unmount', () => removeEventListener('keydown', escape));
 </script>
 
-<dialog-root data-instance="@[this.instance]" onclose="$.component = undefined">
-  <!-- if component -->
+<dialog-root
+  data-instance="@[this.instance]"
+  open="@[open]"
+  noescape="@[noescape]"
+  onclose="$.open = false"
+>
+  <!-- if open -->
   <dialog-overlay flex overflow-auto>
     <dialog-box max-w-full m-auto>
       <component src="@[component]" props="@[props]" close="@[this.close]"></component>

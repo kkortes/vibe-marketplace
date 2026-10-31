@@ -6,7 +6,8 @@
 
   const root = () => document.querySelector(`overlay-slider[data-instance="${instance}"]`);
 
-  const escape = ({ code }) => code === 'Escape' && root().hasAttribute('open') && $[id].close();
+  const escape = ({ code }) =>
+    code === 'Escape' && root().hasAttribute('open') && !root().hasAttribute('noescape') && $[id].close();
 
   addEventListener('keydown', escape);
 
@@ -16,6 +17,7 @@
 <overlay-slider
   data-instance="@[this.instance]"
   open="@[open]"
+  noescape="@[noescape]"
   onclose="$.open = false"
   onclick="(event.target.matches('overlay-slider, carousel, slides, slide') || event.currentTarget.contains(event.target.closest('[close]'))) && this.close()"
 >
